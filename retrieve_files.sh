@@ -111,8 +111,7 @@ mkdir -p $dropLocation
 
 currentdate=$(date +%Y%m%d) 
 
-DATE="`date`"
-log "INFO" "-[JOB START] ${DATE}: ------------"
+log "INFO" "-[JOB START] $(date): ------------"
 log "INFO" "================= Script starting ================="
 
 log "INFO" "Starting file download process"
@@ -129,11 +128,7 @@ then
     week=$(date -d $friDate +%V)
     if [ $year -eq  2015 ]
     then
-      week=$((10#$week-1))
-      if [ $week -lt 10 ]
-      then
-        week="$(printf "%02d" $week)"
-      fi
+      week="$(printf "%02d" $((10#week-1)))"
     fi
   
     zipFilePath=${baseURL}PTAB_${friDate}_WK${week}.zip
@@ -165,7 +160,6 @@ log "INFO" "Starting file parsing process"
 log "INFO" "File parsing process complete"
 
 log "INFO" "================= Script exiting ================="
-DATE="`date`"
-log "INFO" "-[JOB END]-- ${DATE}: ------------"
+log "INFO" "-[JOB END]-- $(date): ------------"
 
 lock false
