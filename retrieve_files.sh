@@ -16,20 +16,20 @@
 function lock ( ) {
   if "$1" == true
   then
-    if [ -f ${LOCKFILE} ]
+    if [ -f ${lockFile} ]
     then
       echo
-      echo "${LOCKFILE} exits."
+      echo "${lockFile} exits."
       echo "Looks like a copy of $scriptName is already running... "
       echo "Abort"
       log "ERR" " Already running, please check logs for reason... "
       exit 0
     else
-      touch ${LOCKFILE}
+      touch ${lockFile}
     fi
   else
-    if [ -f $LOCKFILE ] ; then
-      rm $LOCKFILE
+    if [ -f $lockFile ] ; then
+      rm $lockFile
     fi
   fi
 }
@@ -64,12 +64,12 @@ function log()
 processingTime=`date +%Y%m%d-%H%M%S`
 scriptName=$0
 statusDirectory=logs
-BASEURL="https://bulkdata.uspto.gov/data2/patent/trial/appeal/board/"
-DROP_LOCATION="files/`date +%Y%m%d`"
-declare -i filedate
-retrieve_all=false
-retrieve_none=false
-LOCKFILE="/tmp/file_download.lck"
+baseURL="https://bulkdata.uspto.gov/data2/patent/trial/appeal/board/"
+dropLocation="files/`date +%Y%m%d`"
+declare -i fileDate
+retrieveAll=false
+retrieveNone=false
+lockFile="/tmp/file_download.lck"
 
 touch $statusDirectory/log-$processingTime
 
@@ -81,7 +81,7 @@ case "$1" in
   echo "$1"
   if date -d $1 >/dev/null 2>&1
   then
-    filedate=$1
+    fileDate=$1
   else
     log "ERR" "date passed in is not valid: $1"
     lock false
@@ -89,10 +89,10 @@ case "$1" in
   fi
   ;;
 -a | --all )
-  retrieve_all=true
+  retrieveAll=true
   ;;
 -n | --none )
-  retrieve_none=true
+  retrieveNone=true
   ;;
 -h | --help )
   usage
@@ -107,7 +107,7 @@ case "$1" in
 esac
      
 #create directory for downloaded files(if does not exist already)
-mkdir -p $DROP_LOCATION
+mkdir -p $dropLocation
 
 currentdate=$(date +%Y%m%d) 
 
@@ -117,16 +117,16 @@ log "INFO" "================= Script starting ================="
 
 log "INFO" "Starting file download process"
 
-if $retrieve_all && ! $retrieve_none 
+if $retrieveAll && ! $retrieveNone 
 then
-  wget --directory-prefix=files/`date +%Y%m%d` -e robots=off --cut-dirs=3  --reject="index.html*" --no-parent --recursive --relative --level=1 --no-directories $BASEURL
-elif ! $retrieve_all && ! $retrieve_none
+  wget --directory-prefix=files/`date +%Y%m%d` -e robots=off --cut-dirs=3  --reject="index.html*" --no-parent --recursive --relative --level=1 --no-directories $baseURL
+elif ! $retrieveAll && ! $retrieveNone
 then
-  while [ $filedate -lt $currentdate ]
+  while [ $fileDate -lt $currentdate ]
   do
-    fri_date=$(date '+%C%y%m%d' -d "$filedate -$(date -d $filedate +%u) days + 5 day")
-    year=$(date -d $fri_date +%Y) 
-    week=$(date -d $fri_date +%V)
+    friDate=$(date '+%C%y%m%d' -d "$fileDate -$(date -d $fileDate +%u) days + 5 day")
+    year=$(date -d $friDate +%Y) 
+    week=$(date -d $friDate +%V)
     if [ $year -eq  2015 ]
     then
       week=$((10#$week-1))
@@ -136,16 +136,16 @@ then
       fi
     fi
   
-    zipfilepath=${BASEURL}PTAB_${fri_date}_WK${week}.zip
-    wget -q --spider $zipfilepath
+    zipFilePath=${baseURL}PTAB_${friDate}_WK${week}.zip
+    wget -q --spider $zipFilePath
     if [ $? -eq 0 ]
     then
-      wget -nc -P $DROP_LOCATION $zipfilepath 
+      wget -nc -P $dropLocation $zipFilePath 
     else 
-      log "ERR" "file does not exist: $zipfilepath"
+      log "ERR" "file does not exist: $zipFilePath"
     fi
 
-    filedate=$(date '+%C%y%m%d' -d "$filedate+7 days")
+    fileDate=$(date '+%C%y%m%d' -d "$fileDate+7 days")
   done
 fi
 
@@ -154,13 +154,13 @@ log "INFO" "File download process complete"
 #After pulling down the files, unzip each one in the directory
 log "INFO" "Starting file unzipping process"
 
-find $DROP_LOCATION -type f -name "*.zip" -exec unzip -n {} -d $DROP_LOCATION \;
+find $dropLocation -type f -name "*.zip" -exec unzip -n {} -d $dropLocation \;
 
 log "INFO" "File unzip process complete"
 
 log "INFO" "Starting file parsing process"
 
-#find $DROP_LOCATION -type f -name "*pdf" -exec curl -X PUT --data-binary *.pdf http://192.168.99.100:9998/tika --header "Content-type: application/pdf" >> $statusDirectory/log-$processingTime-processfiles.txt \;
+#find $dropLocation -type f -name "*pdf" -exec curl -X PUT --data-binary *.pdf http://192.168.99.100:9998/tika --header "Content-type: application/pdf" >> $statusDirectory/log-$processingTime-processfiles.txt \;
 
 log "INFO" "File parsing process complete"
 
