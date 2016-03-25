@@ -61,7 +61,5 @@ target/
 #Ipython Notebook
 .ipynb_checkpoints
 
-!files/
 files/*
-!logs/
 logs/*
