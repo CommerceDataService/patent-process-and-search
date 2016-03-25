@@ -1,0 +1,797 @@
+
+UNITED STATES PATENT AND TRADEMARKOFFICE
+UNITED STATES DEPARTMENT OF COMMERCE
+United States Patent and Trademark Office
+Address: COMMISSIONER FOR PATENTS
+
+P.O. Box 1450
+Alexandria, Virginia 22313-1450
+www.uspto.gov
+
+APPLICATION NO. FILING DATE FIRST NAMED INVENTOR ATTORNEY DOCKET NO. CONFIRMATION NO.
+
+95/001,836 11/29/2011 6480962 1762030.00124US1 4559
+
+115222 7590 02/29/2016
+Bey & Cotropia PLLC (Finjan Inc.)
+Dawn-Marie Bey
+213 Bayly Court
+Richmond, VA 23229
+
+EXAMINER
+
+BASEHOAR, ADAM L
+
+ART UNIT PAPER NUMBER
+
+3992
+
+MAIL DATE DELIVERY MODE
+
+02/29/2016 PAPER
+
+Please find below and/or attached an Office communication concerning this application or proceeding.
+
+The time period for reply, if any, is set in the attached communication.
+
+PTOL-90A (Rev. 04/07)
+
+
+
+ 
+ 
+ 
+ 
+ 
+
+UNITED STATES PATENT AND TRADEMARK OFFICE 
+________________ 
+
+ 
+BEFORE THE PATENT TRIAL AND APPEAL BOARD 
+
+________________ 
+ 
+
+SYMANTEC CORPORATION 
+Requester  
+
+ 
+v. 
+ 
+
+FINJAN, INC. 
+Patent Owner and Appellant 
+
+ 
+________________ 
+
+ 
+Appeal 2015-007907 
+
+Reexamination Control 95/001,836 
+Patent 6,480,962 B1 
+
+Technology Center 3900 
+________________ 
+
+ 
+Before STEPHEN C. SIU, JERMY J. CURCURI, and 
+IRVIN E. BRANCH, Administrative Patent Judges. 
+ 
+CURCURI, Administrative Patent Judge. 
+ 
+
+ 
+
+DECISION ON APPEAL 
+
+ Patent Owner appeals the Examiner’s decision to reject claims 2–4, 7–
+
+11, 13, 14, 16–20, 22–32, 34–36, 39–44, 46–51, 53, and 54. Claims 1, 5, 6, 
+
+12, 15, 21, 33, 37, 38, 45, 52, and 55 have been withdrawn from the appeal. 
+
+
+
+Appeal 2015-007907 
+Reexamination Control 95/001,836 
+Patent 6,480,962 B1 
+ 
+
+ 2 
+
+See Patent Owner Appeal Brief (PO App. Br.) 1, Patent Owner Rebuttal 
+
+Brief (PO Reb. Br.) 3. We have jurisdiction under 35 U.S.C. §§ 134 and 315 
+
+(pre-AIA). 
+
+ Claims 2–4, 7–11, 13, 14, 16–20, 22–32, 34–36, 39–44, 46–51, 53, 
+
+and 54 are rejected in various grounds of rejections. See Right of Appeal 
+
+Notice (RAN) 9–12. 
+
+ We affirm. 
+
+ 
+
+STATEMENT OF THE CASE 
+
+ This proceeding arose from a request by Symantec Corporation for an 
+
+inter partes reexamination of U.S. Patent 6,480,962 B1, entitled “System 
+
+and Method for Protecting a Client During Runtime from Hostile 
+
+Downloadables” (the ’962 patent). Patent Owner and Requester both note 
+
+related litigation. See PO App. Br. 1, Third Party Requester Respondent’s 
+
+Brief (3PR Resp. Br.) 4. The ’962 patent relates to “a system and method for 
+
+protecting clients from hostile Downloadables.” ’962 patent, col. 1, ll. 22–
+
+23. Claim 22 is illustrative are reproduced below: 
+
+ 22. A system for determining whether a 
+Downloadable, which is received by a Downloadable engine, is 
+suspicious, comprising: 
+ means for monitoring substantially in parallel a plurality 
+of subsystems of the operating system during runtime for an 
+event caused from a request made by a Downloadable; 
+ means for interrupting processing of the request; 
+ means for comparing information pertaining to the 
+Downloadable against a predetermined security policy; and 
+ means for performing a predetermined responsive action 
+based on the comparison. 
+ 
+
+
+
+Appeal 2015-007907 
+Reexamination Control 95/001,836 
+Patent 6,480,962 B1 
+ 
+
+ 3 
+
+ANALYSIS 
+
+THE ANTICIPATION REJECTION OF CLAIMS 2, 3, 8, 11, 13, 16, 18, 19, 22–24, 
+
+26, 27, 29, 32, 34, 35, 40, 43, 44, 46–51, 53, AND 54 BY JAEGER 
+
+ The Examiner finds claims 2, 3, 8, 11, 13, 16, 18, 19, 22–24, 26, 27, 
+
+29, 32, 34, 35, 40, 43, 44, 46–51, 53, and 54 are invalid under 35 U.S.C. 
+
+§ 102(a) as anticipated by Jaeger (Trent Jaeger, et al., “Building Systems 
+
+that Flexibly Control Downloaded Executable Content,” PROCEEDINGS OF 
+
+THE SIXTH USENIX UNIX SECURITY SYMPOSIUM, July 1996). RAN 14, 34–
+
+36, 63–64 (incorporating Request 31–32 and Claim Chart Exhibit C1 by 
+
+reference). 
+
+ 
+
+Claims 2, 3, 8, 11, 13, 16, 18, 19, 22–24, 26, 27, 29, 32, 34, 35, 40, 43, and 
+
+48–51 
+
+ Patent Owner presents the following principal arguments: 
+
+Nowhere does Jaeger show or suggest MONITORING as 
+variously claimed in independent claims 1, 12, 22, 33, 48, and 
+50. In stark contrast, Jaeger discloses that operations within the 
+browser “are implemented by a call to authorize which checks 
+the content access rights prior to calling the actual operation. 
+Since these commands are only available in the browser and are 
+protected by the authorization operation, only authorized 
+accesses to system objects are possible.” See Third Party 
+Requestor Comments to NFOA, pg. 22 (quoting Jaeger § 7.3) 
+(emphasis added). Thus, by Respondent’s own admission, any 
+monitoring performed by Jaeger is of requests in the browser 
+rather than events in subsystems of the operating system. Thus, 
+once again, Respondent and the Examiner (who adopted 
+Respondent’s arguments with respect to Jaeger) improperly 
+conflate Appellant's claimed “event” and “request.” See Section 
+VII.A.2, supra. 
+
+PO App. Br. 14–15; see also PO App. Br. 9 (“Appellant has submitted and 
+
+
+
+Appeal 2015-007907 
+Reexamination Control 95/001,836 
+Patent 6,480,962 B1 
+ 
+
+ 4 
+
+continues to submit that ‘an event caused from a request from a 
+
+Downloadable’ should be construed to be an event at the operating system 
+
+level that results from a request from a Downloadable.”); see also PO App. 
+
+Br. Evidence Appendix, Exhibit B, Declaration of Dr. Giovanni Vigna ¶ 43 
+
+(Jaeger “focuses on access right by users and/or groups”); see also PO Reb. 
+
+Br. 8–9. 
+
+ We have considered Patent Owner’s arguments and evidence, and we 
+
+do not see any error in the Examiner’s findings. 
+
+ Claim 22 recites “means for monitoring substantially in parallel a 
+
+plurality of subsystems of the operating system during runtime for an event 
+
+caused from a request made by a Downloadable.”  The ’962 patent describes 
+
+Java class extensions 304 (Figure 3); operating system probes 310, 312, 314, 
+
+and 316 (Figures 3 and 4); and messages extension 404, Dynamic-Data-
+
+Exchange (DDE) extension 405, and Dynamically-Linked-Library (DLL) 
+
+extension 406 (Figure 4). See ’962 patent, col. 4, ll. 10–31; col. 5, ll. 23–38. 
+
+Thus, we conclude the broadest reasonable interpretation of the recited 
+
+“means for monitoring” includes class extensions, probes, and equivalent-
+
+functioning software between an application and the operating system. 
+
+ We agree with and adopt as our own Requester’s explanation: 
+
+Jaeger discloses monitoring events in subsystems in the 
+operating system because it discloses monitoring subsystem 
+calls. Jaeger describes enforcing access control rights at the level 
+of the operating system. See Jaeger, § 7.2. In other words, Jaeger 
+describes enforcing access control rights by monitoring calls 
+made by a mobile agent (or other downloaded content) to 
+operating system resources. Thus, Jaeger discloses the 
+“monitoring” limitation of the ’962 patent claims. See, e.g., 
+Requester’s Initial Comments filed October 10, 2012 (“Initial 
+
+
+
+Appeal 2015-007907 
+Reexamination Control 95/001,836 
+Patent 6,480,962 B1 
+ 
+
+ 5 
+
+Comments”), p. 22. As discussed above, the claims do not 
+require monitoring of operating system calls to be performed at 
+the operating system level. 
+
+3PR Resp. Br. 13; see also Third-Party Requester Comments after Non-
+
+Final Action, dated October 10, 2012, 22 (Jaeger’s authorization operation 
+
+makes possible only authorized accesses to system objects (citing Jaeger 
+
+§ 7.3)). 
+
+ Put another way, Jaeger (§ 7.2) describes: “Application-specific 
+
+interpreters are responsible for deriving access rights within their domain, 
+
+but the browser still enforces all system object accesses.” Jaeger (§ 7.3) 
+
+describes: “operations are implemented by a call to authorize which checks 
+
+the content access rights prior to calling the actual operation. Since these 
+
+commands are only available in the browser and are protected by the 
+
+authorization operation, only authorized accesses to system objects are 
+
+possible.” Thus, Jaeger describes software between an application and the 
+
+operating system (Jaeger’s browser) for monitoring substantially in parallel a 
+
+plurality of subsystems of the operating system during runtime for an event 
+
+(Jaeger’s enforcing access control rights by monitoring calls made by 
+
+downloaded content to operating system resources) caused from a request 
+
+made by a Downloadable. 
+
+ Regarding Patent Owner’s argument that Jaeger’s monitoring is of 
+
+requests in the browser rather than events in subsystems of the operating 
+
+system, we do not see any error in the Examiner’s findings because claim 22 
+
+does not require monitoring of operating system calls to be performed at the 
+
+operating system level. Jaeger’s browser performs the recited monitoring. 
+
+
+
+Appeal 2015-007907 
+Reexamination Control 95/001,836 
+Patent 6,480,962 B1 
+ 
+
+ 6 
+
+ Regarding Patent Owner’s related argument that claim 22 requires an 
+
+event at the operating system level that results from a request from a 
+
+Downloadable, we find this argument without consequence. Jaeger describes 
+
+an event at the operating system level (Jaeger’s accesses to system objects) 
+
+that results from a request from a Downloadable (Jaeger’s call made by 
+
+downloaded content).  
+
+ Regarding Patent Owner’s related evidence of record explaining that 
+
+Jaeger focuses on access rights by users and/or groups, we find this 
+
+explanation without consequence because Jaeger’s browser performs the 
+
+recited monitoring. 
+
+ We, therefore, sustain the Examiner’s rejection of claim 22, as well as 
+
+claims 2, 3, 8, 11, 13, 16, 18, 19, 23, 24, 26, 27, 29, 32, 34, 35, 40, 43, and 
+
+48–51, which are not argued separately with particularity. 
+
+ 
+
+Claims 44, 46, and 47 
+
+ Claim 44, 46, and 47 each recite: “each subsystem includes one of a 
+
+file system, network system, process system or memory system.” 
+
+ Regarding these claims, Patent Owner further argues: “Jaeger fails to 
+
+monitor a plurality of subsystems of an operating system, let alone 
+
+monitoring those subsystems in parallel, let alone each of those subsystems 
+
+including one of a file system, network system, process system, or memory 
+
+system.” PO App. Br. 16; see also PO App. Br. 11 (a plurality of subsystems 
+
+are monitored). 
+
+ We do not see any error in the Examiner’s findings. 
+
+ We agree with and adopt as our own Requester’s explanation: “the 
+
+
+
+Appeal 2015-007907 
+Reexamination Control 95/001,836 
+Patent 6,480,962 B1 
+ 
+
+ 7 
+
+broadest reasonable interpretation of claims 44[, 46, and] 47 includes 
+
+monitoring a plurality of subsystems (e.g., 2) wherein each subsystem 
+
+includes 1 type of subsystem.” 3PR Resp. Br. 14; see also Jaeger § 5 (“The 
+
+local system services provide operating systems services for controlling 
+
+operations external to the interpreters. Also, system-specific information is 
+
+made available for local system services (e.g., the file system structure).)”; 
+
+see also Jaeger, § 5, Figure 5 (browser accesses network services, local 
+
+software, local file). 
+
+ Thus, Jaeger describes each subsystem (for example, Jaeger’s network 
+
+service and Jaeger’s local file) includes one of a file system (Jaeger’s local 
+
+file), network system (Jaeger’s network service), process system or memory 
+
+system. 
+
+ We, therefore, sustain the Examiner’s rejection of claims 44, 46, and 
+
+47. 
+
+ 
+
+Claim 53 
+
+ Claim 53 recites: “comparing information pertaining to the 
+
+Downloadable against a predetermined security policy, wherein information 
+
+pertaining to the Downloadable includes information about requests to the 
+
+operating system made by the Downloadable.” 
+
+ Regarding claim 53, Patent Owner further argues: 
+
+Jaeger fails to show or suggest information pertaining to the 
+Downloadable including “information about requests to the 
+operating system made by the Downloadable.” With respect to 
+this feature, Requestor relies on Jaeger’s disclosure of the ability 
+to identify I/O commands, which is completely irrelevant to 
+whether or not information pertaining to a Downloadable 
+
+
+
+Appeal 2015-007907 
+Reexamination Control 95/001,836 
+Patent 6,480,962 B1 
+ 
+
+ 8 
+
+includes information about a request to the operating system, let 
+alone information about multiple requests to the operating 
+system. 
+
+PO App. Br. 15. 
+
+ We do not see any error in the Examiner’s findings. 
+
+ We agree with and adopt as our own Requester’s explanation: “Jaeger 
+
+discloses comparing information pertaining to the Downloadable against a 
+
+predetermined security policy. For example, the access rights associated 
+
+with executing content constitute a ‘security policy.’” 3PR Resp. Br. 14; see 
+
+also Jaeger § 5 (identifying I/O commands in the content language of the 
+
+downloaded content). 
+
+ We conclude that construing “information pertaining to the 
+
+Downloadable” to include Jaeger’s identified I/O commands is not overly 
+
+broad or unreasonable because the identified I/O commands are part of the 
+
+downloaded content. 
+
+ Thus, Jaeger describes comparing information pertaining to the 
+
+Downloadable (Jaeger’s identified I/O commands) against a predetermined 
+
+security policy (Jaeger’s access rights), wherein information pertaining to 
+
+the Downloadable includes information about requests (Jaeger’s identified 
+
+I/O commands) to the operating system made by the Downloadable. 
+
+ We, therefore, sustain the Examiner’s rejection of claim 53. 
+
+ 
+
+Claim 54 
+
+ Claim 54 recites: “comparing information pertaining to the 
+
+downloadable against a predetermined security policy, wherein information 
+
+
+
+Appeal 2015-007907 
+Reexamination Control 95/001,836 
+Patent 6,480,962 B1 
+ 
+
+ 9 
+
+pertaining to the Downloadable includes information about memory usage 
+
+by the Downloadable.” 
+
+ Regarding claim 54, Patent Owner further argues: 
+
+Jaeger is completely silent with respect to information pertaining 
+to the Downloadable including information about memory usage 
+by the Downloadable. Requestor’s reli[es] on Jaeger’s disclosure 
+that “[a] process can read and write objects in its memory,” 
+which has no bearing on whether information pertaining to a 
+Downloadable includes information about memory usage by the 
+Downloadable. 
+
+PO App. Br. 15–16. 
+
+ We do not see any error in the Examiner’s findings. 
+
+ Jaeger (§ 3) describes: “[a] process can read and write objects in its 
+
+memory.” Thus, Jaeger’s identified I/O commands include commands for 
+
+reading and writing objects in memory. 
+
+ Thus, Jaeger describes comparing information pertaining to the 
+
+downloadable (Jaeger’s identified I/O commands) against a predetermined 
+
+security policy (Jaeger’s access rights), wherein information pertaining to 
+
+the Downloadable includes information about memory usage by the 
+
+Downloadable (Jaeger’s commands for reading and writing objects in 
+
+memory). 
+
+ We, therefore, sustain the Examiner’s rejection of claim 54. 
+
+ 
+
+THE OBVIOUSNESS REJECTION OF CLAIMS 11, 32, AND 43 OVER JAEGER 
+
+ The Examiner finds claims 11, 32, and 43 are invalid under 35 U.S.C. 
+
+§ 103(a) as obvious over Jaeger. RAN 15, 44–45, 67 (incorporating Request 
+
+63 and Claim Chart Exhibit C1 by reference). Claims 11, 32, and 43 each 
+
+
+
+Appeal 2015-007907 
+Reexamination Control 95/001,836 
+Patent 6,480,962 B1 
+ 
+
+ 10 
+
+recite: “wherein the predetermined responsive action includes discarding the 
+
+Downloadable.” 
+
+ Patent Owner presents the following principal arguments: 
+
+ i. The Examiner provides no support for the assertion that the 
+
+claimed invention would have been obvious. PO App. Br. 25; PO Reb. Br. 
+
+11–12. 
+
+ ii. Endrijonas (Endrijonas, “Rx PC: The Anti-Virus Handbook,” 
+
+McGraw-Hill, Inc., 1993) is not included in the ground of rejection. PO App. 
+
+Br. 25. 
+
+ iii. The Examiner does not explain why it would have been 
+
+obvious to combine Jaeger and Endrijonas. PO App. Br. 25. 
+
+ We have considered Patent Owner’s arguments and evidence, and we 
+
+do not see any error in the Examiner’s findings. 
+
+ We agree with and adopt as our own Requester’s explanation: “one of 
+
+ordinary skill in the art would have recognized that modifying Jaeger to 
+
+discard the executable content would provide more efficient memory 
+
+allocation by freeing memory space previously taken by the executable 
+
+content for other uses.” 3PR Resp. Br. 18; see also Jaeger § 7.3 (“In general, 
+
+software execution is authorized by determining if the remote principal (i.e., 
+
+principal group) has execute rights for the first argument in the exec call. If 
+
+so, then the exec operation executes the software using the current rights of 
+
+the principal group”). 
+
+ Regarding Patent Owners argument i, Jaeger (§ 7.3) discloses 
+
+executing external software with an exec call when authorized. When not 
+
+authorized, the exec call in the Downloadable is not executed.  A skilled 
+
+
+
+Appeal 2015-007907 
+Reexamination Control 95/001,836 
+Patent 6,480,962 B1 
+ 
+
+ 11 
+
+artisan would have recognized that as an alternative to not executing the 
+
+exec call in the Downloadable, it would have been obvious to discard the 
+
+Downloadable for the purpose of freeing memory space. See Request Claim 
+
+Chart Exhibit C1. 
+
+ Regarding Patent Owner’s arguments ii and iii, the claims are rejected 
+
+based on Jaeger. We agree with Requester that the recited discarding would 
+
+have been obvious in view of Jaeger alone, for reasons explained above. 
+
+Endrijonas provides evidence that discarding or deleting is well-known. See 
+
+Endrijonas 73. 
+
+ We, therefore, sustain the Examiner’s rejection of claims 11, 32, and 
+
+43. 
+
+ 
+
+THE OBVIOUSNESS REJECTION OF CLAIMS 4, 14, 25, AND 36 OVER JAEGER AND 
+
+CHAPPELL 
+
+ The Examiner finds claims 4, 14, 25, and 36 are invalid under 35 
+
+U.S.C. § 103(a) as obvious over Jaeger and Chappell (David Chappell, 
+
+“Understanding ActiveX and OLE, A Guide for Developers & Managers” 
+
+Microsoft Press, 1996). RAN 16, 48–49, 69–70 (incorporating Request 40 
+
+and Claim Chart Exhibit C1 by reference).  
+
+ Patent Owner argues that claims 4, 14, 25, and 36 are patentable for 
+
+their dependency from a patentable base claim. PO App. Br. 26. 
+
+ Claim 4 depends from withdrawn base claim 1, claim 14 depends 
+
+from withdrawn base claim 12, claim 25 depends from base claim 22, and 
+
+claim 36 depends from withdrawn base claim 33. 
+
+
+
+Appeal 2015-007907 
+Reexamination Control 95/001,836 
+Patent 6,480,962 B1 
+ 
+
+ 12 
+
+ We sustain the Examiner’s rejection of claims 4, 14, 25, and 36 for 
+
+reasons discussed above with respect to claim 22. 
+
+ 
+
+THE OBVIOUSNESS REJECTION OF CLAIMS 7, 9, 10, 17, 20, 28, 30, 31, 39, 41, 
+
+AND 42 OVER JAEGER AND RASMUSSON 
+
+ The Examiner finds claims 7, 9, 10, 17, 20, 28, 30, 31, 39, 41, and 42 
+
+are invalid under 35 U.S.C. § 103(a) as obvious over Jaeger and Rasmusson 
+
+(Andreas Rasmusson & Sverker Jansson, “Personal Security Assistance for 
+
+Secure Internet Commerce,” NEW SECURITY PARADIGMS ’96 
+
+Workshop, Lake Arrowhead, CA, September 16–19, 1996). RAN 16, 49–50, 
+
+70 (incorporating Request 40–41 and Claim Chart Exhibit C1 by reference).  
+
+ Patent Owner argues that claims 7, 9, 10, 17, 20, 28, 30, 31, 39, 41, 
+
+and 42 are patentable for their dependency from a patentable base claim. PO 
+
+App. Br. 26. 
+
+ Claims 7, 9, and 10 depends from withdrawn base claim 1, claims 17 
+
+and 20 depend from withdrawn base claim 12, claims 28, 20, and 31 depend 
+
+from base claim 22, and claims 39, 41, and 42 depend from withdrawn base 
+
+claim 33. 
+
+ We sustain the Examiner’s rejection of claims 7, 9, 10, 17, 20, 28, 30, 
+
+31, 39, 41, and 42 for reasons discussed above with respect to claim 22. 
+
+ 
+
+THE REMAINING REJECTIONS 
+
+ Because we have affirmed the Examiner’s rejection of all the claims, 
+
+we decline to reach the merits of the remaining rejections over the prior art.  
+
+See, e.g., In re Gleave, 560 F.3d 1331, 1338 (Fed. Cir. 2009) (not reaching 
+
+
+
+Appeal 2015-007907 
+Reexamination Control 95/001,836 
+Patent 6,480,962 B1 
+ 
+
+ 13 
+
+rejections based on obviousness when claims already rejected as 
+
+anticipated).   
+
+ 
+
+ORDER 
+
+The Examiner’s decision rejecting claims 2–4, 7–11, 13, 14, 16–20, 
+
+22–32, 34–36, 39–44, 46–51, 53, and 54 is affirmed. 
+
+Requests for extensions of time in this inter partes reexamination 
+
+proceeding are governed by 37 C.F.R. § 1.956.  See 37 C.F.R. § 41.79. 
+
+In the event neither party files a request for rehearing within the time 
+
+provided in 37 C.F.R. § 41.79, and this decision becomes final and 
+
+appealable under 37 C.F.R. § 41.81, a party seeking judicial review must 
+
+timely serve notice on the Director of the United States Patent and 
+
+Trademark Office. See 37 C.F.R. §§ 90.1 and 1.983. 
+
+ 
+AFFIRMED 
+
+ 
+ 
+  
+
+
+
+Appeal 2015-007907 
+Reexamination Control 95/001,836 
+Patent 6,480,962 B1 
+ 
+
+ 14 
+
+ELD 
+ 
+For PATENT OWNER: 
+ 
+BEY & COTROPIA PLLC (FINJAN INC.) 
+DAWN-MARIE BEY 
+213 BAYLY COURT 
+RICHMOND, VA 23229 
+ 
+For THIRD PARTY REQUESTER:  
+ 
+WILMERHALE/SYMANTEC  CORPORATION 
+WILMER CUTLER PICKERING HALE AND DORR LLP 
+1875 PENNSYLVANIA AVENUE, N.W. 
+WASHINGTON, SC 20006 
+
+
+	CURCURI, Administrative Patent Judge.
+	ORDER
+
