@@ -78,8 +78,7 @@ lock true
 case "$1" in
 -d | --date )
   shift
-  echo "$1"
-  if date -d $1 >/dev/null 2>&1
+  if date "+%d/%m/%Y" -d $1 >/dev/null 2>&1
   then
     fileDate=$1
   else
@@ -114,15 +113,17 @@ currentdate=$(date +%Y%m%d)
 log "INFO" "-[JOB START] $(date): ------------"
 log "INFO" "================= Script starting ================="
 
-log "INFO" "Starting file download process"
 
 if $retrieveAll && ! $retrieveNone 
 then
+  log "INFO" "Starting file download process"
   wget --directory-prefix=files/`date +%Y%m%d` -e robots=off --cut-dirs=3  --reject="index.html*" --no-parent --recursive --relative --level=1 --no-directories $baseURL
+  log "INFO" "File download process complete"
 elif ! $retrieveAll && ! $retrieveNone
 then
   while [ $fileDate -lt $currentdate ]
   do
+    log "INFO" "Starting file download process"
     friDate=$(date '+%C%y%m%d' -d "$fileDate -$(date -d $fileDate +%u) days + 5 day")
     year=$(date -d $friDate +%Y) 
     week=$(date -d $friDate +%V)
@@ -142,9 +143,10 @@ then
 
     fileDate=$(date '+%C%y%m%d' -d "$fileDate+7 days")
   done
+  log "INFO" "File download process complete"
+else
+  log "INFO" "skipping file download process"
 fi
-
-log "INFO" "File download process complete"
 
 #After pulling down the files, unzip each one in the directory
 log "INFO" "Starting file unzipping process"
@@ -155,7 +157,10 @@ log "INFO" "File unzip process complete"
 
 log "INFO" "Starting file parsing process"
 
-#find $dropLocation -type f -name "*pdf" -exec curl -X PUT --data-binary *.pdf http://192.168.99.100:9998/tika --header "Content-type: application/pdf" >> $statusDirectory/log-$processingTime-processfiles.txt \;
+#for f in "$dropLocation/*"
+#do
+  #  curl -x PUT --data-binary @$dropLocation/$filename http://192.168.99.100:9998/tika --header "Content-type: application/pdf" > ${filename%.*}.txt
+#done       
 
 log "INFO" "File parsing process complete"
 
