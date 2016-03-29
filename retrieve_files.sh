@@ -165,12 +165,11 @@ do
   else
     if [ -d "$f/PDF_image" ]
     then
-      for i in $f/PDF_image/*
+      for i in $f/PDF_image/*.pdf
       do
         fname=$(basename "$i")
-        extension="${fname##*.}"
         fname="${fname%.*}"
-        if [ $extension == "pdf" ] && [ ! -f "$f/PDF_image/$fname.txt" ]
+        if [ ! -f "$f/PDF_image/$fname.txt" ]
         then
           log "INFO" "Parsing document: $i to ${i%.*}.txt"
           curl -X PUT --data-binary @$i http://192.168.99.100:9998/tika --header "Content-type: application/pdf" > ${i%.*}.txt
