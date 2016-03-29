@@ -1,4 +1,4 @@
-#!/bin/bash
+#/bin/bash
 #set -x
 
 ###################################################################################################################
@@ -157,10 +157,25 @@ log "INFO" "File unzip process complete"
 
 log "INFO" "Starting file parsing process"
 
-#for f in "$dropLocation/*"
-#do
-  #  curl -x PUT --data-binary @$dropLocation/$filename http://192.168.99.100:9998/tika --header "Content-type: application/pdf" > ${filename%.*}.txt
-#done       
+for f in $dropLocation/*
+do
+  if [[ $f == *.zip ]]
+  then
+    continue;
+  else
+    for i in $f/PDF_image/*
+    do
+      fname=$(basename "$i")
+      extension="${fname##*.}"
+      fname="${fname%.*}"
+      if [ $extension == "pdf" ] && [ ! -f "$f/PDF_image/$fname.txt" ]
+      then
+        log "INFO" "Parsing document: $i to ${i%.*}.txt""
+        curl -X PUT --data-binary @$i http://192.168.99.100:9998/tika --header "Content-type: application/pdf" > ${i%.*}.txt
+      fi
+    done
+  fi
+done       
 
 log "INFO" "File parsing process complete"
 
