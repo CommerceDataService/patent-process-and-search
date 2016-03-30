@@ -65,7 +65,7 @@ processingTime=`date +%Y%m%d-%H%M%S`
 scriptName=$0
 statusDirectory=logs
 baseURL="https://bulkdata.uspto.gov/data2/patent/trial/appeal/board/"
-dropLocation="files/`date +%Y%m%d`"
+dropLocation="files"
 declare -i fileDate
 retrieveAll=false
 retrieveNone=false
@@ -104,9 +104,6 @@ case "$1" in
   log "ERR" "argument passed in is not valid: $1"
   exit 1
 esac
-     
-#create directory for downloaded files(if does not exist already)
-mkdir -p $dropLocation
 
 currentdate=$(date +%Y%m%d) 
 

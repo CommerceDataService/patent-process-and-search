@@ -22,13 +22,13 @@ def getFolder(root,level):
 
 #crawl through each xml file, find corresponding text doc and add to xml node
 for root, dirs, files in os.walk('files/'):
-    for name.endswith('.xml') in files:
+    for name in files:
         if name.endswith('.xml'):
             with open(os.path.join(root,name)) as fd:
                 doc = xmltodict.parse(fd.read())
                 for x in doc['main']['DATA_RECORD']:
                     value = None
-                    pathfolder = getFolder(root,2)
+                    pathfolder = getFolder(root,1)
                     if pathfolder.startswith('PTAB'):
                         value = getData(x,'DOCUMENT_IMAGE_ID')
                     elif pathfolder.startswith('PRPS'):
