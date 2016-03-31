@@ -31,7 +31,7 @@ if __name__ == '__main__':
     logging.basicConfig(filename='logs/parse-xml-log-'+time.strftime('%Y%m%d-%H%M%S'),\
     level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s\
     -%(message)s',datefmt='%Y%m%d %H:%M:%S')
- 
+
     logging.info("-- [JOB START]  ----------------")
     logging.info("-- =============== Script starting ====================")
 
@@ -54,15 +54,18 @@ if __name__ == '__main__':
                             elif pathfolder.startswith('PRPS'):
                                 value = getData(x,'DOCUMENT_NM')
                             #add extracted pdf text to node
-                            with open(os.path.join(root+'/PDF_image',value+'.txt')) as dr:
-                                text = dr.read()
-                                setData(x,'DOCUMENT_TEXT',text)
+                            if os.path.isfile(os.path.join(root,'PDF_image',value+'.txt')):
+                                with open(os.path.join(root,'PDF_image',value+'.txt')) as dr:
+                                    text = dr.read()
+                                    setData(x,'DOCUMENT_TEXT',text)
+                            else:
+                                logging.error("-- Parsed text for file - "+os.path.join(root,'PDF_image',value+'.pdf')+ " does not exist")
                         #transform output to json and save to file with same name
                         with open(os.path.join(root,os.path.splitext(name)[0])+'.json','w') as outfile:
                             json.dump(doc,outfile)
                             logging.info("-- Creation of json file complete")
                     else:
-                        logging.error("File already exists")
+                        logging.info("-- File already exists")
 
     logging.info("=============== Script exiting ====================")
     logging.info("[JOB END] ----------------")
