@@ -105,6 +105,10 @@ case "$1" in
   exit 1
 esac
 
+#create directory for downloaded files and logs(if does not exist already)
+mkdir -p $dropLocation
+mkdir -p $statusDirectory
+
 currentdate=$(date +%Y%m%d) 
 
 log "INFO" "-[JOB START] $(date): ------------"
