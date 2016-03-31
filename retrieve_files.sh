@@ -172,7 +172,7 @@ do
         if [ ! -f "$f/PDF_image/$fname.txt" ]
         then
           log "INFO" "Parsing document: $i to ${i%.*}.txt"
-          python parse.py "$i" &
+          python parse.py "$i"
           # leaving this cURL command in so we can use it for reference or debugging
           # curl -X PUT --data-binary @$i http://192.168.99.100:9998/tika --header "Content-type: application/pdf" > ${i%.*}.txt
          fi
