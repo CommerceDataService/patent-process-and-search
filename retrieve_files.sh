@@ -47,7 +47,8 @@ function log()
   if [ $type = "WARN" -o $type = "ERR" ]
   then
     echo >> $statusDirectory/err-$processingTime
-    echo -e "$type: `date +%Y.%m.%d-%H:%M:%S` -- $scriptName -- $message" >> $statusDirectory/err-$processingTime
+    echo -e "$type: `date +%Y.%m.%d-%H:%M:%S` -- $scriptName -- $message" >> \
+    $statusDirectory/retrieve-err-$processingTime
   fi
   #
   # always write into log file
@@ -55,7 +56,8 @@ function log()
   echo
   echo -e "$type: `date +%Y.%m.%d-%H:%M:%S` -- $scriptName -- $message"
   echo >> $statusDirectory/log-$processingTime
-  echo -e "$type: `date +%Y.%m.%d-%H:%M:%S` -- $scriptName -- $message" >> $statusDirectory/log-$processingTime
+  echo -e "$type: `date +%Y.%m.%d-%H:%M:%S` -- $scriptName -- $message" >> \
+  $statusDirectory/retrieve-log-$processingTime
 }
 
 #=============================== MAIN BODY OF SCRIPT ===============================
@@ -94,6 +96,7 @@ case "$1" in
         exit 1
       fi
     fi
+    log "INFO" "Date parameters: \n\tStartDate: $startDate \n\tEndDate:   $endDate"
   else
     log "ERR" "start date passed in is not valid: $1"
     lock false
@@ -102,9 +105,11 @@ case "$1" in
   ;;
 -a | --all )
   retrieveAll=true
+  log "INFO" "Retrieve All parameter set to TRUE"
   ;;
 -n | --none )
   retrieveNone=true
+  log "INFO" "Retrieve None parameter set to TRUE"
   ;;
 -h | --help )
   usage
@@ -139,8 +144,8 @@ then
   startDate=$(date '+%C%y%m%d' -d "$startDate -$(date -d $startDate +%u) days + 5 day")
   while [ $startDate -lt $endDate ]
   do
-    year=$(date -d $friDate +%Y) 
-    week=$(date -d $friDate +%V)
+    year=$(date -d $startDate +%Y) 
+    week=$(date -d $startDate +%V)
     if [ $year -eq  2015 ]
     then
       week="$(printf "%02d" $((10#week-1)))"
@@ -149,6 +154,7 @@ then
     wget -q --spider $zipFilePath
     if [ $? -eq 0 ]
     then
+      log "INFO" "Downloading file: $zipFilePath"
       wget -nc -P $dropLocation $zipFilePath 
     else 
       log "ERR" "file does not exist: $zipFilePath"
