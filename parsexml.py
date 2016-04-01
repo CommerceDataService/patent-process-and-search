@@ -9,29 +9,35 @@
 #structure of the document, then transforms the document to json and saves it
 #to a file.
 
-#Add flag for reprocessing of a specific file
-
-import sys, json, xmltodict, os, logging, time, argparse
+import sys, json, xmltodict, os, logging, time, argparse, glob
 from datetime import datetime
 
-#get value for specified tag from a list
-def getData(list,tag):
-    value = list[tag]
+#this function contains the code for parsing the xml file
+#and writing the results out to a json file
+def processFile(fname,overwrite):
+    try:
+        with open(fname) as fd:
+            fn = os.path.splitext(fname)[0]+'.json'
+            doc = xmltodict.parse(fd.read())
 
-    return value
-
-#add data with specified tag to existing list
-def setData(list,tag,text):
-    list[tag] = text
-
-#get specified folder from folder path
-def getFolder(root,level):
-    folder = root.split(os.path.sep)[level]
-
-    return folder
+            #get document id from metadata xml file
+            for x in doc['main']['DATA_RECORD']:
+                value = x.get('DOCUMENT_IMAGE_ID',x.get('DOCUMENT_NM'))
+                with open(os.path.join(os.path.dirname(fn),'PDF_image',value+'.txt')) as dr:
+                    text = dr.read()
+                    x['DOCUMENT_TEXT'] = text
+            #transform output to json and save to file with same name
+            with open(fn,'w') as outfile:
+                json.dump(doc,outfile)
+                logging.info("-- Processing of XML file and creation of json file complete")
+    except IOError as e:
+        logging.error("I/O error({0}): {1}".format(e.errno,e.strerror))
+    except:
+        logging.error("Unexpected error:", sys.exc_info()[0])
+        raise
 
 #validate date
-def valid_date(s):
+def validDate(s):
     try:
         datetime.strptime(s, "%Y%m%d")
         return s
@@ -40,18 +46,17 @@ def valid_date(s):
         raise argparse.ArgumentTypeError(msg)
 
 if __name__ == '__main__':
+    scriptpath = os.path.dirname(os.path.abspath(__file__))
+
     #logging configuration
     logging.basicConfig(filename='logs/parse-xml-log-'+time.strftime('%Y%m%d-%H%M%S'),\
     level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s\
     -%(message)s',datefmt='%Y%m%d %H:%M:%S')
 
-    #pass in date for reprocessing and will match end of folder's name after
-    #underscore
-
     parser = argparse.ArgumentParser()
     parser.add_argument("-r", "--reprocess", required=False,\
     help="Reprocess file from a specific date - format YYYYMMDD",\
-    nargs='*', type=valid_date)
+    nargs='*', type=validDate)
     args = parser.parse_args()
     if args.reprocess:
         logging.info("Date arguments passed for reprocessing:"+", ".join(args.reprocess))
@@ -61,72 +66,19 @@ if __name__ == '__main__':
 
     if args.reprocess:
        for date in args.reprocess:
-           for root, dirs, files in os.walk('files/'):
-               for name in dirs:
-                   if name.endswith(date):
-                       try:
-                           name_split = name.split('_',2)
-                           with open(os.path.join(root,name+"Meta_data_"+name_split[2])) as fd:
-                               pathfolder = getFolder(root,1)
-                               logging.info("-- Processing metadata file in "+pathfolder)
-                               logging.info("-- Starting re-creation of json file -  "+name[0:-3]+"json")
-                               doc = xmltodict.parse(fd.read())
-
-                               #get document id from metadata xml file
-                               for x in doc['main']['DATA_RECORD']:
-                                   value = None
-                                   if pathfolder.startswith('PTAB'):
-                                       value = getData(x,'DOCUMENT_IMAGE_ID')
-                                   elif pathfolder.startswith('PRPS'):
-                                       value = getData(x,'DOCUMENT_NM')
-                                   #add extracted pdf text to node
-                                   if os.path.isfile(os.path.join(root,'PDF_image',value+'.txt')):
-                                       with open(os.path.join(root,'PDF_image',value+'.txt')) as dr:
-                                           text = dr.read()
-                                           setData(x,'DOCUMENT_TEXT',text)
-                                   else:
-                                       logging.error("-- Parsed text for file - "+os.path.join(root,'PDF_image',value+'.pdf')+ " does not exist")
-                               #transform output to json and save to file with same name
-                               with open(os.path.join(root,os.path.splitext(name)[0])+'.json','w') as outfile:
-                                    json.dump(doc,outfile)
-                                    logging.info("-- Creation of json file complete")
-                       except IOError as e:
-                           logging.error("I/O error({0}): {1}".format(e.errno,e.strerror))
-                       except:
-                           logging.error("Unexpected error:", sys.exc_info()[0])
-                           raise
+           for dirname in glob.iglob(os.path.join(scriptpath,'files','*'+date)):
+               #crawl through each main directory and find the metadata xml file
+               for filename in glob.iglob(os.path.join(dirname,'*.xml'),recursive=True):
+                   logging.info("-- Starting re-processing of file: "+filename)
+                   processFile(os.path.abspath(filename),True)
     else:
         #crawl through each main directory and find the metadata xml file
-        for root, dirs, files in os.walk('files/'):
-            for name in files:
-                if name.endswith('.xml'):
-                    with open(os.path.join(root,name)) as fd:
-                        pathfolder = getFolder(root,1)
-                        logging.info("-- Processing metadata file in "+ pathfolder)
-                        if not os.path.isfile(os.path.join(root,name[0:-3]+"json")):
-                            logging.info("-- Starting creation of json file -  "+name[0:-3]+"json")
-                            doc = xmltodict.parse(fd.read())
-
-                            #get document id from metadata xml file
-                            for x in doc['main']['DATA_RECORD']:
-                                value = None
-                                if pathfolder.startswith('PTAB'):
-                                    value = getData(x,'DOCUMENT_IMAGE_ID')
-                                elif pathfolder.startswith('PRPS'):
-                                    value = getData(x,'DOCUMENT_NM')
-                                #add extracted pdf text to node
-                                if os.path.isfile(os.path.join(root,'PDF_image',value+'.txt')):
-                                    with open(os.path.join(root,'PDF_image',value+'.txt')) as dr:
-                                        text = dr.read()
-                                        setData(x,'DOCUMENT_TEXT',text)
-                                else:
-                                    logging.error("-- Parsed text for file - "+os.path.join(root,'PDF_image',value+'.pdf')+ " does not exist")
-                            #transform output to json and save to file with same name
-                            with open(os.path.join(root,os.path.splitext(name)[0])+'.json','w') as outfile:
-                                json.dump(doc,outfile)
-                                logging.info("-- Creation of json file complete")
-                        else:
-                            logging.info("-- File already exists")
+        for filename in glob.iglob(os.path.join(scriptpath,'files','**/*.xml')):
+            if not os.path.isfile(os.path.join(os.path.splitext(os.path.abspath(filename))[0]+'.json')):
+                logging.info("-- Starting processing of file: "+filename)
+                processFile(os.path.abspath(filename),False)
+            else:
+                logging.info("-- JSON file for file: "+filename+" already exists")
 
     logging.info("-- =============== Script exiting ====================")
     logging.info("-- [JOB END] ----------------")
