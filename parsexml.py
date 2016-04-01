@@ -66,14 +66,17 @@ if __name__ == '__main__':
 
     if args.reprocess:
        for date in args.reprocess:
-           for dirname in glob.iglob(os.path.join(scriptpath,'files','*'+date)):
+           for dirname in glob.iglob(os.path.join(scriptpath,'files','PTAB*'+date)):
+               print(dirname)
                #crawl through each main directory and find the metadata xml file
                for filename in glob.iglob(os.path.join(dirname,'*.xml'),recursive=True):
+                   print(filename)
                    logging.info("-- Starting re-processing of file: "+filename)
                    processFile(os.path.abspath(filename),True)
     else:
         #crawl through each main directory and find the metadata xml file
-        for filename in glob.iglob(os.path.join(scriptpath,'files','**/*.xml')):
+        for filename in glob.iglob(os.path.join(scriptpath,'files','PTAB*/*.xml')):
+            print(filename)
             if not os.path.isfile(os.path.join(os.path.splitext(os.path.abspath(filename))[0]+'.json')):
                 logging.info("-- Starting processing of file: "+filename)
                 processFile(os.path.abspath(filename),False)
