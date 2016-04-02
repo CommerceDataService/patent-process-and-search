@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python 3.5
 
 #Author:        Sasan Bahadaran
 #Date:          2/29/16
@@ -12,12 +12,17 @@
 import sys, json, xmltodict, os, logging, time, argparse, glob
 from datetime import datetime
 
+#change extension of file name to specified extension
+def change_ext(fname, ext):
+    seq = (os.path.splitext(fname)[0], ext)
+    return '.'.join(seq)
+
 #this function contains the code for parsing the xml file
 #and writing the results out to a json file
-def processFile(fname,overwrite):
+def processFile(fname):
     try:
-        with open(fname) as fd:
-            fn = os.path.splitext(fname)[0]+'.json'
+        with open(os.path.abspath(fname)) as fd:
+            fn = change_ext(fname,'json')
             doc = xmltodict.parse(fd.read())
 
             #get document id from metadata xml file
@@ -45,6 +50,7 @@ def validDate(s):
         msg = "Not a valid date: '{0}'.".format(s)
         raise argparse.ArgumentTypeError(msg)
 
+
 if __name__ == '__main__':
     scriptpath = os.path.dirname(os.path.abspath(__file__))
 
@@ -62,26 +68,22 @@ if __name__ == '__main__':
         logging.info("Date arguments passed for reprocessing:"+", ".join(args.reprocess))
 
     logging.info("-- [JOB START]  ----------------")
-    logging.info("-- =============== Script starting ====================")
 
     if args.reprocess:
        for date in args.reprocess:
            for dirname in glob.iglob(os.path.join(scriptpath,'files','PTAB*'+date)):
-               print(dirname)
                #crawl through each main directory and find the metadata xml file
                for filename in glob.iglob(os.path.join(dirname,'*.xml'),recursive=True):
-                   print(filename)
                    logging.info("-- Starting re-processing of file: "+filename)
-                   processFile(os.path.abspath(filename),True)
+                   processFile(filename)
     else:
         #crawl through each main directory and find the metadata xml file
         for filename in glob.iglob(os.path.join(scriptpath,'files','PTAB*/*.xml')):
-            print(filename)
-            if not os.path.isfile(os.path.join(os.path.splitext(os.path.abspath(filename))[0]+'.json')):
+            fn = change_ext(filename,'json')
+            if not os.path.isfile(os.path.abspath(fn)):
                 logging.info("-- Starting processing of file: "+filename)
-                processFile(os.path.abspath(filename),False)
+                processFile(filename)
             else:
                 logging.info("-- JSON file for file: "+filename+" already exists")
 
-    logging.info("-- =============== Script exiting ====================")
     logging.info("-- [JOB END] ----------------")

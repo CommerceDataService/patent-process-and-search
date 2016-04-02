@@ -47,8 +47,7 @@ function log()
   if [ $type = "WARN" -o $type = "ERR" ]
   then
     echo >> $statusDirectory/err-$processingTime
-    echo -e "$type: `date +%Y.%m.%d-%H:%M:%S` -- $scriptName -- $message" >> \
-    $statusDirectory/retrieve-err-$processingTime
+    echo -e "$type: `date +%Y.%m.%d-%H:%M:%S` -- $scriptName -- $message" >> $statusDirectory/retrieve-err-$processingTime
   fi
   #
   # always write into log file
@@ -56,8 +55,7 @@ function log()
   echo
   echo -e "$type: `date +%Y.%m.%d-%H:%M:%S` -- $scriptName -- $message"
   echo >> $statusDirectory/log-$processingTime
-  echo -e "$type: `date +%Y.%m.%d-%H:%M:%S` -- $scriptName -- $message" >> \
-  $statusDirectory/retrieve-log-$processingTime
+  echo -e "$type: `date +%Y.%m.%d-%H:%M:%S` -- $scriptName -- $message" >> $statusDirectory/retrieve-log-$processingTime
 }
 
 #=============================== MAIN BODY OF SCRIPT ===============================
@@ -128,7 +126,6 @@ mkdir -p $dropLocation
 mkdir -p $statusDirectory
 
 log "INFO" "-[JOB START] $(date): ------------"
-log "INFO" "================= Script starting ================="
 
 #if --all flag is set then get all available files from the page
 if $retrieveAll && ! $retrieveNone 
@@ -203,7 +200,6 @@ done
 
 log "INFO" "File parsing process complete"
 
-log "INFO" "================= Script exiting ================="
 log "INFO" "-[JOB END]-- $(date): ------------"
 
 lock false
