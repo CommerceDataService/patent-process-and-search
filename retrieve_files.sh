@@ -148,7 +148,7 @@ then
     week=$(date -d $startDate +%V)
     if [ $year -eq  2015 ]
     then
-      week="$(printf "%02d" $((10#week-1)))"
+      week="$(printf "%02d" $((10#$week-1)))"
     fi
     zipFilePath=${baseURL}PTAB_${startDate}_WK${week}.zip
     wget -q --spider $zipFilePath
