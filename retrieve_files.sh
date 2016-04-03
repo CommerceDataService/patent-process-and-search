@@ -131,7 +131,7 @@ log "INFO" "-[JOB START] $(date): ------------"
 if $retrieveAll && ! $retrieveNone 
 then
   log "INFO" "Starting file download process"
-  wget --directory-prefix=files/`date +%Y%m%d` -e robots=off --cut-dirs=3  --reject="index.html*" --no-parent --recursive --relative --level=1 --no-directories $baseURL
+  wget --directory-prefix=files -e robots=off --cut-dirs=3  --reject="index.html*" --no-parent --recursive --relative --level=1 --no-directories $baseURL
   log "INFO" "File download process complete"
 
 #use the start and end dates to determine which files to get
