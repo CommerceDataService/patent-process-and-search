@@ -172,8 +172,10 @@ do
         if [ ! -f "$f/PDF_image/$fname.txt" ]
         then
           log "INFO" "Parsing document: $i to ${i%.*}.txt"
-          curl -X PUT --data-binary @$i http://192.168.99.100:9998/tika --header "Content-type: application/pdf" > ${i%.*}.txt
-        fi
+          python parse.py "$i" 2>&1
+          # leaving this cURL command in so we can use it for reference or debugging
+          # curl -X PUT --data-binary @$i http://192.168.99.100:9998/tika --header "Content-type: application/pdf" > ${i%.*}.txt
+         fi
       done
     else
       log "INFO" "No files to parse"
