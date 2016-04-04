@@ -1,2 +1,3 @@
+xmltodict==0.10.1
 git+https://github.com/18F/doc_processing_toolkit.git#egg=textextraction
 boto
