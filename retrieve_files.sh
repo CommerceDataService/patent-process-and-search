@@ -174,7 +174,8 @@ log "INFO" "File unzip process complete"
 log "INFO" "Starting file parsing process"
 
 #parse all pdf files that have not already been parsed
-for f in $dropLocation/*
+
+for f in $dropLocation/PTAB_*
 do
   if [[ $f == *.zip ]]
   then

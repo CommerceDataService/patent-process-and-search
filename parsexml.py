@@ -55,14 +55,22 @@ if __name__ == '__main__':
     scriptpath = os.path.dirname(os.path.abspath(__file__))
 
     #logging configuration
-    logging.basicConfig(filename='logs/parse-xml-log-'+time.strftime('%Y%m%d-%H%M%S'),\
-    level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s\
-    -%(message)s',datefmt='%Y%m%d %H:%M:%S')
+    logging.basicConfig(
+                        filename='logs/parse-xml-log-'+time.strftime('%Y%m%d-%H%M%S'),
+                        level=logging.INFO,
+                        format='%(asctime)s - %(name)s - %(levelname)s -%(message)s',
+                        datefmt='%Y%m%d %H:%M:%S'
+                       )
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-r", "--reprocess", required=False,\
-    help="Reprocess file from a specific date - format YYYYMMDD",\
-    nargs='*', type=validDate)
+    parser.add_argument(
+                        "-r",
+                        "--reprocess",
+                        required=False,
+                        help="Reprocess file from a specific date - format YYYYMMDD",
+                        nargs='*',
+                        type=validDate
+                       )
     args = parser.parse_args()
     if args.reprocess:
         logging.info("Date arguments passed for reprocessing:"+", ".join(args.reprocess))
