@@ -1,0 +1,13 @@
+{
+  "name": "flot.curvedlines",
+  "homepage": "https://github.com/MichaelZinsmaier/CurvedLines",
+  "_release": "ed2aedbfed",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "ed2aedbfed930236666b6cb2b1b4eba26315dae8"
+  },
+  "_source": "git://github.com/MichaelZinsmaier/CurvedLines.git",
+  "_target": "*",
+  "_originalSource": "flot.curvedlines"
+}

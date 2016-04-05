@@ -1,0 +1,16 @@
+{
+  "db": {
+    "name": "db",
+    "connector": "memory"
+  },
+  "searchtoolapi": {
+    "host": "54.85.209.123",
+    "port": 3306,
+    "database": "searchtool",
+    "username": "root",
+    "password": "uspto",
+    "name": "searchtoolapi",
+    "connector": "mysql",
+    "user": "root"
+  }
+}

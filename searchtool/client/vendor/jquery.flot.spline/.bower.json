@@ -1,0 +1,13 @@
+{
+  "name": "jquery.flot.spline",
+  "_cacheHeaders": {
+    "ETag": "\"3ae0521d7ea15e5837ec56da1db640c1501872ae\"",
+    "Content-Length": "5424",
+    "Content-Type": "text/plain; charset=utf-8"
+  },
+  "_release": "e-tag:3ae0521d7",
+  "main": "index.js",
+  "_source": "https://raw.githubusercontent.com/AMKohn/flot/master/jquery.flot.spline.js",
+  "_target": "*",
+  "_originalSource": "https://raw.githubusercontent.com/AMKohn/flot/master/jquery.flot.spline.js"
+}
