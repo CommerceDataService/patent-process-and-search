@@ -28,9 +28,13 @@ def processFile(fname):
             #get document id from metadata xml file
             for x in doc['main']['DATA_RECORD']:
                 value = x.get('DOCUMENT_IMAGE_ID',x.get('DOCUMENT_NM'))
-                with open(os.path.join(os.path.dirname(fn),'PDF_image',value+'.txt')) as dr:
-                    text = dr.read()
-                    x['DOCUMENT_TEXT'] = text
+                if os.path.isfile(os.path.join(os.path.dirname(fn),'PDF_image',value+'.txt')):
+                    with open(os.path.join(os.path.dirname(fn),'PDF_image',value+'.txt')) as dr:
+                        text = dr.read()
+                        x['DOCUMENT_TEXT'] = text
+                else:
+                    logging.error("PDF text file does not exist. JSON file creation skipped.")
+                    return
             #transform output to json and save to file with same name
             with open(fn,'w') as outfile:
                 json.dump(doc,outfile)

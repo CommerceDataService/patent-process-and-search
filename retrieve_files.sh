@@ -134,7 +134,7 @@ begDate=$startDate
 if ! $retrieveNone
 then
   log "INFO" "Starting file download process"
-  while [ $begDate -lt $endDate ]
+  while [ $begDate -le $endDate ]
   do
     year=$(date -d $begDate +%Y) 
     week=$(date -d $begDate +%V)
@@ -172,7 +172,7 @@ log "INFO" "Starting file parsing process"
 
 begDate=$startDate
 echo $begDate
-while [ $begDate -lt $endDate ]
+while [ $begDate -le $endDate ]
 do
   for f in $dropLocation/PTAB_*$begDate
   do
