@@ -22,6 +22,7 @@ app.set('view engine', 'ejs'); // LoopBack comes with EJS out-of-box
 app.set('views', path.join(__dirname, 'views'));
 app.engine('ejs', engine);
 app.use(loopback.static(require('path').join(__dirname, '..', 'client')));
+app.use(loopback.static(require('path').join(__dirname, '..', 'bower_components')));
 
 app.use(helmet.xssFilter());
 
