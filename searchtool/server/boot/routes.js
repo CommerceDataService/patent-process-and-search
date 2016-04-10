@@ -50,8 +50,6 @@ module.exports = function(app) {
         });
     });
 
-
-
     // Destroy session on logout
     router.get('/logout', function(req, res, next) {
         if (!req.cookies.USPTOSession) return res.sendStatus(401);
@@ -160,23 +158,17 @@ module.exports = function(app) {
     // Main Search
     router.get('/newsearch', function(req, res) {
         var sessionCookie;
-        sessionCookie = JSON.parse(req.cookies.USPTOSession);
-
-        if (typeof req.cookies.USPTOSession === 'undefined') {
-            res.redirect('/login');
-        } else {
-            sessionCookie = JSON.parse(req.cookies.USPTOSession);
-        }
-
         if (config.requireLogin) {
-            if (sessionCookie && typeof sessionCookie.id !== 'undefined') {
-                buildSearch(req, res);
-            } else {
+            if (typeof req.cookies.USPTOSession === 'undefined') {
                 res.redirect('/login');
+            } else {
+                sessionCookie = JSON.parse(req.cookies.USPTOSession);
+                if (typeof sessionCookie.id === 'undefined') {
+                    res.redirect('/login');
+                }
             }
-        } else {
-            buildSearch(req, res);
         }
+        buildSearch(req, res);
     });
 
     // Download Query
