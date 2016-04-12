@@ -23,7 +23,7 @@ The second script for processing reads through the resulting txt files from the 
 downloaded zip file into a JSON file.  In order to run this script, execute the
 following:
 ```
-./parsexml.py
+python parsexml.py
 ```
 
 ##Loading data into Solr
