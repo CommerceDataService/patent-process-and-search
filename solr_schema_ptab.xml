@@ -1,0 +1,1885 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<response>
+  <lst name="responseHeader">
+    <int name="status">0</int>
+    <int name="QTime">0</int>
+  </lst>
+  <lst name="schema">
+    <str name="name">example-data-driven-schema</str>
+    <float name="version">1.6</float>
+    <str name="uniqueKey">id</str>
+    <arr name="fieldTypes">
+      <lst>
+        <str name="name">ancestor_path</str>
+        <str name="class">solr.TextField</str>
+        <lst name="indexAnalyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.KeywordTokenizerFactory</str>
+          </lst>
+        </lst>
+        <lst name="queryAnalyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.PathHierarchyTokenizerFactory</str>
+            <str name="delimiter">/</str>
+          </lst>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">binary</str>
+        <str name="class">solr.BinaryField</str>
+      </lst>
+      <lst>
+        <str name="name">boolean</str>
+        <str name="class">solr.BoolField</str>
+        <bool name="sortMissingLast">true</bool>
+      </lst>
+      <lst>
+        <str name="name">booleans</str>
+        <str name="class">solr.BoolField</str>
+        <bool name="multiValued">true</bool>
+        <bool name="sortMissingLast">true</bool>
+      </lst>
+      <lst>
+        <str name="name">currency</str>
+        <str name="class">solr.CurrencyField</str>
+        <str name="precisionStep">8</str>
+        <str name="currencyConfig">currency.xml</str>
+        <str name="defaultCurrency">USD</str>
+      </lst>
+      <lst>
+        <str name="name">date</str>
+        <str name="class">solr.TrieDateField</str>
+        <str name="precisionStep">0</str>
+        <str name="positionIncrementGap">0</str>
+      </lst>
+      <lst>
+        <str name="name">dates</str>
+        <str name="class">solr.TrieDateField</str>
+        <str name="precisionStep">0</str>
+        <bool name="multiValued">true</bool>
+        <str name="positionIncrementGap">0</str>
+      </lst>
+      <lst>
+        <str name="name">descendent_path</str>
+        <str name="class">solr.TextField</str>
+        <lst name="indexAnalyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.PathHierarchyTokenizerFactory</str>
+            <str name="delimiter">/</str>
+          </lst>
+        </lst>
+        <lst name="queryAnalyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.KeywordTokenizerFactory</str>
+          </lst>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">double</str>
+        <str name="class">solr.TrieDoubleField</str>
+        <str name="precisionStep">0</str>
+        <str name="positionIncrementGap">0</str>
+      </lst>
+      <lst>
+        <str name="name">doubles</str>
+        <str name="class">solr.TrieDoubleField</str>
+        <str name="precisionStep">0</str>
+        <bool name="multiValued">true</bool>
+        <str name="positionIncrementGap">0</str>
+      </lst>
+      <lst>
+        <str name="name">float</str>
+        <str name="class">solr.TrieFloatField</str>
+        <str name="precisionStep">0</str>
+        <str name="positionIncrementGap">0</str>
+      </lst>
+      <lst>
+        <str name="name">floats</str>
+        <str name="class">solr.TrieFloatField</str>
+        <str name="precisionStep">0</str>
+        <bool name="multiValued">true</bool>
+        <str name="positionIncrementGap">0</str>
+      </lst>
+      <lst>
+        <str name="name">ignored</str>
+        <str name="class">solr.StrField</str>
+        <bool name="multiValued">true</bool>
+        <bool name="indexed">false</bool>
+        <bool name="stored">false</bool>
+      </lst>
+      <lst>
+        <str name="name">int</str>
+        <str name="class">solr.TrieIntField</str>
+        <str name="precisionStep">0</str>
+        <str name="positionIncrementGap">0</str>
+      </lst>
+      <lst>
+        <str name="name">ints</str>
+        <str name="class">solr.TrieIntField</str>
+        <str name="precisionStep">0</str>
+        <bool name="multiValued">true</bool>
+        <str name="positionIncrementGap">0</str>
+      </lst>
+      <lst>
+        <str name="name">location</str>
+        <str name="class">solr.LatLonType</str>
+        <str name="subFieldSuffix">_coordinate</str>
+      </lst>
+      <lst>
+        <str name="name">location_rpt</str>
+        <str name="class">solr.SpatialRecursivePrefixTreeFieldType</str>
+        <str name="distanceUnits">kilometers</str>
+        <str name="distErrPct">0.025</str>
+        <str name="geo">true</str>
+        <str name="maxDistErr">0.001</str>
+      </lst>
+      <lst>
+        <str name="name">long</str>
+        <str name="class">solr.TrieLongField</str>
+        <str name="precisionStep">0</str>
+        <str name="positionIncrementGap">0</str>
+      </lst>
+      <lst>
+        <str name="name">longs</str>
+        <str name="class">solr.TrieLongField</str>
+        <str name="precisionStep">0</str>
+        <bool name="multiValued">true</bool>
+        <str name="positionIncrementGap">0</str>
+      </lst>
+      <lst>
+        <str name="name">lowercase</str>
+        <str name="class">solr.TextField</str>
+        <str name="positionIncrementGap">100</str>
+        <lst name="analyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.KeywordTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.LowerCaseFilterFactory</str>
+            </lst>
+          </arr>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">phonetic_en</str>
+        <str name="class">solr.TextField</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">false</bool>
+        <lst name="analyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.StandardTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.DoubleMetaphoneFilterFactory</str>
+              <str name="inject">false</str>
+            </lst>
+          </arr>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">point</str>
+        <str name="class">solr.PointType</str>
+        <str name="dimension">2</str>
+        <str name="subFieldSuffix">_d</str>
+      </lst>
+      <lst>
+        <str name="name">random</str>
+        <str name="class">solr.RandomSortField</str>
+        <bool name="indexed">true</bool>
+      </lst>
+      <lst>
+        <str name="name">string</str>
+        <str name="class">solr.StrField</str>
+        <bool name="sortMissingLast">true</bool>
+      </lst>
+      <lst>
+        <str name="name">strings</str>
+        <str name="class">solr.StrField</str>
+        <bool name="multiValued">true</bool>
+        <bool name="sortMissingLast">true</bool>
+      </lst>
+      <lst>
+        <str name="name">tdate</str>
+        <str name="class">solr.TrieDateField</str>
+        <str name="precisionStep">6</str>
+        <str name="positionIncrementGap">0</str>
+      </lst>
+      <lst>
+        <str name="name">tdates</str>
+        <str name="class">solr.TrieDateField</str>
+        <str name="precisionStep">6</str>
+        <bool name="multiValued">true</bool>
+        <str name="positionIncrementGap">0</str>
+      </lst>
+      <lst>
+        <str name="name">tdouble</str>
+        <str name="class">solr.TrieDoubleField</str>
+        <str name="precisionStep">8</str>
+        <str name="positionIncrementGap">0</str>
+      </lst>
+      <lst>
+        <str name="name">tdoubles</str>
+        <str name="class">solr.TrieDoubleField</str>
+        <str name="precisionStep">8</str>
+        <bool name="multiValued">true</bool>
+        <str name="positionIncrementGap">0</str>
+      </lst>
+      <lst>
+        <str name="name">text_ar</str>
+        <str name="class">solr.TextField</str>
+        <str name="positionIncrementGap">100</str>
+        <lst name="analyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.StandardTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.LowerCaseFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">lang/stopwords_ar.txt</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.ArabicNormalizationFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.ArabicStemFilterFactory</str>
+            </lst>
+          </arr>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">text_bg</str>
+        <str name="class">solr.TextField</str>
+        <str name="positionIncrementGap">100</str>
+        <lst name="analyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.StandardTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.LowerCaseFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">lang/stopwords_bg.txt</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.BulgarianStemFilterFactory</str>
+            </lst>
+          </arr>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">text_ca</str>
+        <str name="class">solr.TextField</str>
+        <str name="positionIncrementGap">100</str>
+        <lst name="analyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.StandardTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.ElisionFilterFactory</str>
+              <str name="articles">lang/contractions_ca.txt</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.LowerCaseFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">lang/stopwords_ca.txt</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.SnowballPorterFilterFactory</str>
+              <str name="language">Catalan</str>
+            </lst>
+          </arr>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">text_cjk</str>
+        <str name="class">solr.TextField</str>
+        <str name="positionIncrementGap">100</str>
+        <lst name="analyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.StandardTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.CJKWidthFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.LowerCaseFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.CJKBigramFilterFactory</str>
+            </lst>
+          </arr>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">text_cz</str>
+        <str name="class">solr.TextField</str>
+        <str name="positionIncrementGap">100</str>
+        <lst name="analyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.StandardTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.LowerCaseFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">lang/stopwords_cz.txt</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.CzechStemFilterFactory</str>
+            </lst>
+          </arr>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">text_da</str>
+        <str name="class">solr.TextField</str>
+        <str name="positionIncrementGap">100</str>
+        <lst name="analyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.StandardTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.LowerCaseFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">lang/stopwords_da.txt</str>
+              <str name="format">snowball</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.SnowballPorterFilterFactory</str>
+              <str name="language">Danish</str>
+            </lst>
+          </arr>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">text_de</str>
+        <str name="class">solr.TextField</str>
+        <str name="positionIncrementGap">100</str>
+        <lst name="analyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.StandardTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.LowerCaseFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">lang/stopwords_de.txt</str>
+              <str name="format">snowball</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.GermanNormalizationFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.GermanLightStemFilterFactory</str>
+            </lst>
+          </arr>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">text_el</str>
+        <str name="class">solr.TextField</str>
+        <str name="positionIncrementGap">100</str>
+        <lst name="analyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.StandardTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.GreekLowerCaseFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">lang/stopwords_el.txt</str>
+              <str name="ignoreCase">false</str>
+            </lst>
+            <lst>
+              <str name="class">solr.GreekStemFilterFactory</str>
+            </lst>
+          </arr>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">text_en</str>
+        <str name="class">solr.TextField</str>
+        <str name="positionIncrementGap">100</str>
+        <lst name="indexAnalyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.StandardTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">lang/stopwords_en.txt</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.LowerCaseFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.EnglishPossessiveFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.KeywordMarkerFilterFactory</str>
+              <str name="protected">protwords.txt</str>
+            </lst>
+            <lst>
+              <str name="class">solr.PorterStemFilterFactory</str>
+            </lst>
+          </arr>
+        </lst>
+        <lst name="queryAnalyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.StandardTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.SynonymFilterFactory</str>
+              <str name="expand">true</str>
+              <str name="synonyms">synonyms.txt</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">lang/stopwords_en.txt</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.LowerCaseFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.EnglishPossessiveFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.KeywordMarkerFilterFactory</str>
+              <str name="protected">protwords.txt</str>
+            </lst>
+            <lst>
+              <str name="class">solr.PorterStemFilterFactory</str>
+            </lst>
+          </arr>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">text_en_splitting</str>
+        <str name="class">solr.TextField</str>
+        <str name="positionIncrementGap">100</str>
+        <str name="autoGeneratePhraseQueries">true</str>
+        <lst name="indexAnalyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.WhitespaceTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">lang/stopwords_en.txt</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.WordDelimiterFilterFactory</str>
+              <str name="generateNumberParts">1</str>
+              <str name="splitOnCaseChange">1</str>
+              <str name="catenateWords">1</str>
+              <str name="generateWordParts">1</str>
+              <str name="catenateAll">0</str>
+              <str name="catenateNumbers">1</str>
+            </lst>
+            <lst>
+              <str name="class">solr.LowerCaseFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.KeywordMarkerFilterFactory</str>
+              <str name="protected">protwords.txt</str>
+            </lst>
+            <lst>
+              <str name="class">solr.PorterStemFilterFactory</str>
+            </lst>
+          </arr>
+        </lst>
+        <lst name="queryAnalyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.WhitespaceTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.SynonymFilterFactory</str>
+              <str name="expand">true</str>
+              <str name="synonyms">synonyms.txt</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">lang/stopwords_en.txt</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.WordDelimiterFilterFactory</str>
+              <str name="generateNumberParts">1</str>
+              <str name="splitOnCaseChange">1</str>
+              <str name="catenateWords">0</str>
+              <str name="generateWordParts">1</str>
+              <str name="catenateAll">0</str>
+              <str name="catenateNumbers">0</str>
+            </lst>
+            <lst>
+              <str name="class">solr.LowerCaseFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.KeywordMarkerFilterFactory</str>
+              <str name="protected">protwords.txt</str>
+            </lst>
+            <lst>
+              <str name="class">solr.PorterStemFilterFactory</str>
+            </lst>
+          </arr>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">text_en_splitting_tight</str>
+        <str name="class">solr.TextField</str>
+        <str name="positionIncrementGap">100</str>
+        <str name="autoGeneratePhraseQueries">true</str>
+        <lst name="analyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.WhitespaceTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.SynonymFilterFactory</str>
+              <str name="expand">false</str>
+              <str name="synonyms">synonyms.txt</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">lang/stopwords_en.txt</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.WordDelimiterFilterFactory</str>
+              <str name="generateNumberParts">0</str>
+              <str name="catenateWords">1</str>
+              <str name="generateWordParts">0</str>
+              <str name="catenateAll">0</str>
+              <str name="catenateNumbers">1</str>
+            </lst>
+            <lst>
+              <str name="class">solr.LowerCaseFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.KeywordMarkerFilterFactory</str>
+              <str name="protected">protwords.txt</str>
+            </lst>
+            <lst>
+              <str name="class">solr.EnglishMinimalStemFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.RemoveDuplicatesTokenFilterFactory</str>
+            </lst>
+          </arr>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">text_es</str>
+        <str name="class">solr.TextField</str>
+        <str name="positionIncrementGap">100</str>
+        <lst name="analyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.StandardTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.LowerCaseFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">lang/stopwords_es.txt</str>
+              <str name="format">snowball</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.SpanishLightStemFilterFactory</str>
+            </lst>
+          </arr>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">text_eu</str>
+        <str name="class">solr.TextField</str>
+        <str name="positionIncrementGap">100</str>
+        <lst name="analyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.StandardTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.LowerCaseFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">lang/stopwords_eu.txt</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.SnowballPorterFilterFactory</str>
+              <str name="language">Basque</str>
+            </lst>
+          </arr>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">text_fa</str>
+        <str name="class">solr.TextField</str>
+        <str name="positionIncrementGap">100</str>
+        <lst name="analyzer">
+          <arr name="charFilters">
+            <lst>
+              <str name="class">solr.PersianCharFilterFactory</str>
+            </lst>
+          </arr>
+          <lst name="tokenizer">
+            <str name="class">solr.StandardTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.LowerCaseFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.ArabicNormalizationFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.PersianNormalizationFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">lang/stopwords_fa.txt</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+          </arr>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">text_fi</str>
+        <str name="class">solr.TextField</str>
+        <str name="positionIncrementGap">100</str>
+        <lst name="analyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.StandardTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.LowerCaseFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">lang/stopwords_fi.txt</str>
+              <str name="format">snowball</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.SnowballPorterFilterFactory</str>
+              <str name="language">Finnish</str>
+            </lst>
+          </arr>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">text_fr</str>
+        <str name="class">solr.TextField</str>
+        <str name="positionIncrementGap">100</str>
+        <lst name="analyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.StandardTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.ElisionFilterFactory</str>
+              <str name="articles">lang/contractions_fr.txt</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.LowerCaseFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">lang/stopwords_fr.txt</str>
+              <str name="format">snowball</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.FrenchLightStemFilterFactory</str>
+            </lst>
+          </arr>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">text_ga</str>
+        <str name="class">solr.TextField</str>
+        <str name="positionIncrementGap">100</str>
+        <lst name="analyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.StandardTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.ElisionFilterFactory</str>
+              <str name="articles">lang/contractions_ga.txt</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">lang/hyphenations_ga.txt</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.IrishLowerCaseFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">lang/stopwords_ga.txt</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.SnowballPorterFilterFactory</str>
+              <str name="language">Irish</str>
+            </lst>
+          </arr>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">text_general</str>
+        <str name="class">solr.TextField</str>
+        <bool name="multiValued">true</bool>
+        <str name="positionIncrementGap">100</str>
+        <lst name="indexAnalyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.StandardTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">stopwords.txt</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.LowerCaseFilterFactory</str>
+            </lst>
+          </arr>
+        </lst>
+        <lst name="queryAnalyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.StandardTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">stopwords.txt</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.SynonymFilterFactory</str>
+              <str name="expand">true</str>
+              <str name="synonyms">synonyms.txt</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.LowerCaseFilterFactory</str>
+            </lst>
+          </arr>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">text_general_rev</str>
+        <str name="class">solr.TextField</str>
+        <str name="positionIncrementGap">100</str>
+        <lst name="indexAnalyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.StandardTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">stopwords.txt</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.LowerCaseFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.ReversedWildcardFilterFactory</str>
+              <str name="maxFractionAsterisk">0.33</str>
+              <str name="withOriginal">true</str>
+              <str name="maxPosQuestion">2</str>
+              <str name="maxPosAsterisk">3</str>
+            </lst>
+          </arr>
+        </lst>
+        <lst name="queryAnalyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.StandardTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.SynonymFilterFactory</str>
+              <str name="expand">true</str>
+              <str name="synonyms">synonyms.txt</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">stopwords.txt</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.LowerCaseFilterFactory</str>
+            </lst>
+          </arr>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">text_gl</str>
+        <str name="class">solr.TextField</str>
+        <str name="positionIncrementGap">100</str>
+        <lst name="analyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.StandardTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.LowerCaseFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">lang/stopwords_gl.txt</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.GalicianStemFilterFactory</str>
+            </lst>
+          </arr>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">text_hi</str>
+        <str name="class">solr.TextField</str>
+        <str name="positionIncrementGap">100</str>
+        <lst name="analyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.StandardTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.LowerCaseFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.IndicNormalizationFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.HindiNormalizationFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">lang/stopwords_hi.txt</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.HindiStemFilterFactory</str>
+            </lst>
+          </arr>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">text_hu</str>
+        <str name="class">solr.TextField</str>
+        <str name="positionIncrementGap">100</str>
+        <lst name="analyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.StandardTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.LowerCaseFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">lang/stopwords_hu.txt</str>
+              <str name="format">snowball</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.SnowballPorterFilterFactory</str>
+              <str name="language">Hungarian</str>
+            </lst>
+          </arr>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">text_hy</str>
+        <str name="class">solr.TextField</str>
+        <str name="positionIncrementGap">100</str>
+        <lst name="analyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.StandardTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.LowerCaseFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">lang/stopwords_hy.txt</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.SnowballPorterFilterFactory</str>
+              <str name="language">Armenian</str>
+            </lst>
+          </arr>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">text_id</str>
+        <str name="class">solr.TextField</str>
+        <str name="positionIncrementGap">100</str>
+        <lst name="analyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.StandardTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.LowerCaseFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">lang/stopwords_id.txt</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.IndonesianStemFilterFactory</str>
+              <str name="stemDerivational">true</str>
+            </lst>
+          </arr>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">text_it</str>
+        <str name="class">solr.TextField</str>
+        <str name="positionIncrementGap">100</str>
+        <lst name="analyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.StandardTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.ElisionFilterFactory</str>
+              <str name="articles">lang/contractions_it.txt</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.LowerCaseFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">lang/stopwords_it.txt</str>
+              <str name="format">snowball</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.ItalianLightStemFilterFactory</str>
+            </lst>
+          </arr>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">text_ja</str>
+        <str name="class">solr.TextField</str>
+        <str name="positionIncrementGap">100</str>
+        <str name="autoGeneratePhraseQueries">false</str>
+        <lst name="analyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.JapaneseTokenizerFactory</str>
+            <str name="mode">search</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.JapaneseBaseFormFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.JapanesePartOfSpeechStopFilterFactory</str>
+              <str name="tags">lang/stoptags_ja.txt</str>
+            </lst>
+            <lst>
+              <str name="class">solr.CJKWidthFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">lang/stopwords_ja.txt</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.JapaneseKatakanaStemFilterFactory</str>
+              <str name="minimumLength">4</str>
+            </lst>
+            <lst>
+              <str name="class">solr.LowerCaseFilterFactory</str>
+            </lst>
+          </arr>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">text_lv</str>
+        <str name="class">solr.TextField</str>
+        <str name="positionIncrementGap">100</str>
+        <lst name="analyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.StandardTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.LowerCaseFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">lang/stopwords_lv.txt</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.LatvianStemFilterFactory</str>
+            </lst>
+          </arr>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">text_nl</str>
+        <str name="class">solr.TextField</str>
+        <str name="positionIncrementGap">100</str>
+        <lst name="analyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.StandardTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.LowerCaseFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">lang/stopwords_nl.txt</str>
+              <str name="format">snowball</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.StemmerOverrideFilterFactory</str>
+              <str name="dictionary">lang/stemdict_nl.txt</str>
+              <str name="ignoreCase">false</str>
+            </lst>
+            <lst>
+              <str name="class">solr.SnowballPorterFilterFactory</str>
+              <str name="language">Dutch</str>
+            </lst>
+          </arr>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">text_no</str>
+        <str name="class">solr.TextField</str>
+        <str name="positionIncrementGap">100</str>
+        <lst name="analyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.StandardTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.LowerCaseFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">lang/stopwords_no.txt</str>
+              <str name="format">snowball</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.SnowballPorterFilterFactory</str>
+              <str name="language">Norwegian</str>
+            </lst>
+          </arr>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">text_pt</str>
+        <str name="class">solr.TextField</str>
+        <str name="positionIncrementGap">100</str>
+        <lst name="analyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.StandardTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.LowerCaseFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">lang/stopwords_pt.txt</str>
+              <str name="format">snowball</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.PortugueseLightStemFilterFactory</str>
+            </lst>
+          </arr>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">text_ro</str>
+        <str name="class">solr.TextField</str>
+        <str name="positionIncrementGap">100</str>
+        <lst name="analyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.StandardTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.LowerCaseFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">lang/stopwords_ro.txt</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.SnowballPorterFilterFactory</str>
+              <str name="language">Romanian</str>
+            </lst>
+          </arr>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">text_ru</str>
+        <str name="class">solr.TextField</str>
+        <str name="positionIncrementGap">100</str>
+        <lst name="analyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.StandardTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.LowerCaseFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">lang/stopwords_ru.txt</str>
+              <str name="format">snowball</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.SnowballPorterFilterFactory</str>
+              <str name="language">Russian</str>
+            </lst>
+          </arr>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">text_sv</str>
+        <str name="class">solr.TextField</str>
+        <str name="positionIncrementGap">100</str>
+        <lst name="analyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.StandardTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.LowerCaseFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">lang/stopwords_sv.txt</str>
+              <str name="format">snowball</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+            <lst>
+              <str name="class">solr.SnowballPorterFilterFactory</str>
+              <str name="language">Swedish</str>
+            </lst>
+          </arr>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">text_th</str>
+        <str name="class">solr.TextField</str>
+        <str name="positionIncrementGap">100</str>
+        <lst name="analyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.ThaiTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.LowerCaseFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">lang/stopwords_th.txt</str>
+              <str name="ignoreCase">true</str>
+            </lst>
+          </arr>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">text_tr</str>
+        <str name="class">solr.TextField</str>
+        <str name="positionIncrementGap">100</str>
+        <lst name="analyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.StandardTokenizerFactory</str>
+          </lst>
+          <arr name="filters">
+            <lst>
+              <str name="class">solr.TurkishLowerCaseFilterFactory</str>
+            </lst>
+            <lst>
+              <str name="class">solr.StopFilterFactory</str>
+              <str name="words">lang/stopwords_tr.txt</str>
+              <str name="ignoreCase">false</str>
+            </lst>
+            <lst>
+              <str name="class">solr.SnowballPorterFilterFactory</str>
+              <str name="language">Turkish</str>
+            </lst>
+          </arr>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">text_ws</str>
+        <str name="class">solr.TextField</str>
+        <str name="positionIncrementGap">100</str>
+        <lst name="analyzer">
+          <lst name="tokenizer">
+            <str name="class">solr.WhitespaceTokenizerFactory</str>
+          </lst>
+        </lst>
+      </lst>
+      <lst>
+        <str name="name">tfloat</str>
+        <str name="class">solr.TrieFloatField</str>
+        <str name="precisionStep">8</str>
+        <str name="positionIncrementGap">0</str>
+      </lst>
+      <lst>
+        <str name="name">tfloats</str>
+        <str name="class">solr.TrieFloatField</str>
+        <str name="precisionStep">8</str>
+        <bool name="multiValued">true</bool>
+        <str name="positionIncrementGap">0</str>
+      </lst>
+      <lst>
+        <str name="name">tint</str>
+        <str name="class">solr.TrieIntField</str>
+        <str name="precisionStep">8</str>
+        <str name="positionIncrementGap">0</str>
+      </lst>
+      <lst>
+        <str name="name">tints</str>
+        <str name="class">solr.TrieIntField</str>
+        <str name="precisionStep">8</str>
+        <bool name="multiValued">true</bool>
+        <str name="positionIncrementGap">0</str>
+      </lst>
+      <lst>
+        <str name="name">tlong</str>
+        <str name="class">solr.TrieLongField</str>
+        <str name="precisionStep">8</str>
+        <str name="positionIncrementGap">0</str>
+      </lst>
+      <lst>
+        <str name="name">tlongs</str>
+        <str name="class">solr.TrieLongField</str>
+        <str name="precisionStep">8</str>
+        <bool name="multiValued">true</bool>
+        <str name="positionIncrementGap">0</str>
+      </lst>
+    </arr>
+    <arr name="fields">
+      <lst>
+        <str name="name">APPEAL_NO</str>
+        <str name="type">long</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">false</bool>
+      </lst>
+      <lst>
+        <str name="name">PATENT_ISSUE_DT</str>
+        <str name="type">date</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">false</bool>
+      </lst>
+      <lst>
+        <str name="name">DECISION_MAILED_DT</str>
+        <str name="type">date</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">false</bool>
+      </lst>
+      <lst>
+        <str name="name">INVENTOR_FAMILY_NM</str>
+        <str name="type">string</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">false</bool>
+      </lst>
+      <lst>
+        <str name="name">INVENTOR_GIVEN_NM</str>
+        <str name="type">string</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">false</bool>
+      </lst>
+      <lst>
+        <str name="name">LAST_MODIFIED_TS</str>
+        <str name="type">date</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">false</bool>
+      </lst>
+      <lst>
+        <str name="name">INVENTOR_STRING_TX</str>
+        <str name="type">string</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">false</bool>
+      </lst>
+      <lst>
+        <str name="name">PRE_GRANT_PUBLICATION_NO</str>
+        <str name="type">string</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">false</bool>
+      </lst>
+      <lst>
+        <str name="name">PRE_GRANT_PUBLICATION_DT</str>
+        <str name="type">date</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">false</bool>
+      </lst>
+      <lst>
+        <str name="name">INVENTOR_QT</str>
+        <str name="type">int</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">false</bool>
+      </lst>
+      <lst>
+        <str name="name">STATUS_CD</str>
+        <str name="type">string</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">false</bool>
+      </lst>
+      <lst>
+        <str name="name">BD_PATENT_APPLICATION_NO</str>
+        <str name="type">long</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">false</bool>
+      </lst>
+      <lst>
+        <str name="name">APPLICANT_PUB_AUTHORIZATION_DT</str>
+        <str name="type">date</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">false</bool>
+      </lst>
+      <lst>
+        <str name="name">APPLICATION_TYPE_CD</str>
+        <str name="type">string</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">false</bool>
+      </lst>
+      <lst>
+        <str name="name">FK_DT_DOCUMENT_TYPE_NM</str>
+        <str name="type">string</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">false</bool>
+      </lst>
+      <lst>
+        <str name="name">appid</str>
+        <str name="type">string</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">FK_DT_BUSINESS_SHORT_NM</str>
+        <str name="type">string</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">false</bool>
+      </lst>
+      <lst>
+        <str name="name">doc_date</str>
+        <str name="type">date</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">textdata</str>
+        <str name="type">text_general</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+    </arr>
+    <arr name="dynamicFields">
+      <lst>
+        <str name="name">*_txt_en_split_tight</str>
+        <str name="type">text_en_splitting_tight</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_descendent_path</str>
+        <str name="type">descendent_path</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_ancestor_path</str>
+        <str name="type">ancestor_path</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_txt_en_split</str>
+        <str name="type">text_en_splitting</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_coordinate</str>
+        <str name="type">tdouble</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">false</bool>
+      </lst>
+      <lst>
+        <str name="name">ignored_*</str>
+        <str name="type">ignored</str>
+        <bool name="multiValued">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_txt_rev</str>
+        <str name="type">text_general_rev</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_phon_en</str>
+        <str name="type">phonetic_en</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_s_lower</str>
+        <str name="type">lowercase</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_txt_cjk</str>
+        <str name="type">text_cjk</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">random_*</str>
+        <str name="type">random</str>
+      </lst>
+      <lst>
+        <str name="name">*_txt_en</str>
+        <str name="type">text_en</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_txt_ar</str>
+        <str name="type">text_ar</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_txt_bg</str>
+        <str name="type">text_bg</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_txt_ca</str>
+        <str name="type">text_ca</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_txt_cz</str>
+        <str name="type">text_cz</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_txt_da</str>
+        <str name="type">text_da</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_txt_de</str>
+        <str name="type">text_de</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_txt_el</str>
+        <str name="type">text_el</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_txt_es</str>
+        <str name="type">text_es</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_txt_eu</str>
+        <str name="type">text_eu</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_txt_fa</str>
+        <str name="type">text_fa</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_txt_fi</str>
+        <str name="type">text_fi</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_txt_fr</str>
+        <str name="type">text_fr</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_txt_ga</str>
+        <str name="type">text_ga</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_txt_gl</str>
+        <str name="type">text_gl</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_txt_hi</str>
+        <str name="type">text_hi</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_txt_hu</str>
+        <str name="type">text_hu</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_txt_hy</str>
+        <str name="type">text_hy</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_txt_id</str>
+        <str name="type">text_id</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_txt_it</str>
+        <str name="type">text_it</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_txt_ja</str>
+        <str name="type">text_ja</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_txt_lv</str>
+        <str name="type">text_lv</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_txt_nl</str>
+        <str name="type">text_nl</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_txt_no</str>
+        <str name="type">text_no</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_txt_pt</str>
+        <str name="type">text_pt</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_txt_ro</str>
+        <str name="type">text_ro</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_txt_ru</str>
+        <str name="type">text_ru</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_txt_sv</str>
+        <str name="type">text_sv</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_txt_th</str>
+        <str name="type">text_th</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_txt_tr</str>
+        <str name="type">text_tr</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_point</str>
+        <str name="type">point</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_srpt</str>
+        <str name="type">location_rpt</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_tdts</str>
+        <str name="type">tdates</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">attr_*</str>
+        <str name="type">text_general</str>
+        <bool name="multiValued">true</bool>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_txt</str>
+        <str name="type">text_general</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_dts</str>
+        <str name="type">date</str>
+        <bool name="multiValued">true</bool>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_tis</str>
+        <str name="type">tints</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_tls</str>
+        <str name="type">tlongs</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_tfs</str>
+        <str name="type">tfloats</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_tds</str>
+        <str name="type">tdoubles</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_tdt</str>
+        <str name="type">tdate</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_is</str>
+        <str name="type">ints</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_ss</str>
+        <str name="type">strings</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_ls</str>
+        <str name="type">longs</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_bs</str>
+        <str name="type">booleans</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_fs</str>
+        <str name="type">floats</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_ds</str>
+        <str name="type">doubles</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_dt</str>
+        <str name="type">date</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_ti</str>
+        <str name="type">tint</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_tl</str>
+        <str name="type">tlong</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_tf</str>
+        <str name="type">tfloat</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_td</str>
+        <str name="type">tdouble</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_ws</str>
+        <str name="type">text_ws</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_i</str>
+        <str name="type">int</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_s</str>
+        <str name="type">string</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_l</str>
+        <str name="type">long</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_t</str>
+        <str name="type">text_general</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_b</str>
+        <str name="type">boolean</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_f</str>
+        <str name="type">float</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_d</str>
+        <str name="type">double</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_p</str>
+        <str name="type">location</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+      <lst>
+        <str name="name">*_c</str>
+        <str name="type">currency</str>
+        <bool name="indexed">true</bool>
+        <bool name="stored">true</bool>
+      </lst>
+    </arr>
+    <arr name="copyFields">
+      <lst>
+        <str name="source">*</str>
+        <str name="dest">_text_</str>
+      </lst>
+    </arr>
+  </lst>
+</response>
