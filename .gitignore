@@ -63,3 +63,4 @@ target/
 
 files/*
 logs/*
+json_files/*
