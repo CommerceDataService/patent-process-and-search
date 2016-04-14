@@ -1,0 +1,47 @@
+{
+  "_meta": {
+    "sources": [
+      "loopback/common/models",
+      "loopback/server/models",
+      "../common/models",
+      "./models"
+    ],
+    "mixins": [
+      "loopback/common/mixins",
+      "loopback/server/mixins",
+      "../common/mixins",
+      "./mixins"
+    ]
+  },
+  "User": {
+    "dataSource": "searchtoolapi",
+    "public": false
+  },
+  "accessToken": {
+    "dataSource": "searchtoolapi",
+    "public": false
+  },
+  "AccessToken": {
+    "dataSource": "db",
+    "public": false
+  },
+  "ACL": {
+    "dataSource": "db",
+    "public": false
+  },
+  "RoleMapping": {
+    "dataSource": "searchtoolapi",
+    "public": false
+  },
+  "Role": {
+    "dataSource": "searchtoolapi",
+    "public": false
+  },
+  "user": {
+    "dataSource": "searchtoolapi",
+    "public": true,
+    "options": {
+      "emailVerificationRequired": false
+    }
+  }
+}

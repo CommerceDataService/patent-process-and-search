@@ -1325,91 +1325,91 @@
         <str name="name">APPEAL_NO</str>
         <str name="type">long</str>
         <bool name="indexed">true</bool>
-        <bool name="stored">false</bool>
+        <bool name="stored">true</bool>
       </lst>
       <lst>
         <str name="name">PATENT_ISSUE_DT</str>
         <str name="type">date</str>
         <bool name="indexed">true</bool>
-        <bool name="stored">false</bool>
+        <bool name="stored">true</bool>
       </lst>
       <lst>
         <str name="name">DECISION_MAILED_DT</str>
         <str name="type">date</str>
         <bool name="indexed">true</bool>
-        <bool name="stored">false</bool>
+        <bool name="stored">true</bool>
       </lst>
       <lst>
         <str name="name">INVENTOR_FAMILY_NM</str>
         <str name="type">string</str>
         <bool name="indexed">true</bool>
-        <bool name="stored">false</bool>
+        <bool name="stored">true</bool>
       </lst>
       <lst>
         <str name="name">INVENTOR_GIVEN_NM</str>
         <str name="type">string</str>
         <bool name="indexed">true</bool>
-        <bool name="stored">false</bool>
+        <bool name="stored">true</bool>
       </lst>
       <lst>
         <str name="name">LAST_MODIFIED_TS</str>
         <str name="type">date</str>
         <bool name="indexed">true</bool>
-        <bool name="stored">false</bool>
+        <bool name="stored">true</bool>
       </lst>
       <lst>
         <str name="name">INVENTOR_STRING_TX</str>
         <str name="type">string</str>
         <bool name="indexed">true</bool>
-        <bool name="stored">false</bool>
+        <bool name="stored">true</bool>
       </lst>
       <lst>
         <str name="name">PRE_GRANT_PUBLICATION_NO</str>
         <str name="type">string</str>
         <bool name="indexed">true</bool>
-        <bool name="stored">false</bool>
+        <bool name="stored">true</bool>
       </lst>
       <lst>
         <str name="name">PRE_GRANT_PUBLICATION_DT</str>
         <str name="type">date</str>
         <bool name="indexed">true</bool>
-        <bool name="stored">false</bool>
+        <bool name="stored">true</bool>
       </lst>
       <lst>
         <str name="name">INVENTOR_QT</str>
         <str name="type">int</str>
         <bool name="indexed">true</bool>
-        <bool name="stored">false</bool>
+        <bool name="stored">true</bool>
       </lst>
       <lst>
         <str name="name">STATUS_CD</str>
         <str name="type">string</str>
         <bool name="indexed">true</bool>
-        <bool name="stored">false</bool>
+        <bool name="stored">true</bool>
       </lst>
       <lst>
         <str name="name">BD_PATENT_APPLICATION_NO</str>
         <str name="type">long</str>
         <bool name="indexed">true</bool>
-        <bool name="stored">false</bool>
+        <bool name="stored">true</bool>
       </lst>
       <lst>
         <str name="name">APPLICANT_PUB_AUTHORIZATION_DT</str>
         <str name="type">date</str>
         <bool name="indexed">true</bool>
-        <bool name="stored">false</bool>
+        <bool name="stored">true</bool>
       </lst>
       <lst>
         <str name="name">APPLICATION_TYPE_CD</str>
         <str name="type">string</str>
         <bool name="indexed">true</bool>
-        <bool name="stored">false</bool>
+        <bool name="stored">true</bool>
       </lst>
       <lst>
         <str name="name">FK_DT_DOCUMENT_TYPE_NM</str>
         <str name="type">string</str>
         <bool name="indexed">true</bool>
-        <bool name="stored">false</bool>
+        <bool name="stored">true</bool>
       </lst>
       <lst>
         <str name="name">appid</str>
@@ -1421,7 +1421,7 @@
         <str name="name">FK_DT_BUSINESS_SHORT_NM</str>
         <str name="type">string</str>
         <bool name="indexed">true</bool>
-        <bool name="stored">false</bool>
+        <bool name="stored">true</bool>
       </lst>
       <lst>
         <str name="name">doc_date</str>
