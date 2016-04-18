@@ -3,7 +3,6 @@ var boot = require('loopback-boot');
 var loopback = require('loopback');
 var path = require('path');
 var app = module.exports = loopback();
-var engine = require('ejs-locals');
 var helmet = require('helmet');
 
 
@@ -14,15 +13,14 @@ app.middleware('initial', bodyParser.urlencoded({ extended: true }));
 // Sub-apps like REST API are mounted via boot scripts.
 boot(app, __dirname);
 
-app.set('view engine', 'ejs'); // LoopBack comes with EJS out-of-box
+app.set('view engine', 'hbs'); // LoopBack comes with EJS out-of-box
 
 // must be set to serve views properly when starting the app via `slc run` from
 // the project rootapp.set('views', path.join(__dirname, 'views'));
 
 app.set('views', path.join(__dirname, 'views'));
-app.engine('ejs', engine);
-app.use(loopback.static(require('path').join(__dirname, '..', 'client')));
-app.use(loopback.static(require('path').join(__dirname, '..', 'bower_components')));
+app.use(loopback.static(path.join(__dirname, '../client')));
+app.use(loopback.static(path.join(__dirname, '../bower_components')));
 
 app.use(helmet.xssFilter());
 
@@ -53,4 +51,3 @@ app.start = function() {
 if (require.main === module) {
   app.start();
 }
-

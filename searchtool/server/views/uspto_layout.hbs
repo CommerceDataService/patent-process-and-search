@@ -15,16 +15,16 @@
         <meta property="og:title" content="Customize search results">
         <meta property="og:description" content="">
 
-        <link rel="shortcut icon" href="https://uspto.github.io/designpatterns/1.x/generated/favicon.ico">
-        
+        <link rel="shortcut icon" href="designpatterns/1.x/generated/favicon.ico">
+
         <!--[if lte IE 9]>
-            <script src="/designpatterns/1.x/generated/vendor/matchMedia/matchMedia.js"></script>        
+            <script src="/designpatterns/1.x/generated/vendor/matchMedia/matchMedia.js"></script>
             <script src="/designpatterns/1.x/generated/vendor/html5shiv/html5shiv.min.js"></script>
         <![endif]-->
 
-        <link href="https://uspto.github.io/designpatterns/1.x/generated/styles/vendor.css" rel="stylesheet"/>
-        <link href="https://uspto.github.io/designpatterns/1.x/generated/styles/main.css" rel="stylesheet"/>
-        <link href="https://uspto.github.io/designpatterns/1.x/generated/styles/appDemo.min.css" rel="stylesheet"/>        
+        <link href="designpatterns/1.x/generated/styles/vendor.css" rel="stylesheet"/>
+        <link href="designpatterns/1.x/generated/styles/main.css" rel="stylesheet"/>
+        <link href="designpatterns/1.x/generated/styles/appDemo.min.css" rel="stylesheet"/>
         <style>
             /* fix for IE transparent scroll bar */
             @-ms-viewport {
@@ -72,7 +72,7 @@
             </div>
         </div>
     </nav>
-   
+
 </header>
 
 
@@ -113,7 +113,7 @@
                          <b><i>Examples: Search for law 112(f) ..... <code>"112\(f\)"</code>  or search for Art Unit .. <code>"Art Unit 3669"~2</code>  </i></b>
                             <!-- <a href="#void">Show advanced search</a> -->
                         </div>
-                    
+
                     <div class="tabs-results tabs-responsive btn-group hide">
                         <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-default dropdown-toggle hide" type="button">
                             All<span class="badge">100</span> <span class="caret"></span>
@@ -136,7 +136,7 @@
                             <span tabindex="0" class="h4">Refine by</span> <a class="filters-clear" href="">Clear</a>
                         </div>
                        <!--  <form class="filters-accordion js-filterSwitch" role="form"> -->
-    <!-- <div class="h5" tabindex="0">Assignment</div> --> 
+    <!-- <div class="h5" tabindex="0">Assignment</div> -->
     <div class="filter-list">
          <!--    <a class="filter-group-title" href="#void" data-toggle="collapse" data-target="#2filterGroup8">Filing year <i class="icon icon-angle-right pull-right"></i></a>
         <div id="2filterGroup8" class="collapse">
@@ -166,7 +166,7 @@
                 </div>
             </div>
         </div>
-        
+
 
         </form>
            <!--  <a class="filter-group-title" href="#void" data-toggle="collapse" data-target="#2filterGroup2"><i class="icon icon-angle-right pull-right"></i> <span class="badge pull-right">1</span> Application type</a>
@@ -211,7 +211,7 @@
                     </div>
                 </div>
             </div>
-        </div> 
+        </div>
     </div>
     <div class="h5" tabindex="0">Assignee (Owner)</div>
     <div class="filter-list">
@@ -353,15 +353,15 @@
                                     <a href="#void" class="link-sidebar"><i class="icon icon-columns"></i>Refine</a>
                                     <div class="pg-actions clearfix">
 
-                        
+
                                         <h3 class="h4 pull-left margin-top-0"><span style="font-weight: 400"><% if (typeof total !== 'undefined'){ %><%=total %> results took <%= took %> ms <%}%></span></h3>
                                         <div class="btn-pgActions btn-group">
                                          <% if (typeof term !== 'undefined') { %>
                                             <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-default dropdown-toggle" id="btn-pgActions">Download <span class="caret"></span></button>
                                             <ul aria-labelledby="btn-pgActions" class="dropdown-menu">
                                                 <!-- <li role="presentation"><a href="#">Print</a></li>
-                                                <li class="divider" role="separator"></li> --> 
-                                                <!-- <li role="presentation"><a href="#">Download Excel</a></li> --> 
+                                                <li class="divider" role="separator"></li> -->
+                                                <!-- <li role="presentation"><a href="#">Download Excel</a></li> -->
                                                 <li role="presentation"><a target="_BLANK" href="/download?q=<% if (typeof term !== 'undefined') { %><%= term %><%}%>">Download CSV</a></li>
                                                 <%}%>
                                             </ul>
@@ -376,7 +376,7 @@
     <% if (typeof term !== 'undefined') { %>
     <div class="table--actions row">
         <div class="col-xs-6">
-    
+
         <h2> Search Term: <span class="label label-success subtle"><%= term %></span> </h2>
             <h3><a href="javascript:void(0);" onclick="resizeText(1)" id="plustext"> [+] Make results bigger</a> | <a href="javascript:void(0);" onclick="resizeText(-1)" id="minustext">[-] Make results smaller</a></h3>
         </div>
@@ -394,10 +394,10 @@
         </div>
     </div><%}%>
      <div class="table-responsive">
-  
+
         <%- body %>
-     
-        
+
+
     </div>
 </div>
  <div class="table--border js-tableSwitch hide">
@@ -661,8 +661,8 @@
         </div>
     </div>
 </div>
- 
-    
+
+
     <div class="config-ui">
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -719,129 +719,13 @@
             </div>
         </div>
     </div>
-
-
 </main>
 
-
-    
-
-
-
-<script src="https://uspto.github.io/designpatterns/1.x/generated/scripts/vendor.js"></script>
-<script src="https://uspto.github.io/designpatterns/1.x/generated/scripts/plugins.js"></script>
+<script src="designpatterns/1.x/generated/scripts/vendor.js"></script>
+<script src="designpatterns/1.x/generated/scripts/plugins.js"></script>
 <script src="https://components.uspto.gov/js/ais/2-4-pattern-library.js"></script>
-<script src="https://uspto.github.io/designpatterns/1.x/generated/scripts/appDemo.js"></script>
-<script>
-var windowWidth = $(window).width();
-
-// resize window only if width changes
-$(window).resize(function() {
-    if ($(window).width() !== windowWidth) {
-
-        windowWidth = $(window).width();
-
-        $('.app-sidebar').removeClass('open');
-        $('.btn-pgActions, .btn-displayOpts, .pager').removeClass('hide');
-    }
-});
-
-
-// toggle Collections aside display
-$('.btn-collections')
-    .removeClass('hide')
-    .click(function() {
-        $('.collections').toggleClass('hide');
-        $('#chk-collections').prop('checked', $('.collections').is(':visible'));
-    });
-
-// events for Collections panel
-$('.panel--collections')
-    .on('click', '.link-appNumSearch', function(e){ 
-        var appNum = $(this).find('.appNum').text();
-        console.log(appNum);
-        e.preventDefault();
-
-        $('#txt-search, #txt-find').val(appNum);
-    })
-    .on('click', '.close', function(e){         
-        e.preventDefault();
-
-        $('.collections').addClass('hide');
-         $('#chk-collections').prop('checked', false);
-    })
-    .on('click', '[data-toggle="collapsible"]', function(e){         
-        var trigger = $(this),
-            target = trigger.attr('href'),
-            expanded = trigger.attr('aria-expanded') === 'true';
-        
-        e.preventDefault();
-        trigger.attr('aria-expanded', !expanded).find('.icon').toggleClass('icon-plus-square-o icon-minus-square-o');
-        $(target).find('tr').toggleClass('hide').attr('aria-hidden', expanded);
-    });
-
-// initialize tooltip for table cols toggle
-$('.btn-tblCols').tooltip({
-    placement: 'top',
-    template: '<div class="tooltip tooltip-light" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
-});
-
-// enable datepickers 
-$('.datepicker').datepicker({
-    // autoSize: true,
-    // showButtonPanel: true,
-    numberOfMonths: 1,
-    showOtherMonths: true
-    // changeMonth: true,
-    // changeYear: true
-});
-
-// toggle filters sidebar
-$('.link-sidebar').click(function(e) {
-    e.preventDefault();
-    $('.app-sidebar').toggleClass('open');
-    $('.btn-pgActions, .btn-displayOpts, .pager').toggleClass('hide');
-});
-
-// hide filters sidebar
-$('.btn-closeSidebar').click(function(e) {
-    e.preventDefault();
-    $('.app-sidebar').removeClass('open');
-    $('.btn-pgActions, .btn-displayOpts, .pager').removeClass('hide');
-});
-
-// toggle UI configurator
-$('.config-ui')
-    .on('click', '.toggle', function() {
-        $('.config-ui').toggleClass('open');
-    });
-
-// toggle switches for UI widgets
-$('.switch')
-    .on('click', 'input[type="checkbox"]:not(.js-chkPanels)', function() {
-        var attr = '.' + $(this).attr('data-target');
-        
-        $(attr).toggleClass('hide');        
-    })
-     .on('click', '#chk-leftPane, #chk-rightPane', function() {
-        var attr = '.' + $(this).attr('data-target');
-        
-        $(attr).toggleClass('open');        
-    })
-    .on('click', 'input[name="tblsSwitch"]', function() {
-        var attr = '.' + $(this).attr('data-target');
-        
-        $('.js-tableSwitch').addClass('hide');
-        $(attr).toggleClass('hide');        
-    })
-    .on('click', 'input[name="filtersSwitch"]', function() {
-        var attr = '.' + $(this).attr('data-target');
-        
-        $('.js-filterSwitch').addClass('hide');
-        $(attr).toggleClass('hide');        
-    });
-    
-</script>
+<script src="designpatterns/1.x/generated/scripts/appDemo.js"></script>
+<script src="scripts/script.js"></script>
 
 <script type="text/javascript">function resizeText(multiplier) {
   if (document.getElementById('results').style.fontSize == "") {
@@ -853,6 +737,3 @@ $('.switch')
 </body>
 
 </html>
-
-
-
