@@ -1,42 +1,36 @@
-<% layout('uspto_layout') -%>
+{{#if term }}
 
-
- <% if (typeof term !== 'undefined') { %>
-       
 <div class="media-body">
 <center>
-<%if (typeof result !='undefined' && total !=0) { %>
-<%- 	pagein %>
-   <% } %>
+{{#if result}}
+  {{#if total}}
+    {{{pagein}}}
+  {{/if}}
+{{/if}}
 </center>
 <div class="row" >
 <div class="col-lg-12">
 <hr>
 <div id="results" class="hpanel forum-box">
 
-<%if (typeof result !='undefined' && total !=0) { for(var i=0; i < result.length; i++) { %>
+    {{#each result}}
 
     <div  class="media">
-        <% var appid = result[i].filename[0].substr(0, 8); 
-        appid=appid.trim();
-			var applink='http://appft.uspto.gov/netacgi/nph-Parser?Sect1=PTO2&Sect2=HITOFF&p=1&u=%2Fnetahtml%2FPTO%2Fsearch-adv.html&r=1&f=G&l=50&d=PG01&S1='+appid+'&OS='+appid+'&RS='+appid;
-        %>	
-            <h4>  <a style="cursor:pointer"; onClick="javascript:document.getElementById('action_text').innerHTML =''; document.getElementById('action_text').innerHTML ='<b>File Doc Id:</b><%= result[i].filename[0] %> , <b>Action Type:</b> <%= result[i].action_type[0] %> , <b>Search Term:</b> <%= term %><hr><%-result[i].textdata[0] %>';"  data-item="<%= result[i].filename[0] %>" data-toggle="modal" data-target="#cancelModal">  Office Action ID: <%= result[i].filename %> </a> | <%= result[i].action_type[0] %></h4> 
-              <% var ID=result[i].id;%>
-            <% if (typeof highlighting[ID].textdata !=='undefined' ){ for(var j=0; j < highlighting[ID].textdata.length; j++) { %>
-	            <li><%-highlighting[ID].textdata[j] %></li>
-	        <%}}else{%>
-	             <%-result[i].textdata[0].substr(0, 900) %>...
-	        <% } %>
+            <h4>  <a style="cursor:pointer"; onClick="javascript:document.getElementById('action_text').innerHTML =''; document.getElementById('action_text').innerHTML ='<b>File Doc Id:</b>{{filename}} , <b>Action Type:</b> {{action_type.[0]}} , <b>Search Term:</b> {{../term}}<hr>{{textdata.[0]}}';"  data-item="{{filename}}" data-toggle="modal" data-target="#cancelModal">  Office Action ID: {{filename}}</a> | {{action_type.[0]}}</h4>
+            {{#with (lookup ../highlighting id) }}
+              {{#if textdata}}
+                {{#each textdata}}
+                  <li>{{this}}</li>
+                {{/each}}
+              {{else}}
+                {{{truncate ../textdata.[0]}}}...
+              {{/if}}
+            {{/with}}
           <hr>
     </div>
-
-      <% }}
-      else{ %>
-      
+    {{else}}
       <h1> No actions found for <span class="text-success"><%= term %></span> we may still be loading some </h1>
-
-      <% } %>
+    {{/each}}
 
     <div class="modal fade" id="cancelModal" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog">
@@ -57,12 +51,14 @@
 
 </div>
 <center>
-<%if (typeof result !='undefined' && total !=0) { %>
-<%- 	pagein %>
-   <% } %>
+  {{#if result}}
+    {{#if total}}
+      {{{pagein}}}
+    {{/if}}
+  {{/if}}
 </center>
 
 
- <%}else{%>
-        <h3> Welcome <% if (typeof email !== 'undefined') { %> <%=email %> <%} %> to the new USPTO Office Action Search App </h3> 
-        <%}%>
+ {{else}}
+        <h3> Welcome {{#if email }} {{email}} {{/if}}to the new USPTO Office Action Search App </h3>
+        {{/if}}
