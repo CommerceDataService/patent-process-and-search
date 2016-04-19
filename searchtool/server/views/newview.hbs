@@ -20,7 +20,7 @@
             {{#with (lookup ../highlighting id) }}
               {{#if textdata}}
                 {{#each textdata}}
-                  <li>{{this}}</li>
+                  <li>{{{this}}}</li>
                 {{/each}}
               {{else}}
                 {{{truncate ../textdata.[0]}}}...
