@@ -4,6 +4,7 @@ var loopback = require('loopback');
 var path = require('path');
 var app = module.exports = loopback();
 var helmet = require('helmet');
+var hbs = require('hbs');
 
 
 
@@ -14,7 +15,10 @@ app.middleware('initial', bodyParser.urlencoded({ extended: true }));
 boot(app, __dirname);
 
 app.set('view engine', 'hbs'); // LoopBack comes with EJS out-of-box
-
+hbs.registerHelper('truncate', function(passedString) {
+    var theString = passedString.substring(0,900);
+    return new hbs.SafeString(theString)
+});
 // must be set to serve views properly when starting the app via `slc run` from
 // the project rootapp.set('views', path.join(__dirname, 'views'));
 
