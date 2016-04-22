@@ -30,18 +30,19 @@ def format_date(field,x):
 #and writing the results out to a json file
 def processFile(fname):
     type = os.path.splitext(fname)[1]
+    doc = {}
     try:
         with open(os.path.abspath(fname)) as fd:
-            doc = {}
             if type == ".xml":
                 fn = change_ext(fname,'json')
                 doc = xmltodict.parse(fd.read())
             elif type == ".json":
-                doc = json.load[fd]
+                doc = json.loads(fd.read())
             #get document id from metadata xml file
-            for x in doc['main']['DATA_RECORD']:
+            records = doc['main']['DATA_RECORD']
+            for x in records:
+                docid = x.get('DOCUMENT_IMAGE_ID',x.get('DOCUMENT_NM'))
                 if type == ".xml":
-                    docid = x.get('DOCUMENT_IMAGE_ID',x.get('DOCUMENT_NM'))
                     txtfn = os.path.join(os.path.dirname(fn),'PDF_image',docid+'.txt')
                     if os.path.isfile(txtfn):
                         x['LAST_MODIFIED_TS'] = format_date('LAST_MODIFIED_TS',x)
@@ -57,29 +58,27 @@ def processFile(fname):
                     else:
                         logging.info("TXT file: "+docid+".txt  does not exist. JSON file creation skipped.")
                         return
-
-                jsontext = json.dumps(x)
-                
-                #Send content to Solr to update index
-                jsontext = '{"add":{ "doc":'+jsontext+',"boost":1.0,"overwrite":true, "commitWithin": 1000}}'
-                with open(os.path.join(os.path.dirname(fn),'jsoncomplete.txt'),'a+') as logfile:
-                    logfile.seek(0)
-                    if docid+"\n" in logfile:
-                        logging.info("-- file: "+docid+"  already processed by Solr")
-                        continue
-                    else:
-                        logging.info("-- Sending data record to Solr")
-                        url = "http://54.208.116.77:8983/solr/ptab/update"
-                        headers = {"Content-type" : "application/json"}
-                        #r = requests.post(url, data=jsontext, headers=headers)
-                        #rdict = json.loads(r.text)
-                        #status = rdict["responseHeader"]["status"] 
-                        #if status == 0:
-                        #    logfile.write(docid+"\n")
-                        #    logging.info("-- Solr update complete")
-                        #else:
-                        #    logging.info("-- Solr error for doc: "+docid+" error: "+rdict["error"])
-
+                if (args.solr):
+                    jsontext = json.dumps(x)
+                    #Send content to Solr to update index
+                    jsontext = '{"add":{ "doc":'+jsontext+',"boost":1.0,"overwrite":true, "commitWithin": 1000}}'
+                    with open(os.path.join(os.path.dirname(fname),'jsoncomplete.txt'),'a+') as logfile:
+                        logfile.seek(0)
+                        if docid+"\n" in logfile:
+                            logging.info("-- file: "+docid+"  already processed by Solr")
+                            continue
+                        else:
+                            logging.info("-- Sending file: "+docid+" to Solr")
+                            url = "http://54.208.116.77:8983/solr/ptab/update"
+                            headers = {"Content-type" : "application/json"}
+                            r = requests.post(url, data=jsontext, headers=headers)
+                            rdict = json.loads(r.text)
+                            status = rdict["responseHeader"]["status"] 
+                            if status == 0:
+                                logging.info("-- Solr update for file: "+docid+" complete")
+                            else:
+                                logging.info("-- Solr error for doc: "+docid+" error: "+', '.join("{!s}={!r}".format(k,v) for (k,v) in rdict.items()))
+                            
             #transform output to json and save to file with same name
             if type == ".xml":
                 with open(fn,'w') as outfile:
@@ -106,7 +105,7 @@ if __name__ == '__main__':
 
     #logging configuration
     logging.basicConfig(
-                        filename='logs/parsexml-log-'+time.strftime('%Y%m%d-%H%M%S'),
+                        filename='logs/parsexml-log-'+time.strftime('%Y%m%d'),
                         level=logging.INFO,
                         format='%(asctime)s - %(name)s - %(levelname)s -%(message)s',
                         datefmt='%Y%m%d %H:%M:%S'
@@ -121,10 +120,19 @@ if __name__ == '__main__':
                         nargs='*',
                         type=validDate
                        )
+    parser.add_argument(
+                        "-s",
+                        "--solr",
+                        required=False,
+                        help="Pass this flag to skip Solr processing",
+                        action='store_false'
+                       )
+
     args = parser.parse_args()
     if args.reprocess:
         logging.info("Date arguments passed for reprocessing:"+", ".join(args.reprocess))
-
+    if args.solr:
+        logging.info("Solr processing for documents will be skipped: "+str(args.solr))
     logging.info("-- [JOB START]  ----------------")
 
     if args.reprocess:
