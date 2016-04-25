@@ -3,7 +3,7 @@
 If you don't have Node.js installed yet, we recommend using [nvm](https://github.com/creationix/nvm), which will provide you Node.js and npm.
 
 ## Install 
-npm install
+`npm install`
 
 ## Configuration
 There is a config file in `/searchtool/server/server-config.js`. You can skip the MySQL requirement below by setting 'requireLogin' to `false`.
