@@ -4,6 +4,7 @@ If you don't have Node.js installed yet, we recommend using [nvm](https://github
 
 ## Install 
 `npm install`
+`bower install`
 
 ## Configuration
 There is a config file in `/searchtool/server/server-config.js`. You can skip the MySQL requirement below by setting 'requireLogin' to `false`.
