@@ -22,7 +22,7 @@ def changeExt(fname, ext):
     return '.'.join(seq)
 
 #get field(date) and return in a proper iso format
-def formatDate(field,x):
+def formatDate(x, field):
     date = dateutil.parser.parse(x.pop(field))
     dateiso = date.isoformat()+'Z'
     return dateiso
@@ -31,7 +31,7 @@ def formatDate(field,x):
 def sendToSolr(core, json):
      #add try-catch block
      jsontext = '{"add":{ "doc":'+json+',"boost":1.0,"overwrite":true, "commitWithin": 1000}}'
-     url = os.path.join(url,"solr",core,"update")
+     url = os.path.join(solrURL,"solr",core,"update")
      headers = {"Content-type" : "application/json"}
      
      return requests.post(url, data=jsontext, headers=headers)
@@ -51,13 +51,13 @@ def readJSON(fname):
                        continue
                     else:
                        logging.info("-- Sending file: "+docid+" to Solr")
-                       #response = sendToSolr(ptab, jsontext)
-                       #r = response.json
-                       #status = r["responseHeader"]["status"]
-                       #if status == 0:
-                       #    logging.info("-- Solr update for file: "+docid+" complete")
-                       #else:
-                       #    logging.info("-- Solr error for doc: "+docid+" error: "+', '.join("{!s}={!r}".format(k,v) for (k,v) in rdict.items()))
+                       response = sendToSolr('ptab', jsontext)
+                       r = response.json
+                       status = r["responseHeader"]["status"]
+                       if status == 0:
+                           logging.info("-- Solr update for file: "+docid+" complete")
+                       else:
+                           logging.info("-- Solr error for doc: "+docid+" error: "+', '.join("{!s}={!r}".format(k,v) for (k,v) in rdict.items()))
     except IOError as e:
         logging.error("I/O error({0}): {1}".format(e.errno,e.strerror))
     except:
@@ -74,16 +74,18 @@ def processXML(fname):
             records = doc['main']['DATA_RECORD']
             for x in records:
                 docid = x.get('DOCUMENT_IMAGE_ID',x.get('DOCUMENT_NM'))
+                print("docid: "+docid)
                 txtfn = os.path.join(os.path.dirname(fn),'PDF_image',docid+'.txt')
                 if os.path.isfile(txtfn):
-                    x['LAST_MODIFIED_TS'] = format_date(x, 'LAST_MODIFIED_TS')
-                    x['PATENT_ISSUE_DT'] = format_date(x, 'PATENT_ISSUE_DT')
-                    x['DECISION_MAILED_DT'] = format_date(x, 'DECISION_MAILED_DT')
-                    x['PRE_GRANT_PUBLICATION_DT'] = format_date(x, 'PRE_GRANT_PUBLICATION_DT')
-                    x['APPLICANT_PUB_AUTHORIZATION_DT'] = format_date(x, 'APPLICANT_PUB_AUTHORIZATION_DT')
+                    x['LAST_MODIFIED_TS'] = formatDate(x, 'LAST_MODIFIED_TS')
+                    x['PATENT_ISSUE_DT'] = formatDate(x, 'PATENT_ISSUE_DT')
+                    x['DECISION_MAILED_DT'] = formatDate(x, 'DECISION_MAILED_DT')
+                    x['PRE_GRANT_PUBLICATION_DT'] = formatDate(x, 'PRE_GRANT_PUBLICATION_DT')
+                    x['APPLICANT_PUB_AUTHORIZATION_DT'] = formatDate(x, 'APPLICANT_PUB_AUTHORIZATION_DT')
                     x['appid'] = x.pop('BD_PATENT_APPLICATION_NO')
                     x['doc_date'] = x.pop('DOCUMENT_CREATE_DT')
                     with open(txtfn) as dr:
+                        print("in open txt doc")
                         text = dr.read()
                         x['textdata'] = text
                 else:
@@ -113,7 +115,7 @@ def validDate(s):
 def processFile(filename):
     fn = changeExt(filename,'json')
     if os.path.isfile(os.path.abspath(fn)):
-        if (args.solr):
+        if (args.skipsolr):
             logging.info("-- XML file: "+filename+" already processed.  Skipping Solr process.")
         else:
             logging.info("-- XML file: "+filename+" already processed.  Sending to Solr for indexing.")
@@ -146,18 +148,17 @@ if __name__ == '__main__':
                        )
     parser.add_argument(
                         "-s",
-                        "--solr",
+                        "--skipsolr",
                         required=False,
                         help="Pass this flag to skip Solr processing",
                         action='store_false'
                        )
 
     args = parser.parse_args()
+    logging.info("--SCRIPT ARGUMENTS--------------")
     if args.dates:
         logging.info("Date arguments passed for processing: "+", ".join(args.dates))
-    logging.info("Solr Processing set to: "+str(args.solr))
-    #if args.solr:
-    #    logging.info("Solr processing for documents will be skipped: "+str(args.solr))
+    logging.info("Solr Processing set to: "+str(args.skipsolr))
     logging.info("-- [JOB START]  ----------------")
 
     if args.dates:
