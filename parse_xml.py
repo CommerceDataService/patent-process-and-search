@@ -44,7 +44,9 @@ def readJSON(fname):
             for x in records:
                 docid = x.get('DOCUMENT_IMAGE_ID',x.get('DOCUMENT_NM'))
                 jsontext = json.dumps(x)
-                with open(os.path.join(os.path.dirname(fname),'jsoncomplete.txt'),'a+') as logfile:
+                #need to change this line
+                print(os.path.join(os.path.dirname(fname)))
+                with open(os.path.join(os.path.dirname(fname),'solrcomplete.txt'),'a+') as logfile:
                     logfile.seek(0)
                     if docid+"\n" in logfile:
                        logging.info("-- file: "+docid+"  already processed by Solr")
@@ -52,9 +54,10 @@ def readJSON(fname):
                     else:
                        logging.info("-- Sending file: "+docid+" to Solr")
                        response = sendToSolr('ptab', jsontext)
-                       r = response.json
+                       r = response.json()
                        status = r["responseHeader"]["status"]
                        if status == 0:
+                           logfile.write(docid+"\n")
                            logging.info("-- Solr update for file: "+docid+" complete")
                        else:
                            logging.info("-- Solr error for doc: "+docid+" error: "+', '.join("{!s}={!r}".format(k,v) for (k,v) in rdict.items()))
@@ -74,7 +77,6 @@ def processXML(fname):
             records = doc['main']['DATA_RECORD']
             for x in records:
                 docid = x.get('DOCUMENT_IMAGE_ID',x.get('DOCUMENT_NM'))
-                print("docid: "+docid)
                 txtfn = os.path.join(os.path.dirname(fn),'PDF_image',docid+'.txt')
                 if os.path.isfile(txtfn):
                     x['LAST_MODIFIED_TS'] = formatDate(x, 'LAST_MODIFIED_TS')
@@ -85,7 +87,6 @@ def processXML(fname):
                     x['appid'] = x.pop('BD_PATENT_APPLICATION_NO')
                     x['doc_date'] = x.pop('DOCUMENT_CREATE_DT')
                     with open(txtfn) as dr:
-                        print("in open txt doc")
                         text = dr.read()
                         x['textdata'] = text
                 else:
@@ -123,6 +124,7 @@ def processFile(filename):
     else:
         logging.info("-- Starting processing of XML file: "+filename)
         processXML(filename)
+        logging.info("-- Starting processing of JSON file: "+fn)
         readJSON(fn)
 
 if __name__ == '__main__':
