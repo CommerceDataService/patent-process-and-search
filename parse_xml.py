@@ -153,7 +153,7 @@ if __name__ == '__main__':
                         "--skipsolr",
                         required=False,
                         help="Pass this flag to skip Solr processing",
-                        action='store_false'
+                        action='store_true'
                        )
 
     args = parser.parse_args()
