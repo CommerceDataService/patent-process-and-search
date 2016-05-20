@@ -16,7 +16,7 @@
           {{#each result}}
 
             <div class="media">
-              <h4>  <a style="cursor:pointer"; onClick="javascript:document.getElementById('action_text').innerHTML =''; document.getElementById('action_text').innerHTML ='<b>File Doc Id:</b>{{filename}} , <b>Action Type:</b> {{action_type.[0]}} , <b>Search Term:</b> {{../term}}<hr>{{textdata.[0]}}';"  data-item="{{filename}}" data-toggle="modal" data-target="#cancelModal">  Office Action ID: {{filename}}</a> | {{action_type.[0]}}</h4>
+              <h4>  <a style="cursor:pointer"; onClick="javascript:document.getElementById('action_text').innerHTML =''; document.getElementById('action_text').innerHTML ='<b>File Doc Id:</b>{{filename}} , <b>Action Type:</b> {{action_type.[0]}} , <b>Search Term:</b> {{../term}}<hr>{{breaklines textdata.[0]}}';"  data-item="{{filename}}" data-toggle="modal" data-target="#cancelModal">  Office Action ID: {{filename}}</a> | {{action_type.[0]}}</h4>
               {{#with (lookup ../highlighting id) }}
                 {{#if textdata}}
                   {{#each textdata}}
