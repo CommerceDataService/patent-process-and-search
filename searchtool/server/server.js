@@ -19,6 +19,11 @@ hbs.registerHelper('truncate', function(passedString) {
     var theString = passedString.substring(0,900);
     return new hbs.SafeString(theString)
 });
+hbs.registerHelper('breaklines', function(text) {
+    text = hbs.Utils.escapeExpression(text);
+    text = text.replace(/(\r\n|\n|\r)/gm, '<br>');
+    return new hbs.SafeString(text);
+});
 // must be set to serve views properly when starting the app via `slc run` from
 // the project rootapp.set('views', path.join(__dirname, 'views'));
 
