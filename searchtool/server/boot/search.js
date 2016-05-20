@@ -53,7 +53,10 @@ exports.buildSearch = function (req, res) {
     }
     q = q+dateRange;
     // Build Search .. if no page number set then only show
-    var SEARCH_URL = config.solrURI+'/'+req.query.dataset+'/select?q='+q+'&wt=json&indent=true&rows=20&start='+s+'&hl=true&hl.snippets=10&hl.fl=textdata&hl.fragsize=200&hl.simple.pre=<code>&hl.simple.post=</code>&hl.usePhraseHighlighter=true&q.op=AND&fl=appid,action_type,filename,minread,id,textdata';
+    var SEARCH_URL = config.solrURI+'/'+req.query.dataset+'/select?q='+q+'&wt=json&indent=true&rows=20&start='+s+'&hl=true&hl.snippets=10&hl.fl=textdata&hl.fragsize=200&hl.simple.pre=<code>&hl.simple.post=</code>&hl.usePhraseHighlighter=true&q.op=AND';
+    if (req.query.dataset == 'oafiledatanew'){
+    SEARCH_URL += '&fl=appid,action_type,filename,minread,id,textdata';
+    }
 
     // Debug for logs
     console.log(SEARCH_URL);

@@ -17,7 +17,7 @@
 
           {{#each result}}
             <div class="media">
-              <h4>  <a style="cursor:pointer"; onClick="javascript:document.getElementById('action_text').innerHTML =''; document.getElementById('action_text').innerHTML ='<b>File Doc Id:</b> {{appid}}, <b>Search Term:</b> {{../term}}<hr>{{breaklines textdata.[0]}}';"  data-item="{{appid}}" data-toggle="modal" data-target="#cancelModal"> PTAB ID: {{appid}}</a></h4>
+              <h4>  <a style="cursor:pointer"; onClick="javascript:document.getElementById('action_text').innerHTML =''; document.getElementById('action_text').innerHTML ='<b>File Doc Id:</b> {{DOCUMENT_IMAGE_ID}}, <b>Search Term:</b> {{../term}}<hr>{{breaklines textdata.[0]}}';"  data-item="{{DOCUMENT_IMAGE_ID}}" data-toggle="modal" data-target="#cancelModal"> PTAB ID: {{appid}}</a></h4>
               {{#with (lookup ../highlighting id) }}
                 {{#if textdata}}
                   {{#each textdata}}
