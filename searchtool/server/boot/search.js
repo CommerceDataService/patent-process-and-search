@@ -48,16 +48,15 @@ exports.buildSearch = function (req, res) {
         s = (req.query.pageno -1) *20;
         currentPage = parseInt(req.query.pageno) ;
     }
-    if(req.query.dataset == 'ptab'){
-      var ptab = true;
-    }
     q = q+dateRange;
-    console.log(req.query.dataset)
     // Build Search .. if no page number set then only show
     var SEARCH_URL = config.solrURI+'/'+req.query.dataset+'/select?q='+q+'&wt=json&indent=true&rows=20&start='+s+'&hl=true&hl.snippets=10&hl.fl=textdata&hl.fragsize=200&hl.simple.pre=<code>&hl.simple.post=</code>&hl.usePhraseHighlighter=true&q.op=AND';
     if (req.query.dataset == 'oafiledatanew'){
        SEARCH_URL += '&fl=appid,action_type,filename,minread,id,textdata';
-    }
+    }else if (req.query.dataset == 'ptab'){
+	    var ptab = true;
+            //add query fields here later for ptab
+   }
 
     // Debug for logs
     console.log(SEARCH_URL);
