@@ -22,6 +22,7 @@ hbs.registerHelper('truncate', function(passedString) {
 hbs.registerHelper('breaklines', function(text) {
     text = hbs.Utils.escapeExpression(text);
     text = text.replace(/(\r\n|\n|\r)/gm, '<br>');
+    text = text.replace(/[&\/\\]/g,'_');
     return new hbs.SafeString(text);
 });
 // must be set to serve views properly when starting the app via `slc run` from
