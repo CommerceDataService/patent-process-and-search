@@ -71,7 +71,7 @@ exports.buildSearch = function (req, res) {
                 res.render('newview', {
                     result:body.response.docs,
                     total:humanize.numberFormat(body.response.numFound,0),
-                    pagein:paginate({totalItem:body.response.numFound, itemPerPage:20, currentPage:currentPage, url:'/newsearch',params:{q:q}}),
+                    pagein:paginate({totalItem:body.response.numFound, itemPerPage:20, currentPage:currentPage, url:'/newsearch',params: {q: q, dataset: req.query.dataset} }),
                     took:humanize.numberFormat(body.responseHeader.QTime,0 ),
                     highlighting:body.highlighting,
                     term:q,
