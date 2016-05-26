@@ -152,7 +152,7 @@ module.exports = function(app) {
         } else {
             res.render('newview', {
                 email: req.body.email,
-                accessOK: !!(token.id || ! config.requireLogin)
+                accessOK: !!(! config.requireLogin || token.id)
             }
             );
         }
