@@ -40,10 +40,19 @@ module.exports = function(app) {
                     maxAge: maxAgeSet,
                     httpOnly: true
                 });
+
+                // encapsulate the logic of having either a logged in user, or having the system open without logins required
+                var accessOK = false;
+                if (token.id) {
+                    accessOK = true;
+                } else if (! config.requireLogin) {
+                    accessOK = true;
+                }
+
                 res.render('newview', {
                     email: req.body.email,
                     accessToken: token.id,
-                    accessOK: !!(token.id || config.requireLogin == false)
+                    accessOK: accessOK
                 });
             }
         });
