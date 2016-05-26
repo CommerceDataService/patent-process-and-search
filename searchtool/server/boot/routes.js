@@ -14,7 +14,9 @@ module.exports = function(app) {
 
     // Default Login Screen
     router.get('/login', function(req, res){
-        res.render('login');
+        res.render('login', {
+            accessOK: !!(token.id || ! config.requireLogin)
+        });
     });
 
 
@@ -41,18 +43,10 @@ module.exports = function(app) {
                     httpOnly: true
                 });
 
-                // encapsulate the logic of having either a logged in user, or having the system open without logins required
-                var accessOK = false;
-                if (token.id) {
-                    accessOK = true;
-                } else if (! config.requireLogin) {
-                    accessOK = true;
-                }
-
                 res.render('newview', {
                     email: req.body.email,
                     accessToken: token.id,
-                    accessOK: accessOK
+                    accessOK: !!(token.id || ! config.requireLogin)
                 });
             }
         });
@@ -158,7 +152,12 @@ module.exports = function(app) {
 
                 });
         } else {
-            res.render('newview');
+            res.render('newview', {
+                email: req.body.email,
+                accessToken: token.id,
+                accessOK: !!(token.id || ! config.requireLogin)
+            }
+            );
         }
     });
 
