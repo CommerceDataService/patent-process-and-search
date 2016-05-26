@@ -75,18 +75,25 @@ exports.buildSearch = function (req, res) {
                     took:humanize.numberFormat(body.responseHeader.QTime,0 ),
                     highlighting:body.highlighting,
                     term:q,
-                    ptab: ptab
+                    ptab: ptab,
+                    email: req.body.email,
+                    accessOK: !!(! config.requireLogin || token.id)
                 });
             } else {
                 res.render('newview', {
                     total:0,
                     pagein:'',
                     took:body.responseHeader.QTime,
-                    term:q
+                    term:q,
+                    email: req.body.email,
+                    accessOK: !!(! config.requireLogin || token.id)
                 });
             }
         });
     } else {
-        res.render('newview');
+        res.render('newview', {
+            email: req.body.email,
+            accessOK: !!(! config.requireLogin || token.id)
+        });
     }
 };
