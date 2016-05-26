@@ -14,9 +14,7 @@ module.exports = function(app) {
 
     // Default Login Screen
     router.get('/login', function(req, res){
-        res.render('login', {
-            accessOK: !!(token.id || ! config.requireLogin)
-        });
+        res.render('login');
     });
 
 
@@ -154,7 +152,6 @@ module.exports = function(app) {
         } else {
             res.render('newview', {
                 email: req.body.email,
-                accessToken: token.id,
                 accessOK: !!(token.id || ! config.requireLogin)
             }
             );
