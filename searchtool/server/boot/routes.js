@@ -43,7 +43,7 @@ module.exports = function(app) {
                 res.render('newview', {
                     email: req.body.email,
                     accessToken: token.id,
-                    loginRequired: config.requireLogin
+                    accessOK: ((!!accessToken) || !config.requireLogin)
                 });
             }
         });

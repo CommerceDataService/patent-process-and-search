@@ -136,23 +136,15 @@
           </div>
           <div class="main-wrapper row-grid">
             <div class="app-sidebar filters keyline-right">
-              {{#if loginRequired}}
-              {{#unless accessToken}}
+              {{#unless accessOK}}
               This Search engine is for Authorized users only.
               <hr> For access, please contact Thomas Beach
               {{/unless}}
-              {{/if}}
               <a tabindex="-1" id="filters"></a>
               <div class="close-sidebar keyline-bottom clearfix">
                 <button class="btn-closeSidebar pull-right btn btn-sm btn-default btn-hover"><i class="icon icon-angle-double-left"></i> Close</button>
               </div>
-              {{#if loginRequired}}
-              {{#if accessToken}}
-                  <div class="filter-heading">
-                    <span tabindex="0" class="h4">Refine by</span> <a class="filters-clear" href="">Clear</a>
-                  </div>
-              {{/if}}
-              {{else}}
+              {{#if accessOK}}
                   <div class="filter-heading">
                     <span tabindex="0" class="h4">Refine by</span> <a class="filters-clear" href="">Clear</a>
                   </div>
@@ -174,11 +166,7 @@
                 </div>
             </div>
         </div> -->
-                {{#if loginRequired}}
-                {{#if accessToken}}
-                    <a class="filter-group-title" href="#void" data-toggle="collapse" data-target="#2filterGroup1"><i class="icon icon-angle-right pull-right"></i> Filing date range</a>
-                {{/if}}
-                {{else}}
+                {{#if accessOK}}
                     <a class="filter-group-title" href="#void" data-toggle="collapse" data-target="#2filterGroup1"><i class="icon icon-angle-right pull-right"></i> Filing date range</a>
                 {{/if}}
                 <div id="2filterGroup1" class="collapse">
