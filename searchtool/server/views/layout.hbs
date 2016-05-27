@@ -371,20 +371,25 @@
                     <a tabindex="-1" id="searchResults"></a>
                     <a href="#void" class="link-sidebar"><i class="icon icon-columns"></i>Refine</a>
                     <div class="pg-actions clearfix">
+                        <div class="row">
+                            {{#if term}}<span> Search Term: <span class="label label-success subtle">{{term}}</span> </span>{{/if}}
+                            {{#if total}}
+                            <span class="pull-left margin-top-0">{{total}} results took {{took}} ms</span>
+                            <span><a href="javascript:void(0);" onclick="resizeText(1)" id="plustext"> [+] Make results bigger</a> | <a href="javascript:void(0);" onclick="resizeText(-1)" id="minustext">[-] Make results smaller</a></span>
+                            {{/if}}
 
-
-                      <h3 class="h4 pull-left margin-top-0"><span style="font-weight: 400">{{#if total}}{{total}} results took {{took}} ms {{/if}}</span></h3>
-                      <div class="btn-pgActions btn-group">
-                        {{#if term}}
-                          <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-default dropdown-toggle" id="btn-pgActions">Download <span class="caret"></span></button>
-                          <ul aria-labelledby="btn-pgActions" class="dropdown-menu">
-                            <!-- <li role="presentation"><a href="#">Print</a></li>
-                                                <li class="divider" role="separator"></li> -->
-                            <!-- <li role="presentation"><a href="#">Download Excel</a></li> -->
-                            <li role="presentation"><a target="_BLANK" href="/download?q={{term}}">Download CSV</a></li>
-                          </ul>
-                          {{/if}}
-                      </div>
+                          <div class="btn-pgActions btn-group">
+                            {{#if term}}
+                              <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-default dropdown-toggle" id="btn-pgActions">Download <span class="caret"></span></button>
+                              <ul aria-labelledby="btn-pgActions" class="dropdown-menu">
+                                <!-- <li role="presentation"><a href="#">Print</a></li>
+                                                    <li class="divider" role="separator"></li> -->
+                                <!-- <li role="presentation"><a href="#">Download Excel</a></li> -->
+                                <li role="presentation"><a target="_BLANK" href="/download?q={{term}}">Download CSV</a></li>
+                              </ul>
+                              {{/if}}
+                          </div>
+                        </div>
                     </div>
                     <!-- <ul class="list-keywords list-unstyled margin-bottom-0">
                                         <li tabindex="0" class="filter-value"><span>Application type: Service</span> <i class="icon icon-close icon-muted"></i></li>
@@ -396,8 +401,6 @@
                       <div class="table--actions row">
                         <div class="col-xs-6">
 
-                          <h2> Search Term: <span class="label label-success subtle">{{term}}</span> </h2>
-                          <h3><a href="javascript:void(0);" onclick="resizeText(1)" id="plustext"> [+] Make results bigger</a> | <a href="javascript:void(0);" onclick="resizeText(-1)" id="minustext">[-] Make results smaller</a></h3>
                         </div>
                         <div class="col-xs-6">
                           <!-- <div class="btn-group dropdown pull-right">
