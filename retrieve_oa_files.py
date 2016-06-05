@@ -52,9 +52,9 @@ def constructFilename(fname,paramList):
 
 def copyFile(old,new):
     try:
+        fpath, fname = os.path.split(new)
         if not os.path.isfile(new):
             shutil.copyfile(old,new)
-            fpath, fname = os.path.split(new)
             logging.info("-- File: "+fname+" written to directory: "+fpath)
         else:
             logging.info("-- File: "+fname+" already exists")
