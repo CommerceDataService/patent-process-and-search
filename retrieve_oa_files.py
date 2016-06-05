@@ -62,9 +62,6 @@ def copyFile(old,new):
         logging.error('Unexpected error:', sys.exc_info()[0])
         raise
 
-#def zipFiles():
-    
-
 if __name__ == '__main__':
     scriptpath = os.path.dirname(os.path.abspath(__file__))
     pubidpath = 'files/OFFICEACTIONS/pair_app_ids.txt'
@@ -117,8 +114,5 @@ if __name__ == '__main__':
                 newfname = constructFilename(filename,allparts)
                 logging.info("-- New file name: "+newfname)
                 copyFile(filename,newfname)
-                #if args.skipcombine:
-                #    zipFiles()
         del appids[:]
-
     logging.info("-- [JOB END] -------------------")
