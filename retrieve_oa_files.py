@@ -20,7 +20,8 @@ def constructPath(appid):
     series = appid[:2]
     series2 = appid[2:5]
     series3 = appid[5:8]
-    return os.path.join(oafilespath,series,series2,series3)
+    fileurl = oafilespath+'\\'+series+'\\'+series2+'\\'+series3+'\\*\\*\\*\\*\\*.xml'
+    return fileurl
 
 def makeDirectory(directory):
     if not os.path.isdir(directory):
@@ -45,9 +46,9 @@ def constructFilename(fname,paramList):
     fpath,filename = os.path.split(fname)
     filename = os.path.splitext(filename)[0]
     filename = filename.replace(" ","_").replace("'","")
-    appid = str(paramList[7])+str(paramList[8])+str(paramList[9])
-    selparts = (filename,appid,paramList[11])
+    selparts = (str(paramList[3])+str(paramList[4])+str(paramList[5]),str(paramList[7]),filename)
     newfname = os.path.join(scriptpath,'extractedfiles',series,'_'.join(selparts)+'.xml')
+    print("new filename: "+newfname)
     return newfname
 
 def copyFile(old,new):
@@ -56,23 +57,47 @@ def copyFile(old,new):
         if not os.path.isfile(new):
             shutil.copyfile(old,new)
             logging.info("-- File: "+fname+" written to directory: "+fpath)
+            completeappids.append(currentapp)
         else:
             logging.info("-- File: "+fname+" already exists")
+    except IOError as e:
+         logging.error('I/O error({0}): {1}'.format(e.errno,e.strerror))
     except:
         logging.error('Unexpected error:', sys.exc_info()[0])
         raise
 
+def writeCompletedApps(logfname):
+    try:
+        with open(logfname,'a+') as logfile:
+            for appid in completeappids:
+                logfile.write(appid+"\n")
+    except IOError as e:
+        logging.error('I/O error({0}): {1}'.format(e.errno,e.strerror))
+
+def checkIfProcessed(logfname):
+    try:
+        with open(logfname,'a+') as logfile:
+            logfile.seek(0)
+            if currentapp+"\n" in logfile:
+                logging.info("-- App: "+currentapp+" already processed")
+                return True
+            else:
+                return False
+    except IOError as e:
+        logging.error('I/O error({0}): {1}'.format(e.errno,e.strerror))
+        raise
+
 if __name__ == '__main__':
     scriptpath = os.path.dirname(os.path.abspath(__file__))
-    pubidpath = 'files/OFFICEACTIONS/pair_app_ids.txt'
-    #use this on pto machine
-    #oafilespath = '\\s-mdw-isl-b02-smb.uspto.gov\BigData\PE2E-ELP\PATENT'
-    oafilespath = os.path.join(scriptpath,'PE2E-ELP/PATENT')
+    pubidpath = 'pair_app_ids.txt'
+    oafilespath = '\\\\s-mdw-isl-b02-smb.uspto.gov\\BigData\\PE2E-ELP\\PATENT'
     appids = []
+    completeappids = []
+    currentapp = ''
 
     #logging configuration
     logging.basicConfig(
-                        filename='logs/extract-files--log-'+time.strftime('%Y%m%d'),
+                        filename='logs/extract-files-log-'+time.strftime('%Y%m%d')+'.txt',
                         level=logging.INFO,
                         format='%(asctime)s - %(name)s - %(levelname)s -%(message)s',
                         datefmt='%Y%m%d %H:%M:%S'
@@ -86,33 +111,44 @@ if __name__ == '__main__':
                         nargs='*',
                         type=str
                        )
-    parser.add_argument(
-                        '-z',
-                        '--zipfiles',
-                        required=False,
-                        help='Pass this flag to create zip file from all extracted files at end of process',
-                        action='store_true'
-                       )
     args = parser.parse_args()
-    logging.info("-- SCRIPT ARGUMENTS -------------")
+    logging.info("-- SCRIPT ARGUMENTS ------------")
     if args.series:
         logging.info("-- Series passed for processing: "+", ".join(args.series))
-    logging.info("Skip Combine set to: "+str(args.zipfiles))
 
     logging.info("-- [JOB START]  ----------------")
 
     for series in args.series:
         logging.info("-- Processing series: "+series)
+        logfile = os.path.join(scriptpath,'extractedfiles',series,'appcomplete.txt')
         getAppIDs(os.path.join(scriptpath,pubidpath),series)
         makeDirectory(os.path.join(scriptpath,'extractedfiles',series))
         for x in appids:
-            seriesdirpath = constructPath(x)
-            for filename in glob.iglob(os.path.join(seriesdirpath,'*','*','*','*','*.xml'),recursive=True):
-                logging.info("-- Processing file: "+filename)
-                filepath = os.path.dirname(filename)
-                allparts = splitAll(filepath)
-                newfname = constructFilename(filename,allparts)
-                logging.info("-- New file name: "+newfname)
-                copyFile(filename,newfname)
+            try:
+                currentapp = x
+                if not checkIfProcessed(logfile):
+                    seriesdirpath = constructPath(x)
+                    for filename in glob.iglob(seriesdirpath,recursive=True):
+                        logging.info("-- Processing file: "+filename)
+                        filepath = os.path.dirname(filename)
+                        print("filepath: "+filepath)
+                        allparts = splitAll(filepath)
+                        print("filename: "+filename)
+                        newfname = constructFilename(filename,allparts)
+                        logging.info("-- New file name: "+newfname)
+                        copyFile(filename,newfname)
+                        currentapp = ''
+                else:
+                    logging.info("App: "+currentapp+" already processed")
+            except IOError as e:
+                logging.error('I/O error({0}): {1}'.format(e.errno,e.strerror))
+            except:
+                logging.error('Unexpected error:', sys.exc_info()[0])
+                raise
+        if len(completeappids) > 0:
+            writeCompletedApps(logfile)
+        #empty lists for appids and appids found
         del appids[:]
+        del completeappids[:]
+
     logging.info("-- [JOB END] -------------------")
