@@ -15,16 +15,16 @@
   <meta property="og:title" content="Customize search results">
   <meta property="og:description" content="">
 
-  <link rel="shortcut icon" href="designpatterns/1.x/generated/favicon.ico">
+  <link rel="shortcut icon" href="/bower_components/designpatterns/generated/favicon.ico">
 
   <!--[if lte IE 9]>
-            <script src="/designpatterns/1.x/generated/vendor/matchMedia/matchMedia.js"></script>
-            <script src="/designpatterns/1.x/generated/vendor/html5shiv/html5shiv.min.js"></script>
+            <script src="/bower_components/designpatterns/generated/vendor/matchMedia/matchMedia.js"></script>
+            <script src="/bower_components/designpatterns/generated/vendor/html5shiv/html5shiv.min.js"></script>
         <![endif]-->
 
-  <link href="designpatterns/1.x/generated/styles/vendor.css" rel="stylesheet" />
-  <link href="designpatterns/1.x/generated/styles/main.css" rel="stylesheet" />
-  <link href="designpatterns/1.x/generated/styles/appDemo.min.css" rel="stylesheet" />
+  <link href="/bower_components/designpatterns/generated/styles/vendor.css" rel="stylesheet" />
+  <link href="/bower_components/designpatterns/generated/styles/main.css" rel="stylesheet" />
+  <link href="/bower_components/designpatterns/generated/styles/appDemo.min.css" rel="stylesheet" />
   <style>
     /* fix for IE transparent scroll bar */
 
@@ -104,7 +104,7 @@
           <a tabindex="-1" id="search"></a>
           <div class="header keyline-bottom">
             <form role="form" action="/newsearch" class="padding-top-2 padding-right-2 padding-bottom-2">
-              <h2 class="margin-top-0">Search</h2>
+              <h2 class="margin-top-0">Patent Data Search</h2>
               <div class="input-search input-group">
                 <input type="text" name="q" value="{{#if term}}{{term}}{{/if}}" aria-label="Search all fields" title="Search all fields" class="form-control" placeholder="Search all fields" id="txt-find">
                 <span class="input-group-btn">
@@ -136,7 +136,7 @@
           </div>
           <div class="main-wrapper row-grid">
             <div class="app-sidebar filters keyline-right">
-              {{#unless accessToken}}
+              {{#unless accessOK}}
               This Search engine is for Authorized users only.
               <hr> For access, please contact Thomas Beach
               {{/unless}}
@@ -144,10 +144,10 @@
               <div class="close-sidebar keyline-bottom clearfix">
                 <button class="btn-closeSidebar pull-right btn btn-sm btn-default btn-hover"><i class="icon icon-angle-double-left"></i> Close</button>
               </div>
-              {{#if accessToken}}
-              <div class="filter-heading">
-                <span tabindex="0" class="h4">Refine by</span> <a class="filters-clear" href="">Clear</a>
-              </div>
+              {{#if accessOK}}
+                  <div class="filter-heading">
+                    <span tabindex="0" class="h4">Refine by</span> <a class="filters-clear" href="">Clear</a>
+                  </div>
               {{/if}}
 
               <!--  <form class="filters-accordion js-filterSwitch" role="form"> -->
@@ -166,8 +166,8 @@
                 </div>
             </div>
         </div> -->
-                {{#if accessToken}}
-                <a class="filter-group-title" href="#void" data-toggle="collapse" data-target="#2filterGroup1"><i class="icon icon-angle-right pull-right"></i> Filing date range</a>
+                {{#if accessOK}}
+                    <a class="filter-group-title" href="#void" data-toggle="collapse" data-target="#2filterGroup1"><i class="icon icon-angle-right pull-right"></i> Filing date range</a>
                 {{/if}}
                 <div id="2filterGroup1" class="collapse">
                   <div class="filter-group-content">
@@ -183,8 +183,11 @@
                     </div>
                   </div>
                 </div>
-
-
+                <div class="input-search input-group" style="margin-left: 1em;">
+                  <span class="input-group-btn">
+                    <button class="btn btn-primary" style="z-index: 1;">Refine Search</button>
+                  </span>
+                </div>
                 </form>
                 <!--  <a class="filter-group-title" href="#void" data-toggle="collapse" data-target="#2filterGroup2"><i class="icon icon-angle-right pull-right"></i> <span class="badge pull-right">1</span> Application type</a>
         <div id="2filterGroup2" class="collapse">
@@ -368,20 +371,25 @@
                     <a tabindex="-1" id="searchResults"></a>
                     <a href="#void" class="link-sidebar"><i class="icon icon-columns"></i>Refine</a>
                     <div class="pg-actions clearfix">
+                        <div class="row">
+                            {{#if term}}<span> Search Term: <span class="label label-success subtle">{{term}}</span> </span>{{/if}}
+                            {{#if total}}
+                            <span class="pull-left margin-top-0">{{total}} results took {{took}} ms</span>
+                            <span><a href="javascript:void(0);" onclick="resizeText(1)" id="plustext"> [+] Make results bigger</a> | <a href="javascript:void(0);" onclick="resizeText(-1)" id="minustext">[-] Make results smaller</a></span>
+                            {{/if}}
 
-
-                      <h3 class="h4 pull-left margin-top-0"><span style="font-weight: 400">{{#if total}}{{total}} results took {{took}} ms {{/if}}</span></h3>
-                      <div class="btn-pgActions btn-group">
-                        {{#if term}}
-                          <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-default dropdown-toggle" id="btn-pgActions">Download <span class="caret"></span></button>
-                          <ul aria-labelledby="btn-pgActions" class="dropdown-menu">
-                            <!-- <li role="presentation"><a href="#">Print</a></li>
-                                                <li class="divider" role="separator"></li> -->
-                            <!-- <li role="presentation"><a href="#">Download Excel</a></li> -->
-                            <li role="presentation"><a target="_BLANK" href="/download?q={{term}}">Download CSV</a></li>
-                          </ul>
-                          {{/if}}
-                      </div>
+                          <div class="btn-pgActions btn-group">
+                            {{#if term}}
+                              <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-default dropdown-toggle" id="btn-pgActions">Download <span class="caret"></span></button>
+                              <ul aria-labelledby="btn-pgActions" class="dropdown-menu">
+                                <!-- <li role="presentation"><a href="#">Print</a></li>
+                                                    <li class="divider" role="separator"></li> -->
+                                <!-- <li role="presentation"><a href="#">Download Excel</a></li> -->
+                                <li role="presentation"><a target="_BLANK" href="/download?q={{term}}">Download CSV</a></li>
+                              </ul>
+                              {{/if}}
+                          </div>
+                        </div>
                     </div>
                     <!-- <ul class="list-keywords list-unstyled margin-bottom-0">
                                         <li tabindex="0" class="filter-value"><span>Application type: Service</span> <i class="icon icon-close icon-muted"></i></li>
@@ -393,8 +401,6 @@
                       <div class="table--actions row">
                         <div class="col-xs-6">
 
-                          <h2> Search Term: <span class="label label-success subtle">{{term}}</span> </h2>
-                          <h3><a href="javascript:void(0);" onclick="resizeText(1)" id="plustext"> [+] Make results bigger</a> | <a href="javascript:void(0);" onclick="resizeText(-1)" id="minustext">[-] Make results smaller</a></h3>
                         </div>
                         <div class="col-xs-6">
                           <!-- <div class="btn-group dropdown pull-right">
@@ -735,11 +741,11 @@
     </div>
   </main>
 
-  <script src="designpatterns/1.x/generated/scripts/vendor.js"></script>
-  <script src="designpatterns/1.x/generated/scripts/plugins.js"></script>
+  <script src="/bower_components/designpatterns/generated/scripts/vendor.js"></script>
+  <script src="/bower_components/designpatterns/generated/scripts/plugins.js"></script>
   <script src="https://components.uspto.gov/js/ais/2-4-pattern-library.js"></script>
-  <script src="designpatterns/1.x/generated/scripts/appDemo.js"></script>
-  <script src="scripts/script.js"></script>
+  <script src="/bower_components/designpatterns/generated/scripts/appDemo.js"></script>
+  <script src="/client/scripts/script.js"></script>
 
   <script type="text/javascript">
     function resizeText(multiplier) {

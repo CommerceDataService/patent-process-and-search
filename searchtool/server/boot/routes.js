@@ -40,9 +40,11 @@ module.exports = function(app) {
                     maxAge: maxAgeSet,
                     httpOnly: true
                 });
+
                 res.render('newview', {
                     email: req.body.email,
-                    accessToken: token.id
+                    accessToken: token.id,
+                    accessOK: !!(token.id || ! config.requireLogin)
                 });
             }
         });
@@ -148,7 +150,11 @@ module.exports = function(app) {
 
                 });
         } else {
-            res.render('newview');
+            res.render('newview', {
+                email: req.body.email,
+                accessOK: !!(! config.requireLogin || token.id)
+            }
+            );
         }
     });
 

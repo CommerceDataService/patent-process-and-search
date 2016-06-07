@@ -61,6 +61,8 @@ target/
 #Ipython Notebook
 .ipynb_checkpoints
 
+.htpasswd
+
 files/*
 logs/*
 json_files/*
