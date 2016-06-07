@@ -8,19 +8,19 @@ def getAppIDs(fname,series):
         with open(os.path.abspath(fname)) as fd:
             for line in fd:
                 if line.startswith(series):
-                    appids.append(line.strip("\n"))
+                    appids.append(line.strip())
         logging.info("-- Number of appids for this series: "+str(len(appids)))
     except IOError as e:
-         logging.error('I/O error({0}): {1}'.format(e.errno,e.strerror))
+         logging.error('-- I/O error({0}): {1}'.format(e.errno,e.strerror))
     except:
-         logging.error('Unexpected error:', sys.exc_info()[0])
+         logging.error('-- Unexpected error:', sys.exc_info()[0])
          raise
 
 def constructPath(appid):
     series = appid[:2]
     series2 = appid[2:5]
     series3 = appid[5:8]
-    fileurl = oafilespath+'\\'+series+'\\'+series2+'\\'+series3+'\\*\\*\\*\\*\\*.xml'
+    fileurl = oafilespath+'\\'+series+'\\'+series2+'\\'+series3
     return fileurl
 
 def makeDirectory(directory):
@@ -61,38 +61,50 @@ def copyFile(old,new):
         else:
             logging.info("-- File: "+fname+" already exists")
     except IOError as e:
-         logging.error('I/O error({0}): {1}'.format(e.errno,e.strerror))
+         logging.error('-- I/O error({0}): {1}'.format(e.errno,e.strerror))
     except:
-        logging.error('Unexpected error:', sys.exc_info()[0])
+        logging.error('-- Unexpected error:', sys.exc_info()[0])
         raise
 
-def writeCompletedApps(logfname):
+def writeLogs(logfname,idlist):
     try:
         with open(logfname,'a+') as logfile:
-            for appid in completeappids:
+            for appid in idlist:
                 logfile.write(appid+"\n")
     except IOError as e:
-        logging.error('I/O error({0}): {1}'.format(e.errno,e.strerror))
+        logging.error('-- I/O error({0}): {1}'.format(e.errno,e.strerror))
 
-def checkIfProcessed(logfname):
-    try:
-        with open(logfname,'a+') as logfile:
-            logfile.seek(0)
-            if currentapp+"\n" in logfile:
-                logging.info("-- App: "+currentapp+" already processed")
-                return True
-            else:
-                return False
-    except IOError as e:
-        logging.error('I/O error({0}): {1}'.format(e.errno,e.strerror))
-        raise
+# def writeNotFoundApps(logfname):
+#     try:
+#         with open(logfname,'a+') as logfile:
+#             for appid in notfoundappids:
+#                 logfile.write(appid+"\n")
+#     except IOError as e:
+#         logging.error('I/O error({0}): {1}'.format(e.errno,e.strerror))
+
+# def loadProcessedApps(logfname,type):
+#     try:
+#         if os.path.isfile(logfname):
+#             prevcompappids = [line.strip() for line in open(logfname,'r')]
+#     except IOError as e:
+#         logging.error('I/O error({0}): {1}'.format(e.errno,e.strerror))
+#         raise
+#
+# def removeProcessedApps(logfname):
+#     if len(prevcompappids) > 0:
+#         #get diff between appids and prevcompappids
+#     if len(notfoundappids) > 0:
+#         #get diff between appids and notfoundappids
 
 if __name__ == '__main__':
     scriptpath = os.path.dirname(os.path.abspath(__file__))
-    pubidpath = 'pair_app_ids.txt'
+    pubidfname = 'pair_app_ids.txt'
     oafilespath = '\\\\s-mdw-isl-b02-smb.uspto.gov\\BigData\\PE2E-ELP\\PATENT'
     appids = []
     completeappids = []
+    notfoundappids = []
+    nofileappids = []
+    #prevcompappids = []
     currentapp = ''
 
     #logging configuration
@@ -120,35 +132,43 @@ if __name__ == '__main__':
 
     for series in args.series:
         logging.info("-- Processing series: "+series)
-        logfile = os.path.join(scriptpath,'extractedfiles',series,'appcomplete.txt')
-        getAppIDs(os.path.join(scriptpath,pubidpath),series)
+        seriespath = os.path.join(scriptpath,'extractedfiles',series)
+        getAppIDs(os.path.join(scriptpath,pubidfname),series)
+        #loadProcessedApps(logfile)
+        #removeProcessedApps(logfile)
         makeDirectory(os.path.join(scriptpath,'extractedfiles',series))
         for x in appids:
             try:
                 currentapp = x
-                if not checkIfProcessed(logfile):
-                    seriesdirpath = constructPath(x)
-                    for filename in glob.iglob(seriesdirpath,recursive=True):
-                        logging.info("-- Processing file: "+filename)
-                        filepath = os.path.dirname(filename)
-                        print("filepath: "+filepath)
-                        allparts = splitAll(filepath)
-                        print("filename: "+filename)
-                        newfname = constructFilename(filename,allparts)
-                        logging.info("-- New file name: "+newfname)
-                        copyFile(filename,newfname)
-                        currentapp = ''
+                seriesdirpath = constructPath(x)
+                if os.path.isdir(seriesdirpath):
+                    for name in glob.glob(seriesdirpath+'\\OA2XML\\*\\xml\\1.0\\*'):
+                        print(name)
+                        if os.path.isdir(name):
+                            nofileappids.append(currentapp)
+                            logging.info("-- No XML file present for path: "+name)
+                        elif os.path.splitext(name)[1] == '.xml':
+                            allparts = splitAll(os.path.dirname(name))
+                            newfname = constructFilename(name,allparts)
+                            logging.info("-- New file name: "+newfname)
+                            copyFile(name,newfname)
                 else:
-                    logging.info("App: "+currentapp+" already processed")
+                    print("in else: "+currentapp)
+                    logging.info("-- App ID: "+currentapp+" not found")
+                    notfoundappids.append(currentapp)
+                currentapp = ''
             except IOError as e:
-                logging.error('I/O error({0}): {1}'.format(e.errno,e.strerror))
+                logging.error(-- 'I/O error({0}): {1}'.format(e.errno,e.strerror))
             except:
-                logging.error('Unexpected error:', sys.exc_info()[0])
+                logging.error('-- Unexpected error:', sys.exc_info()[0])
                 raise
-        if len(completeappids) > 0:
-            writeCompletedApps(logfile)
-        #empty lists for appids and appids found
+        writeLogs(os.path.join(seriespath,'appcomplete.log'),completeappids)
+        writeLogs(os.path.join(seriespath,'appnotfound.log'),notfoundappids)
+        writeLogs(os.path.join(seriespath,'nofilefound.log'),nofileappids)
+        #empty lists
         del appids[:]
         del completeappids[:]
+        del notfoundappids[:]
+        del nofileappids[:]
 
     logging.info("-- [JOB END] -------------------")
