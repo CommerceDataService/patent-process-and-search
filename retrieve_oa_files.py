@@ -8,7 +8,7 @@ def getAppIDs(fname,series):
         with open(os.path.abspath(fname)) as fd:
             for line in fd:
                 if line.startswith(series):
-                    appids.append(line.strip("\n"))
+                    appids.append(line.strip())
         logging.info("-- Number of appids for this series: "+str(len(appids)))
     except IOError as e:
          logging.error('I/O error({0}): {1}'.format(e.errno,e.strerror))
@@ -60,6 +60,8 @@ def copyFile(old,new):
             completeappids.append(currentapp)
         else:
             logging.info("-- File: "+fname+" already exists")
+            #this is just in case the app id was already not contained in completeappids
+            completeappids.append(currentapp)
     except IOError as e:
          logging.error('I/O error({0}): {1}'.format(e.errno,e.strerror))
     except:
@@ -74,18 +76,27 @@ def writeCompletedApps(logfname):
     except IOError as e:
         logging.error('I/O error({0}): {1}'.format(e.errno,e.strerror))
 
-def checkIfProcessed(logfname):
+def writeNotFoundApps(logfname):
     try:
         with open(logfname,'a+') as logfile:
-            logfile.seek(0)
-            if currentapp+"\n" in logfile:
-                logging.info("-- App: "+currentapp+" already processed")
-                return True
-            else:
-                return False
+            for appid in notfoundappids:
+                logfile.write(appid+"\n")
     except IOError as e:
         logging.error('I/O error({0}): {1}'.format(e.errno,e.strerror))
-        raise
+
+# def loadProcessedApps(logfname,type):
+#     try:
+#         if os.path.isfile(logfname):
+#             prevcompappids = [line.strip() for line in open(logfname,'r')]
+#     except IOError as e:
+#         logging.error('I/O error({0}): {1}'.format(e.errno,e.strerror))
+#         raise
+#
+# def removeProcessedApps(logfname):
+#     if len(prevcompappids) > 0:
+#         #get diff between appids and prevcompappids
+#     if len(notfoundappids) > 0:
+#         #get diff between appids and notfoundappids
 
 if __name__ == '__main__':
     scriptpath = os.path.dirname(os.path.abspath(__file__))
@@ -93,6 +104,8 @@ if __name__ == '__main__':
     oafilespath = '\\\\s-mdw-isl-b02-smb.uspto.gov\\BigData\\PE2E-ELP\\PATENT'
     appids = []
     completeappids = []
+    notfoundappids = []
+    #prevcompappids = []
     currentapp = ''
 
     #logging configuration
@@ -122,24 +135,27 @@ if __name__ == '__main__':
         logging.info("-- Processing series: "+series)
         logfile = os.path.join(scriptpath,'extractedfiles',series,'appcomplete.txt')
         getAppIDs(os.path.join(scriptpath,pubidpath),series)
+        #loadProcessedApps(logfile)
+        #removeProcessedApps(logfile)
         makeDirectory(os.path.join(scriptpath,'extractedfiles',series))
         for x in appids:
             try:
                 currentapp = x
-                if not checkIfProcessed(logfile):
-                    seriesdirpath = constructPath(x)
-                    for filename in glob.iglob(seriesdirpath,recursive=True):
-                        logging.info("-- Processing file: "+filename)
-                        filepath = os.path.dirname(filename)
-                        print("filepath: "+filepath)
-                        allparts = splitAll(filepath)
-                        print("filename: "+filename)
-                        newfname = constructFilename(filename,allparts)
-                        logging.info("-- New file name: "+newfname)
-                        copyFile(filename,newfname)
-                        currentapp = ''
+                seriesdirpath = constructPath(x)
+                for filename in glob.iglob(seriesdirpath,recursive=True):
+                    logging.info("-- Processing file: "+filename)
+                    filepath = os.path.dirname(filename)
+                    print("filepath: "+filepath)
+                    allparts = splitAll(filepath)
+                    print("filename: "+filename)
+                    newfname = constructFilename(filename,allparts)
+                    logging.info("-- New file name: "+newfname)
+                    copyFile(filename,newfname)
+                    currentapp = ''
                 else:
-                    logging.info("App: "+currentapp+" already processed")
+                    notfoundappids.append(currentapp)
+                    logging.info("App ID: "+currentapp+" not found")
+                    currentapp = ''
             except IOError as e:
                 logging.error('I/O error({0}): {1}'.format(e.errno,e.strerror))
             except:
@@ -147,6 +163,8 @@ if __name__ == '__main__':
                 raise
         if len(completeappids) > 0:
             writeCompletedApps(logfile)
+        if len(notfoundappids) > 0:
+            writeNotFoundApps(os.path.join(scriptpath,'extractedfiles',series,'appnotfound.log'))
         #empty lists for appids and appids found
         del appids[:]
         del completeappids[:]
