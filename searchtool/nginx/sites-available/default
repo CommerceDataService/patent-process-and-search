@@ -1,0 +1,55 @@
+upstream app_server {
+    server 127.0.0.1:3000;
+}
+server {
+    listen 80;
+    server_name pto-search.cds.commerce.gov www.pto-search.cds.commerce.gov uspto-2147408724.us-west-2.elb.amazonaws.com ec2-52-37-179-99.us-west-2.compute.amazonaws.com;
+
+    # serve static files
+    location /client {
+        root /home/ubuntu/uspto_ptab/searchtool/;
+        # if asset versioning is used
+        if ($query_string) {
+            expires max;
+        }
+    }
+
+    # serve static files
+    location /bower_components {
+        root /home/ubuntu/uspto_ptab/searchtool/;
+        # if asset versioning is used
+        if ($query_string) {
+            expires max;
+        }
+    }
+
+    set $my_host $host;
+    # if the host header is an ip address change it to www.mysite.com
+    # this works around requests coming from ELB with either the instance's
+    # internal ip address in the case of health checks or an unknown internal
+    # ip address in the case of latency checks. translating them to a known
+    # good host header makes django's ALLOWED_HOSTS happy
+    if ($host ~ "\d+\.\d+\.\d+\.\d+") {
+        set $my_host "pto-search.cds.commerce.gov";
+    }
+
+    location / {
+        auth_basic "This is a private beta.";
+        auth_basic_user_file /home/ubuntu/uspto_ptab/searchtool/.htpasswd;
+
+        proxy_pass_header Server;
+        proxy_set_header Host $my_host;
+        proxy_redirect off;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Scheme $scheme;
+        proxy_connect_timeout 10;
+        proxy_read_timeout 10;
+        set $pto_search app_server;
+        proxy_pass http://$pto_search;
+    }
+
+
+
+    # what to serve if upstream is not available or crashes
+    error_page 500 502 503 504 /media/50x.html;
+}

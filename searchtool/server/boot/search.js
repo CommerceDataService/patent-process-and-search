@@ -48,12 +48,15 @@ exports.buildSearch = function (req, res) {
         s = (req.query.pageno -1) *20;
         currentPage = parseInt(req.query.pageno) ;
     }
-    if(req.query.dataset == 'ptab'){
-      var ptab = true;
-    }
     q = q+dateRange;
     // Build Search .. if no page number set then only show
-    var SEARCH_URL = config.solrURI+'/'+req.query.dataset+'/select?q='+q+'&wt=json&indent=true&rows=20&start='+s+'&hl=true&hl.snippets=10&hl.fl=textdata&hl.fragsize=200&hl.simple.pre=<code>&hl.simple.post=</code>&hl.usePhraseHighlighter=true&q.op=AND&fl=appid,action_type,filename,minread,id,textdata';
+    var SEARCH_URL = config.solrURI+'/'+req.query.dataset+'/select?q='+q+'&wt=json&indent=true&rows=20&start='+s+'&hl=true&hl.snippets=10&hl.fl=textdata&hl.fragsize=200&hl.simple.pre=<code>&hl.simple.post=</code>&hl.usePhraseHighlighter=true&q.op=AND';
+    if (req.query.dataset == 'oafiledatanew'){
+       SEARCH_URL += '&fl=appid,action_type,filename,minread,id,textdata';
+    }else if (req.query.dataset == 'ptab'){
+	    var ptab = true;
+            //add query fields here later for ptab
+   }
 
     // Debug for logs
     console.log(SEARCH_URL);
@@ -68,22 +71,29 @@ exports.buildSearch = function (req, res) {
                 res.render('newview', {
                     result:body.response.docs,
                     total:humanize.numberFormat(body.response.numFound,0),
-                    pagein:paginate({totalItem:body.response.numFound, itemPerPage:20, currentPage:currentPage, url:'/newsearch',params:{q:q}}),
+                    pagein:paginate({totalItem:body.response.numFound, itemPerPage:20, currentPage:currentPage, url:'/newsearch',params: {q: q, dataset: req.query.dataset} }),
                     took:humanize.numberFormat(body.responseHeader.QTime,0 ),
                     highlighting:body.highlighting,
                     term:q,
-                    ptab: ptab
+                    ptab: ptab,
+                    email: req.body.email,
+                    accessOK: !!(! config.requireLogin || token.id)
                 });
             } else {
                 res.render('newview', {
                     total:0,
                     pagein:'',
                     took:body.responseHeader.QTime,
-                    term:q
+                    term:q,
+                    email: req.body.email,
+                    accessOK: !!(! config.requireLogin || token.id)
                 });
             }
         });
     } else {
-        res.render('newview');
+        res.render('newview', {
+            email: req.body.email,
+            accessOK: !!(! config.requireLogin || token.id)
+        });
     }
 };

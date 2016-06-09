@@ -19,12 +19,18 @@ hbs.registerHelper('truncate', function(passedString) {
     var theString = passedString.substring(0,900);
     return new hbs.SafeString(theString)
 });
+hbs.registerHelper('breaklines', function(text) {
+    text = hbs.Utils.escapeExpression(text);
+    text = text.replace(/(\r\n|\n|\r)/gm, '<br>');
+    text = text.replace(/[&\/\\]/g,'_');
+    return new hbs.SafeString(text);
+});
 // must be set to serve views properly when starting the app via `slc run` from
 // the project rootapp.set('views', path.join(__dirname, 'views'));
 
 app.set('views', path.join(__dirname, 'views'));
-app.use(loopback.static(path.join(__dirname, '../client')));
-app.use(loopback.static(path.join(__dirname, '../bower_components')));
+app.use('/client', loopback.static(path.join(__dirname, '../client')));
+app.use('/bower_components', loopback.static(path.join(__dirname, '../bower_components')));
 
 app.use(helmet.xssFilter());
 

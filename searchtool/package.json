@@ -35,7 +35,7 @@
     "loopback-connector-mysql": "^2.2.1",
     "loopback-datasource-juggler": "^2.39.0",
     "moment": "^2.12.0",
-    "nodejs-yapaginate": "0.0.9",
+    "nodejs-yapaginate": "https://github.com/CommerceDataService/nodejs-yapaginate",
     "serve-favicon": "^2.0.1",
     "supertest": "^1.1.0",
     "unirest": "0.4.2"
