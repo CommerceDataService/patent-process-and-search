@@ -1,6 +1,6 @@
 #!/usr/bin/env python 3.5
 
-import sys, os, glob, shutil, logging, time, argparse, glob
+import sys, os, glob, shutil, logging, time, argparse, glob, xmltodict
 from datetime import datetime
 
 def getAppIDs(fname,series):
@@ -96,6 +96,48 @@ def writeLogs(logfname,idlist):
 #     if len(notfoundappids) > 0:
 #         #get diff between appids and notfoundappids
 
+#change extension of file name to specified extension
+def changeExt(fname, ext):
+    seq = (os.path.splitext(fname)[0], ext)
+    return '.'.join(seq)
+
+#this function contains the code for parsing the xml file
+#and writing the results out to a json file
+def parseXML(fname):
+    doccontent = []
+    try:
+        fn = changeExt(fname, 'json')
+        if not os.path.isfile(fn):
+            with open(fname) as fd:
+                logging.info("-- Beginning read of file")
+                doc = xmltodict.parse(fd.read())
+                logging.info("-- End of reading file and converting to dictionary")
+                #print(doc)
+                for x in doc['uspat:OutgoingDocument']['uspat:DocumentMetadata']:
+                    x['uscom:DocumentCode'] = 
+                    
+
+
+                for k,v in doc['uspat:OutgoingDocument']['uspat:DocumentMetadata'].items():
+                        if (k == 'uscom:DocumentCode'):
+                            print(v)
+                            doccontent.append(d
+                        #if isinstance(v,dict):
+                        #    print("TRUE")
+                        #    print(v)
+                        #else:
+                        #    print("FALSE")
+                        #    print("{0} : {1}".format(k, v))
+                    #for key,value in x.items():
+                    #    print("key: "+key+", value: "+value)
+                        #doccode = x['uscom:DocumentCode']
+                        #print("doc code: "+str(doccode))
+
+
+    except IOError as e:
+        logging.error('I/O error({0}): {1}'.format(e.errno.e.strerror))
+        raise
+
 if __name__ == '__main__':
     scriptpath = os.path.dirname(os.path.abspath(__file__))
     pubidfname = 'pair_app_ids.txt'
@@ -123,52 +165,61 @@ if __name__ == '__main__':
                         nargs='*',
                         type=str
                        )
+    parser.add_argument(
+                        '-e',
+                        '--skipextraction',
+                        required=False,
+                        help='Pass this flag to skip File extraction',
+                        action='store_true'
+                       )
     args = parser.parse_args()
     logging.info("-- SCRIPT ARGUMENTS ------------")
     if args.series:
         logging.info("-- Series passed for processing: "+", ".join(args.series))
-
+    logging.info("-- Skip Extraction flag set to: "+str(args.skipextraction))
     logging.info("-- [JOB START]  ----------------")
 
     for series in args.series:
-        logging.info("-- Processing series: "+series)
-        seriespath = os.path.join(scriptpath,'extractedfiles',series)
-        getAppIDs(os.path.join(scriptpath,pubidfname),series)
-        #loadProcessedApps(logfile)
-        #removeProcessedApps(logfile)
-        makeDirectory(os.path.join(scriptpath,'extractedfiles',series))
-        for x in appids:
-            try:
-                currentapp = x
-                seriesdirpath = constructPath(x)
-                if os.path.isdir(seriesdirpath):
-                    for name in glob.glob(seriesdirpath+'\\OA2XML\\*\\xml\\1.0\\*'):
-                        print(name)
-                        if os.path.isdir(name):
-                            nofileappids.append(currentapp)
-                            logging.info("-- No XML file present for path: "+name)
-                        elif os.path.splitext(name)[1] == '.xml':
-                            allparts = splitAll(os.path.dirname(name))
-                            newfname = constructFilename(name,allparts)
-                            logging.info("-- New file name: "+newfname)
-                            copyFile(name,newfname)
-                else:
-                    print("in else: "+currentapp)
-                    logging.info("-- App ID: "+currentapp+" not found")
-                    notfoundappids.append(currentapp)
-                currentapp = ''
-            except IOError as e:
-                logging.error(-- 'I/O error({0}): {1}'.format(e.errno,e.strerror))
-            except:
-                logging.error('-- Unexpected error:', sys.exc_info()[0])
-                raise
-        writeLogs(os.path.join(seriespath,'appcomplete.log'),completeappids)
-        writeLogs(os.path.join(seriespath,'appnotfound.log'),notfoundappids)
-        writeLogs(os.path.join(seriespath,'nofilefound.log'),nofileappids)
-        #empty lists
-        del appids[:]
-        del completeappids[:]
-        del notfoundappids[:]
-        del nofileappids[:]
-
+        if not args.skipextraction:
+            logging.info("-- Processing series: "+series)
+            seriespath = os.path.join(scriptpath,'extractedfiles',series)
+            getAppIDs(os.path.join(scriptpath,pubidfname),series)
+            #loadProcessedApps(logfile)
+            #removeProcessedApps(logfile)
+            makeDirectory(os.path.join(scriptpath,'extractedfiles',series))
+            for x in appids:
+                try:
+                    currentapp = x
+                    seriesdirpath = constructPath(x)
+                    if os.path.isdir(seriesdirpath):
+                        for name in glob.glob(seriesdirpath+'\\OA2XML\\*\\xml\\1.0\\*'):
+                            print(name)
+                            if os.path.isdir(name):
+                                nofileappids.append(currentapp)
+                                logging.info("-- No XML file present for path: "+name)
+                            elif os.path.splitext(name)[1] == '.xml':
+                                allparts = splitAll(os.path.dirname(name))
+                                newfname = constructFilename(name,allparts)
+                                logging.info("-- New file name: "+newfname)
+                                copyFile(name,newfname)
+                    else:
+                        print("in else: "+currentapp)
+                        logging.info("-- App ID: "+currentapp+" not found")
+                        notfoundappids.append(currentapp)
+                    currentapp = ''
+                except IOError as e:
+                    logging.error(-- 'I/O error({0}): {1}'.format(e.errno,e.strerror))
+                except:
+                    logging.error('-- Unexpected error:', sys.exc_info()[0])
+                    raise
+            writeLogs(os.path.join(seriespath,'appcomplete.log'),completeappids)
+            writeLogs(os.path.join(seriespath,'appnotfound.log'),notfoundappids)
+            writeLogs(os.path.join(seriespath,'nofilefound.log'),nofileappids)
+            #empty lists
+            del appids[:]
+            del completeappids[:]
+            del notfoundappids[:]
+            del nofileappids[:]
+        else:
+            parseXML(os.path.join(scriptpath,'extractedfiles','14','Final_Rejection_14092037_WLKDS109387.xml'))
     logging.info("-- [JOB END] -------------------")
