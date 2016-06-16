@@ -106,7 +106,7 @@ module.exports = function(app) {
             s = (req.query.pageno -1) *20;
             currentPage = parseInt(req.query.pageno) ;
         }
-        var SEARCH_URL= config.solrURI+'/oafiledatanew/select?q='+q+'&wt=csv&indent=falue&rows=100&start='+s+'&hl=false&hl.snippets=5&hl.fl=textdata&hl.fragsize=200&hl.simple.pre=<code>&hl.simple.post=</code>&hl.usePhraseHighlighter=true&q.op=AND&fl=appid,action_type,filename,minread,id,textdata';
+        var SEARCH_URL= config.solrURI+'/oafiledatanew/select?q='+q+'&wt=csv&indent=false&rows=2000&start='+s+'&hl=false&hl.snippets=5&hl.fl=textdata&hl.fragsize=200&hl.simple.pre=<code>&hl.simple.post=</code>&hl.usePhraseHighlighter=true&q.op=AND&fl=appid,action_type,filename,minread,id,textdata';
 
         // Create the filename for the CSV and remove any special characters
         var csvfilename = q;
