@@ -101,10 +101,44 @@ def changeExt(fname, ext):
     seq = (os.path.splitext(fname)[0], ext)
     return '.'.join(seq)
 
+def mutate(iterable):
+    ptag = False
+    btag = False
+    if isinstance(iterable, list):
+        indexed_list = enumerate(iterable)
+        print("list")
+    elif isinstance(iterable, dict):
+        indexed_list = iterable.items()
+        print("dict")
+    else:
+        indexed_list = iterable
+        print("else")
+    for k,item in indexed_list:
+        if isinstance(item, list):
+            if k == 'uscom:P':
+                print("P TAG: "+item)
+        if isinstance(item, dict):
+            print("mutate-item")
+            mutate(item)
+        #if isinstance(item, dict) or isinstance(item, list) and k == 'uscom:P':
+        #    print("mutate-item")
+            #if k == 'uscom:P':
+            #    print("P tag")
+            #    ptag = True
+            #elif k == 'com:B':
+            #    print("B tag")
+            #    btag = True
+            #print(str(k))
+            mutate(item)
+        else:
+            if item is not None:
+                
+                 print("else k: "+str(k)+", v: "+str(item))
+
 #this function contains the code for parsing the xml file
 #and writing the results out to a json file
 def parseXML(fname):
-    doccontent = []
+    doccontent = {}
     try:
         fn = changeExt(fname, 'json')
         if not os.path.isfile(fn):
@@ -113,15 +147,41 @@ def parseXML(fname):
                 doc = xmltodict.parse(fd.read())
                 logging.info("-- End of reading file and converting to dictionary")
                 #print(doc)
-                for x in doc['uspat:OutgoingDocument']['uspat:DocumentMetadata']:
-                    x['uscom:DocumentCode'] = 
-                    
+                #for k,v in doc['uspat:OutgoingDocument']['uspat:DocumentMetadata'].items():
+                #    if (k == 'uscom:DocumentCode'):
+                #        doccontent['documentcode'] = v
+                #    elif (k == 'uscom:DocumentSourceIdentifier'):
+                #        doccontent['documentsourceidentifier'] = v
+                #    elif (k == 'com:PartyIdentifier'):
+                #        doccontent['partyidentifier'] = v
+                #    elif (k == 'uscom:GroupArtUnitNumber'):
+                #        doccontent['groupartunitnumber'] = v
+                #    elif (k == 'uscom:ExaminationProgramCode'):
+                #        doccontent['examinationprogramcode'] = v
+                #    elif (k == 'uscom:AccessLevelCategory'):
+                #        doccontent['accesslevelcategory'] = v
+                    #for y in doc['uspat:OutgoingDocument']:
+                for text in doc['uspat:OutgoingDocument']['uscom:FormParagraph']['uscom:P']:
+                    print("PARAGRAPH*************")
+                    mutate(text)
+                    #for k,v in text['uscom:P'].items():
+
+                   #     print("k: "+k+", v: "+v)
+                        #mutate(y)
+
+                        #print("{} {}".format(k, v))
+                    #for y in x['uscom:DocumentCode'].items():
+                    #    print(y)
+                    #doccode = x['uscom:DocumentCode']
+                    #print(doccode)
+                    #doccontent.append(x['DocumentCode'] = x.pop('uscom:DocumentCode'))
+                    #print(doccontent)
 
 
-                for k,v in doc['uspat:OutgoingDocument']['uspat:DocumentMetadata'].items():
-                        if (k == 'uscom:DocumentCode'):
-                            print(v)
-                            doccontent.append(d
+                #for k,v in doc['uspat:OutgoingDocument']['uspat:DocumentMetadata'].items():
+                #        if (k == 'uscom:DocumentCode'):
+                #            print(v)
+                            #doccontent.append(d
                         #if isinstance(v,dict):
                         #    print("TRUE")
                         #    print(v)
