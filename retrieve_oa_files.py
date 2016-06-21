@@ -102,43 +102,33 @@ def changeExt(fname, ext):
     return '.'.join(seq)
 
 def mutate(iterable):
-    ptag = False
-    btag = False
+    linum = None
     if isinstance(iterable, list):
         indexed_list = enumerate(iterable)
-        print("list")
     elif isinstance(iterable, dict):
         indexed_list = iterable.items()
-        print("dict")
     else:
         indexed_list = iterable
-        print("else")
     for k,item in indexed_list:
-        if isinstance(item, list):
-            if k == 'uscom:P':
-                print("P TAG: "+item)
-        if isinstance(item, dict):
-            print("mutate-item")
-            mutate(item)
-        #if isinstance(item, dict) or isinstance(item, list) and k == 'uscom:P':
-        #    print("mutate-item")
-            #if k == 'uscom:P':
-            #    print("P tag")
-            #    ptag = True
-            #elif k == 'com:B':
-            #    print("B tag")
-            #    btag = True
-            #print(str(k))
-            mutate(item)
-        else:
-            if item is not None:
-                
-                 print("else k: "+str(k)+", v: "+str(item))
+        if k != 'uscom:FormParagraphNumber':
+            if isinstance(item, list) or isinstance(item, dict):
+                if k == 'uscom:P':
+                    textdata.append('')
+                mutate(item)
+            else:
+                 if item is not None:
+                     if str(k) == '@com:liNumber':
+                         linum = item
+                     if not str(k).startswith('@') and not k == 'uscom:ExaminationProgramCode':
+                         if linum is not None:
+                             textdata.append(str(linum)+' '+str(item))
+                             linum = None
+                         else:
+                             textdata.append(str(item))
 
 #this function contains the code for parsing the xml file
 #and writing the results out to a json file
 def parseXML(fname):
-    doccontent = {}
     try:
         fn = changeExt(fname, 'json')
         if not os.path.isfile(fn):
@@ -146,53 +136,24 @@ def parseXML(fname):
                 logging.info("-- Beginning read of file")
                 doc = xmltodict.parse(fd.read())
                 logging.info("-- End of reading file and converting to dictionary")
-                #print(doc)
-                #for k,v in doc['uspat:OutgoingDocument']['uspat:DocumentMetadata'].items():
-                #    if (k == 'uscom:DocumentCode'):
-                #        doccontent['documentcode'] = v
-                #    elif (k == 'uscom:DocumentSourceIdentifier'):
-                #        doccontent['documentsourceidentifier'] = v
-                #    elif (k == 'com:PartyIdentifier'):
-                #        doccontent['partyidentifier'] = v
-                #    elif (k == 'uscom:GroupArtUnitNumber'):
-                #        doccontent['groupartunitnumber'] = v
-                #    elif (k == 'uscom:ExaminationProgramCode'):
-                #        doccontent['examinationprogramcode'] = v
-                #    elif (k == 'uscom:AccessLevelCategory'):
-                #        doccontent['accesslevelcategory'] = v
-                    #for y in doc['uspat:OutgoingDocument']:
-                for text in doc['uspat:OutgoingDocument']['uscom:FormParagraph']['uscom:P']:
-                    print("PARAGRAPH*************")
+                for k,v in doc['uspat:OutgoingDocument']['uspat:DocumentMetadata'].items():
+                    if (k == 'uscom:DocumentCode'):
+                        doccontent['documentcode'] = v
+                    elif (k == 'uscom:DocumentSourceIdentifier'):
+                        doccontent['documentsourceidentifier'] = v
+                    elif (k == 'com:PartyIdentifier'):
+                        doccontent['partyidentifier'] = v
+                    elif (k == 'uscom:GroupArtUnitNumber'):
+                        doccontent['groupartunitnumber'] = v
+                    elif (k == 'uscom:ExaminationProgramCode'):
+                        doccontent['examinationprogramcode'] = v
+                    elif (k == 'uscom:AccessLevelCategory'):
+                        doccontent['accesslevelcategory'] = v
+                for text in doc['uspat:OutgoingDocument']['uscom:FormParagraph']:
                     mutate(text)
-                    #for k,v in text['uscom:P'].items():
-
-                   #     print("k: "+k+", v: "+v)
-                        #mutate(y)
-
-                        #print("{} {}".format(k, v))
-                    #for y in x['uscom:DocumentCode'].items():
-                    #    print(y)
-                    #doccode = x['uscom:DocumentCode']
-                    #print(doccode)
-                    #doccontent.append(x['DocumentCode'] = x.pop('uscom:DocumentCode'))
-                    #print(doccontent)
-
-
-                #for k,v in doc['uspat:OutgoingDocument']['uspat:DocumentMetadata'].items():
-                #        if (k == 'uscom:DocumentCode'):
-                #            print(v)
-                            #doccontent.append(d
-                        #if isinstance(v,dict):
-                        #    print("TRUE")
-                        #    print(v)
-                        #else:
-                        #    print("FALSE")
-                        #    print("{0} : {1}".format(k, v))
-                    #for key,value in x.items():
-                    #    print("key: "+key+", value: "+value)
-                        #doccode = x['uscom:DocumentCode']
-                        #print("doc code: "+str(doccode))
-
+                    doccontent['textdata'] = '\n'.join(textdata)
+                for k,v in doccontent:
+                    print("k: "+k+", v: "+v)
 
     except IOError as e:
         logging.error('I/O error({0}): {1}'.format(e.errno.e.strerror))
@@ -208,6 +169,8 @@ if __name__ == '__main__':
     nofileappids = []
     #prevcompappids = []
     currentapp = ''
+    doccontent = {}
+    textdata = []
 
     #logging configuration
     logging.basicConfig(
@@ -282,4 +245,6 @@ if __name__ == '__main__':
             del nofileappids[:]
         else:
             parseXML(os.path.join(scriptpath,'extractedfiles','14','Final_Rejection_14092037_WLKDS109387.xml'))
+            del textdata[:]
+            doccontent.clear()
     logging.info("-- [JOB END] -------------------")
