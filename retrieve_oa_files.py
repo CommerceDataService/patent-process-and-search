@@ -1,6 +1,6 @@
 #!/usr/bin/env python 3.5
 
-import sys, os, glob, shutil, logging, time, argparse, glob, xmltodict
+import sys, os, glob, shutil, logging, time, argparse, glob, xmltodict, json
 from datetime import datetime
 
 def getAppIDs(fname,series):
@@ -126,6 +126,15 @@ def mutate(iterable):
                          else:
                              textdata.append(str(item))
 
+def writeToJSON(fname):
+    try:
+        with open(fname,'w') as outfile:
+            json.dump(doccontent,outfile)
+            logging.info("-- Processing of XML file complete")
+    except IOError as e:
+        logging.error('I/O error({0}): {1}'.format(e.errno.e.strerror))
+        raise
+
 #this function contains the code for parsing the xml file
 #and writing the results out to a json file
 def parseXML(fname):
@@ -151,10 +160,10 @@ def parseXML(fname):
                         doccontent['accesslevelcategory'] = v
                 for text in doc['uspat:OutgoingDocument']['uscom:FormParagraph']:
                     mutate(text)
-                    doccontent['textdata'] = '\n'.join(textdata)
-                for k,v in doccontent:
-                    print("k: "+k+", v: "+v)
-
+                print('textdata: '+'\n'.join(textdata))
+                doccontent['textdata'] = '\n'.join(textdata)
+        else:
+            logging.info('File: '+fname+' already exists')
     except IOError as e:
         logging.error('I/O error({0}): {1}'.format(e.errno.e.strerror))
         raise
@@ -244,7 +253,14 @@ if __name__ == '__main__':
             del notfoundappids[:]
             del nofileappids[:]
         else:
-            parseXML(os.path.join(scriptpath,'extractedfiles','14','Final_Rejection_14092037_WLKDS109387.xml'))
+            #hard-coded for testing.  Needs to be changed!
+            fname = os.path.join(scriptpath,'extractedfiles','14','Final_Rejection_14092037_WLKDS109387.xml')
+            parseXML(fname)
+            fn = changeExt(fname, 'json')
+            if len(doccontent) > 0:
+                writeToJSON(fn)
+            else:
+                logging.info('No content to write to file for File: '+fname)
             del textdata[:]
             doccontent.clear()
     logging.info("-- [JOB END] -------------------")
