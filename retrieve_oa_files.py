@@ -1,6 +1,6 @@
 #!/usr/bin/env python 3.5
 
-import sys, os, glob, shutil, logging, time, argparse, glob, xmltodict, json
+import sys, os, glob, shutil, logging, time, argparse, glob, xmltodict, json, csv
 from datetime import datetime
 
 def getAppIDs(fname,series):
@@ -119,7 +119,7 @@ def mutate(iterable):
                  if item is not None:
                      if str(k) == '@com:liNumber':
                          linum = item
-                     if not str(k).startswith('@') and not k == 'uscom:ExaminationProgramCode':
+                     if not str(k).startswith('@') and not k == 'uscom:ExaminationProgramCode' and not k == 'uscom:AccessLevelCategory':
                          if linum is not None:
                              textdata.append(str(linum)+' '+str(item))
                              linum = None
@@ -160,13 +160,49 @@ def parseXML(fname):
                         doccontent['accesslevelcategory'] = v
                 for text in doc['uspat:OutgoingDocument']['uscom:FormParagraph']:
                     mutate(text)
-                print('textdata: '+'\n'.join(textdata))
+                #print('textdata: '+'\n'.join(textdata))
                 doccontent['textdata'] = '\n'.join(textdata)
+                for k,v in doccontent.items():
+                    print('K: '+k+' V: '+v)
         else:
             logging.info('File: '+fname+' already exists')
     except IOError as e:
         logging.error('I/O error({0}): {1}'.format(e.errno.e.strerror))
         raise
+
+def extractPALMData(appid):
+    #doccontent['file_dt']
+    #doccontent['effective_filing_dt']
+    #doccontent['inv_subj_matter_ty']
+    #doccontent['appl_ty']
+    #doccontent['dn_examiner_no']
+    #doccontent['dn_dw_gau_cd']
+    #doccontent['dn_pto_art_subclass_no']
+    #doccontent['dn_pto_art_class_no']
+    #doccontent['confirm_no']
+    #doccontent['dn_intppty_cust_no']
+    #doccontent['atty_dkt_no']
+    #doccontent['dn_nsrd_curr_loc_cd']
+    #doccontent['dn_nsrd_curr_loc_dt']
+    #doccontent['inv_subj_matter_ty']
+    #doccontent['app_status_no']
+    #doccontent['app_status_dt']
+    #doccontent['wipo_pub_no']
+    #doccontent['patent_no']
+    #doccontent['patent_issue_dt']
+    #doccontent['abandon_dt']
+    #doccontent['disposal_type']
+    #doccontent['se_in']
+    #doccontent[]
+    #how to grep for matching line in PALM file
+    #grep -Fwf file2 file1
+    #if value not found, write to a log
+    with open(os.path.join(scriptpath,'files','OFFICEACTIONS','PALM_extract.dsv', mode='r') as csvfile:
+        reader = csv.reader(csvfile, delimiter='|',quotechar='\"')
+        for row in reader:
+            match = row[1]
+            if match == appid:
+                print(row)
 
 if __name__ == '__main__':
     scriptpath = os.path.dirname(os.path.abspath(__file__))
@@ -212,9 +248,9 @@ if __name__ == '__main__':
     logging.info("-- [JOB START]  ----------------")
 
     for series in args.series:
+        seriespath = os.path.join(scriptpath,'extractedfiles',series)
         if not args.skipextraction:
             logging.info("-- Processing series: "+series)
-            seriespath = os.path.join(scriptpath,'extractedfiles',series)
             getAppIDs(os.path.join(scriptpath,pubidfname),series)
             #loadProcessedApps(logfile)
             #removeProcessedApps(logfile)
@@ -240,7 +276,7 @@ if __name__ == '__main__':
                         notfoundappids.append(currentapp)
                     currentapp = ''
                 except IOError as e:
-                    logging.error(-- 'I/O error({0}): {1}'.format(e.errno,e.strerror))
+                    logging.error('-- I/O error({0}): {1}'.format(e.errno,e.strerror))
                 except:
                     logging.error('-- Unexpected error:', sys.exc_info()[0])
                     raise
@@ -254,8 +290,13 @@ if __name__ == '__main__':
             del nofileappids[:]
         else:
             #hard-coded for testing.  Needs to be changed!
-            fname = os.path.join(scriptpath,'extractedfiles','14','Final_Rejection_14092037_WLKDS109387.xml')
+            filename = '14092037_WLKDS109837_Final_Rejection.xml'
+            fname = os.path.join(seriespath, filename)
+            fileappid = filename.split('_')[0]
+            print(fileappid)
             parseXML(fname)
+            #extractPALMData(appid)
+            #call function to get date from CMS RESTFUL service
             fn = changeExt(fname, 'json')
             if len(doccontent) > 0:
                 writeToJSON(fn)
