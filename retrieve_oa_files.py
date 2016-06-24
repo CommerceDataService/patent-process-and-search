@@ -1,7 +1,8 @@
 #!/usr/bin/env python 3.5
 
-import sys, os, glob, shutil, logging, time, argparse, glob, xmltodict, json, csv
+import sys, os, glob, shutil, logging, time, argparse, glob, xmltodict, json, csv, requests
 from datetime import datetime
+from lxml import etree
 
 def getAppIDs(fname,series):
     try:
@@ -16,16 +17,16 @@ def getAppIDs(fname,series):
          logging.error('-- Unexpected error:', sys.exc_info()[0])
          raise
 
+#construct app ID file path from app ID
 def constructPath(appid):
-    series = appid[:2]
-    series2 = appid[2:5]
-    series3 = appid[5:8]
-    fileurl = oafilespath+'\\'+series+'\\'+series2+'\\'+series3
+    fileurl = oafilespath+'\\'+appid[:2]+'\\'+appid[2:5]+'\\'+appid[5:8]
     return fileurl
 
+#create directory if it does not exist
 def makeDirectory(directory):
     if not os.path.isdir(directory):
         os.makedirs(directory)
+
 
 def splitAll(path):
     allparts = []
@@ -74,58 +75,27 @@ def writeLogs(logfname,idlist):
     except IOError as e:
         logging.error('-- I/O error({0}): {1}'.format(e.errno,e.strerror))
 
-# def writeNotFoundApps(logfname):
-#     try:
-#         with open(logfname,'a+') as logfile:
-#             for appid in notfoundappids:
-#                 logfile.write(appid+"\n")
-#     except IOError as e:
-#         logging.error('I/O error({0}): {1}'.format(e.errno,e.strerror))
-
-# def loadProcessedApps(logfname,type):
-#     try:
-#         if os.path.isfile(logfname):
-#             prevcompappids = [line.strip() for line in open(logfname,'r')]
-#     except IOError as e:
-#         logging.error('I/O error({0}): {1}'.format(e.errno,e.strerror))
-#         raise
-#
-# def removeProcessedApps(logfname):
-#     if len(prevcompappids) > 0:
-#         #get diff between appids and prevcompappids
-#     if len(notfoundappids) > 0:
-#         #get diff between appids and notfoundappids
-
 #change extension of file name to specified extension
 def changeExt(fname, ext):
     seq = (os.path.splitext(fname)[0], ext)
     return '.'.join(seq)
 
-def mutate(iterable):
-    linum = None
-    if isinstance(iterable, list):
-        indexed_list = enumerate(iterable)
-    elif isinstance(iterable, dict):
-        indexed_list = iterable.items()
+#get metadata and text from P tags in XML document
+def getText(node):
+    contents = ''
+    if node.tag == '{urn:us:gov:doc:uspto:common}LI' and node.text is not None:
+        contents += (node.get('{http://www.wipo.int/standards/XMLSchema/ST96/Common}liNumber')+' '+node.text +
+                     ''.join(map(getText, node)) +
+                     (node.tail or ''))
+    elif node.tag == '{urn:us:gov:doc:uspto:common}DataTable':
+        return contents
     else:
-        indexed_list = iterable
-    for k,item in indexed_list:
-        if k != 'uscom:FormParagraphNumber':
-            if isinstance(item, list) or isinstance(item, dict):
-                if k == 'uscom:P':
-                    textdata.append('')
-                mutate(item)
-            else:
-                 if item is not None:
-                     if str(k) == '@com:liNumber':
-                         linum = item
-                     if not str(k).startswith('@') and not k == 'uscom:ExaminationProgramCode' and not k == 'uscom:AccessLevelCategory':
-                         if linum is not None:
-                             textdata.append(str(linum)+' '+str(item))
-                             linum = None
-                         else:
-                             textdata.append(str(item))
+        contents += ((node.text or '') +
+                    ''.join(map(getText, node)) +
+                    (node.tail or ''))
+    return contents
 
+#write dictionary to JSON file
 def writeToJSON(fname):
     try:
         with open(fname,'w') as outfile:
@@ -135,74 +105,90 @@ def writeToJSON(fname):
         logging.error('I/O error({0}): {1}'.format(e.errno.e.strerror))
         raise
 
-#this function contains the code for parsing the xml file
-#and writing the results out to a json file
+#code for parsing XML file
 def parseXML(fname):
     try:
+        textdata = ''
         fn = changeExt(fname, 'json')
         if not os.path.isfile(fn):
-            with open(fname) as fd:
-                logging.info("-- Beginning read of file")
-                doc = xmltodict.parse(fd.read())
-                logging.info("-- End of reading file and converting to dictionary")
-                for k,v in doc['uspat:OutgoingDocument']['uspat:DocumentMetadata'].items():
-                    if (k == 'uscom:DocumentCode'):
-                        doccontent['documentcode'] = v
-                    elif (k == 'uscom:DocumentSourceIdentifier'):
-                        doccontent['documentsourceidentifier'] = v
-                    elif (k == 'com:PartyIdentifier'):
-                        doccontent['partyidentifier'] = v
-                    elif (k == 'uscom:GroupArtUnitNumber'):
-                        doccontent['groupartunitnumber'] = v
-                    elif (k == 'uscom:ExaminationProgramCode'):
-                        doccontent['examinationprogramcode'] = v
-                    elif (k == 'uscom:AccessLevelCategory'):
-                        doccontent['accesslevelcategory'] = v
-                for text in doc['uspat:OutgoingDocument']['uscom:FormParagraph']:
-                    mutate(text)
-                #print('textdata: '+'\n'.join(textdata))
-                doccontent['textdata'] = '\n'.join(textdata)
-                for k,v in doccontent.items():
-                    print('K: '+k+' V: '+v)
+            parser = etree.XMLParser(remove_pis=True)
+            tree = etree.parse(fname, parser=parser)
+            root = tree.getroot()
+            namespaces = {'uspat':'urn:us:gov:doc:uspto:patent',
+                          'uscom':'urn:us:gov:doc:uspto:common',
+                          'com':'http://www.wipo.int/standards/XMLSchema/ST96/Common'}
+
+            for item in root.xpath('//uspat:DocumentMetadata', namespaces=namespaces):
+                doccontent['documentcode'] = item.find('uscom:DocumentCode', namespaces=namespaces).text
+                doccontent['documentsourceidentifier'] = item.find('uscom:DocumentSourceIdentifier', namespaces=namespaces).text
+                doccontent['partyidentifier'] = item.find('com:PartyIdentifier', namespaces=namespaces).text
+                doccontent['groupartunitnumber'] = item.find('uscom:GroupArtUnitNumber', namespaces = namespaces).text
+
+            for item in root.xpath('//uscom:P',namespaces=namespaces):
+                textdata += getText(item)+'\n'
+
+            doccontent['textdata'] = textdata
         else:
             logging.info('File: '+fname+' already exists')
     except IOError as e:
         logging.error('I/O error({0}): {1}'.format(e.errno.e.strerror))
         raise
 
+#code for extracting PALM data from PALM series file and combine with other elements from XML file
 def extractPALMData(appid):
-    #doccontent['file_dt']
-    #doccontent['effective_filing_dt']
-    #doccontent['inv_subj_matter_ty']
-    #doccontent['appl_ty']
-    #doccontent['dn_examiner_no']
-    #doccontent['dn_dw_gau_cd']
-    #doccontent['dn_pto_art_subclass_no']
-    #doccontent['dn_pto_art_class_no']
-    #doccontent['confirm_no']
-    #doccontent['dn_intppty_cust_no']
-    #doccontent['atty_dkt_no']
-    #doccontent['dn_nsrd_curr_loc_cd']
-    #doccontent['dn_nsrd_curr_loc_dt']
-    #doccontent['inv_subj_matter_ty']
-    #doccontent['app_status_no']
-    #doccontent['app_status_dt']
-    #doccontent['wipo_pub_no']
-    #doccontent['patent_no']
-    #doccontent['patent_issue_dt']
-    #doccontent['abandon_dt']
-    #doccontent['disposal_type']
-    #doccontent['se_in']
-    #doccontent[]
-    #how to grep for matching line in PALM file
-    #grep -Fwf file2 file1
-    #if value not found, write to a log
-    with open(os.path.join(scriptpath,'files','OFFICEACTIONS','PALM_extract.dsv', mode='r') as csvfile:
-        reader = csv.reader(csvfile, delimiter='|',quotechar='\"')
-        for row in reader:
-            match = row[1]
-            if match == appid:
-                print(row)
+    try:
+        with open(os.path.join(scriptpath,'files','OFFICEACTIONS','PALM_extract.dsv'), 'r') as csvfile:
+            reader = csv.reader(csvfile, delimiter='|',quotechar='\"')
+            next(reader, None)  # skip the headers
+            for row in reader:
+                match = row[0]
+                if match == appid:
+                    print(row)
+                    doccontent['appl_id'] = row[0].strip()
+                    doccontent['file_dt'] = row[1].strip()
+                    doccontent['effective_filing_dt'] = row[2].strip()
+                    doccontent['inv_subj_matter_ty'] = row[3].strip()
+                    doccontent['appl_ty'] = row[4].strip()
+                    doccontent['dn_examiner_no'] = row[5].strip()
+                    doccontent['dn_dw_gau_cd'] = row[6].strip()
+                    doccontent['dn_pto_art_class_no'] = row[7].strip()
+                    doccontent['dn_pto_art_subclass_no'] = row[8].strip()
+                    doccontent['confirm_no'] = row[9].strip()
+                    doccontent['dn_intppty_cust_no'] = row[10].strip()
+                    doccontent['atty_dkt_no'] = row[11].strip()
+                    doccontent['dn_nsrd_curr_loc_cd'] = row[12].strip()
+                    doccontent['dn_nsrd_curr_loc_dt'] = row[13].strip()
+                    doccontent['app_status_no'] = row[14].strip()
+                    doccontent['app_status_dt'] = row[15].strip()
+                    doccontent['wipo_pub_no'] = row[16].strip()
+                    doccontent['patent_no'] = row[17].strip()
+                    doccontent['patent_issue_dt'] = row[18].strip()
+                    doccontent['abandon_dt'] = row[19].strip()
+                    doccontent['disposal_type'] = row[20].strip()
+                    doccontent['se_in'] = row[21].strip()
+                    doccontent['pct_no'] = row[22].strip()
+                    doccontent['invn_ttl_tx'] = row[23].strip()
+                    doccontent['aia_in'] = row[24].strip()
+                    doccontent['continuity_type'] = row[25].strip()
+                    doccontent['frgn_priority_clm'] = row[26].strip()
+                    doccontent['usc_119_met'] = row[27].strip()
+                    doccontent['fig_qt'] = row[28].strip()
+                    doccontent['indp_claim_qt'] = row[29].strip()
+                    doccontent['efctv_claims_qt'] = row[30].strip()
+                    return True
+            else:
+                logging.error('-- Application ID: '+appid+' not found in PALM data')
+                notfoundPALM.append(appid)
+                return False
+    except IOError as e:
+        logging.error('I/O error({0}): {1}'.format(e.errno.e.strerror))
+        return False
+#get official application doc date
+def getDocDate(appid):
+    try:
+        
+    requests.exceptions.RequestException as e:
+        logging.error('-- CMS Restful error: '+e)
 
 if __name__ == '__main__':
     scriptpath = os.path.dirname(os.path.abspath(__file__))
@@ -212,10 +198,10 @@ if __name__ == '__main__':
     completeappids = []
     notfoundappids = []
     nofileappids = []
-    #prevcompappids = []
+    notfoundPALM = []
+    notfoundCMS = []
     currentapp = ''
     doccontent = {}
-    textdata = []
 
     #logging configuration
     logging.basicConfig(
@@ -252,8 +238,6 @@ if __name__ == '__main__':
         if not args.skipextraction:
             logging.info("-- Processing series: "+series)
             getAppIDs(os.path.join(scriptpath,pubidfname),series)
-            #loadProcessedApps(logfile)
-            #removeProcessedApps(logfile)
             makeDirectory(os.path.join(scriptpath,'extractedfiles',series))
             for x in appids:
                 try:
@@ -290,18 +274,25 @@ if __name__ == '__main__':
             del nofileappids[:]
         else:
             #hard-coded for testing.  Needs to be changed!
+            #search seriespath for files, for each file, process
             filename = '14092037_WLKDS109837_Final_Rejection.xml'
+            logging.info('-- Processing file: '+filename)
             fname = os.path.join(seriespath, filename)
             fileappid = filename.split('_')[0]
-            print(fileappid)
-            parseXML(fname)
-            #extractPALMData(appid)
-            #call function to get date from CMS RESTFUL service
-            fn = changeExt(fname, 'json')
-            if len(doccontent) > 0:
-                writeToJSON(fn)
+            doccontent['type'] = 'oa'
+            doccontent['appid'] = fileappid
+            
+            if parseXML(fname):
+                fn = changeExt(fname, 'json')
+                if extractPALMData(fileappid):
+                    if getDocDate(fileappid):
+                            writeToJSON(fn)
+                            logging.info('-- Processing of file: '+filename+' is complete')
+                    else:
+                        logging.error('-- Retrieval of Doc Date for file: '+filename+' failed')
+                else:
+                    logging.error('-- Extraction of PALM data for file: '+filename+' failed')
             else:
-                logging.info('No content to write to file for File: '+fname)
-            del textdata[:]
+                logging.error('-- Parsing of file: '+filename+' failed')
             doccontent.clear()
     logging.info("-- [JOB END] -------------------")
