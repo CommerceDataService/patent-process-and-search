@@ -1,6 +1,6 @@
 #!/usr/bin/env python 3.5
 
-import sys, os, glob, shutil, logging, time, argparse, glob, xmltodict, json, csv, requests
+import sys, os, glob, shutil, logging, time, argparse, glob, json, requests
 from datetime import datetime
 from lxml import etree
 
@@ -128,69 +128,89 @@ def parseXML(fname):
                 textdata += getText(item)+'\n'
 
             doccontent['textdata'] = textdata
+            return True
         else:
             logging.info('File: '+fname+' already exists')
+            return False
     except IOError as e:
         logging.error('I/O error({0}): {1}'.format(e.errno.e.strerror))
         raise
+        return False
 
 #code for extracting PALM data from PALM series file and combine with other elements from XML file
-def extractPALMData(appid):
+def extractPALMData():
     try:
-        with open(os.path.join(scriptpath,'files','OFFICEACTIONS','PALM_extract.dsv'), 'r') as csvfile:
-            reader = csv.reader(csvfile, delimiter='|',quotechar='\"')
-            next(reader, None)  # skip the headers
-            for row in reader:
-                match = row[0]
-                if match == appid:
-                    print(row)
-                    doccontent['appl_id'] = row[0].strip()
-                    doccontent['file_dt'] = row[1].strip()
-                    doccontent['effective_filing_dt'] = row[2].strip()
-                    doccontent['inv_subj_matter_ty'] = row[3].strip()
-                    doccontent['appl_ty'] = row[4].strip()
-                    doccontent['dn_examiner_no'] = row[5].strip()
-                    doccontent['dn_dw_gau_cd'] = row[6].strip()
-                    doccontent['dn_pto_art_class_no'] = row[7].strip()
-                    doccontent['dn_pto_art_subclass_no'] = row[8].strip()
-                    doccontent['confirm_no'] = row[9].strip()
-                    doccontent['dn_intppty_cust_no'] = row[10].strip()
-                    doccontent['atty_dkt_no'] = row[11].strip()
-                    doccontent['dn_nsrd_curr_loc_cd'] = row[12].strip()
-                    doccontent['dn_nsrd_curr_loc_dt'] = row[13].strip()
-                    doccontent['app_status_no'] = row[14].strip()
-                    doccontent['app_status_dt'] = row[15].strip()
-                    doccontent['wipo_pub_no'] = row[16].strip()
-                    doccontent['patent_no'] = row[17].strip()
-                    doccontent['patent_issue_dt'] = row[18].strip()
-                    doccontent['abandon_dt'] = row[19].strip()
-                    doccontent['disposal_type'] = row[20].strip()
-                    doccontent['se_in'] = row[21].strip()
-                    doccontent['pct_no'] = row[22].strip()
-                    doccontent['invn_ttl_tx'] = row[23].strip()
-                    doccontent['aia_in'] = row[24].strip()
-                    doccontent['continuity_type'] = row[25].strip()
-                    doccontent['frgn_priority_clm'] = row[26].strip()
-                    doccontent['usc_119_met'] = row[27].strip()
-                    doccontent['fig_qt'] = row[28].strip()
-                    doccontent['indp_claim_qt'] = row[29].strip()
-                    doccontent['efctv_claims_qt'] = row[30].strip()
-                    return True
-            else:
-                logging.error('-- Application ID: '+appid+' not found in PALM data')
-                notfoundPALM.append(appid)
-                return False
+        with open(os.path.join(scriptpath,'files','OFFICEACTIONS','app'+series+'.json')) as datafile:
+            jsoncontent = json.load(datafile.read())
+            jsoncontent = jsoncontent.encode('utf-8').strip()
+            for item in jsoncontent['items']:
+                print(item)
+        
+        #convert dates to UTC!!!
+        #from datetime import datetime
+        #timestamp = dt.replace(tzinfo=timezone.utc).timestamp()
+
+
+        #need to set path to share drive on PTO computer
+        #with open(os.path.join(scriptpath,'files','OFFICEACTIONS','PALM_extract.dsv'), 'r') as csvfile:
+        #    reader = csv.reader(csvfile, delimiter='|',quotechar='\"')
+        #    next(reader, None)  # skip the headers
+        #    for row in reader:
+        #        match = row[0]
+        #        if match == appid:
+        #            print(row)
+        #            doccontent['appl_id'] = row[0].strip()
+        #            doccontent['file_dt'] = row[1].strip()
+        #            doccontent['effective_filing_dt'] = row[2].strip()
+        #            doccontent['inv_subj_matter_ty'] = row[3].strip()
+        #            doccontent['appl_ty'] = row[4].strip()
+        #            doccontent['dn_examiner_no'] = row[5].strip()
+        #            doccontent['dn_dw_gau_cd'] = row[6].strip()
+        #            doccontent['dn_pto_art_class_no'] = row[7].strip()
+        #            doccontent['dn_pto_art_subclass_no'] = row[8].strip()
+        #            doccontent['confirm_no'] = row[9].strip()
+        #            doccontent['dn_intppty_cust_no'] = row[10].strip()
+        #            doccontent['atty_dkt_no'] = row[11].strip()
+        #            doccontent['dn_nsrd_curr_loc_cd'] = row[12].strip()
+        #            doccontent['dn_nsrd_curr_loc_dt'] = row[13].strip()
+        #            doccontent['app_status_no'] = row[14].strip()
+        #            doccontent['app_status_dt'] = row[15].strip()
+        #            doccontent['wipo_pub_no'] = row[16].strip()
+        #            doccontent['patent_no'] = row[17].strip()
+        #            doccontent['patent_issue_dt'] = row[18].strip()
+        #            doccontent['abandon_dt'] = row[19].strip()
+        #            doccontent['disposal_type'] = row[20].strip()
+        #            doccontent['se_in'] = row[21].strip()
+        #            doccontent['pct_no'] = row[22].strip()
+        #            doccontent['invn_ttl_tx'] = row[23].strip()
+        #            doccontent['aia_in'] = row[24].strip()
+        #            doccontent['continuity_type'] = row[25].strip()
+        #            doccontent['frgn_priority_clm'] = row[26].strip()
+        #            doccontent['usc_119_met'] = row[27].strip()
+        #            doccontent['fig_qt'] = row[28].strip()
+        #            doccontent['indp_claim_qt'] = row[29].strip()
+        #            doccontent['efctv_claims_qt'] = row[30].strip()
+        #            return True
+        #    else:
+        #        logging.error('-- Application ID: '+appid+' not found in PALM data')
+        #        notfoundPALM.append(appid)
+        #        return False
     except IOError as e:
         logging.error('I/O error({0}): {1}'.format(e.errno.e.strerror))
         return False
+
 #get official application doc date
 def getDocDate(appid):
     try:
         url = 'http://pelp-services-eap-0.dev.uspto.gov:8080/cmsservice/api/#/'
         #appid?
-        response = requests.get(url, data=data)
-    requests.exceptions.RequestException as e:
+        #response = requests.get(url, data=data)
+        doccontent['doc_date'] = ''
+        return True
+    except requests.exceptions.RequestException as e:
         logging.error('-- CMS Restful error: '+e)
+        notfoundCMS.append(appid)
+        return False
 
 if __name__ == '__main__':
     scriptpath = os.path.dirname(os.path.abspath(__file__))
@@ -202,6 +222,7 @@ if __name__ == '__main__':
     nofileappids = []
     notfoundPALM = []
     notfoundCMS = []
+    #solrFailed = []
     currentapp = ''
     doccontent = {}
 
@@ -228,11 +249,19 @@ if __name__ == '__main__':
                         help='Pass this flag to skip File extraction',
                         action='store_true'
                        )
+    parser.add_argument(
+                        '-p',
+                        '--skipparsing',
+                        required=False,
+                        help='Pass this flag to skip File parsing',
+                        action='store_true'
+                       )
     args = parser.parse_args()
     logging.info("-- SCRIPT ARGUMENTS ------------")
     if args.series:
         logging.info("-- Series passed for processing: "+", ".join(args.series))
     logging.info("-- Skip Extraction flag set to: "+str(args.skipextraction))
+    logging.info("-- Skip Parsing flag set to: "+str(args.skipparsing))
     logging.info("-- [JOB START]  ----------------")
 
     for series in args.series:
@@ -245,6 +274,8 @@ if __name__ == '__main__':
                 try:
                     currentapp = x
                     seriesdirpath = constructPath(x)
+                    #add code so that for each app ID, if there is a case where a directory is found, but
+                    #no file, then do not keep any of the files for that app ID
                     if os.path.isdir(seriesdirpath):
                         for name in glob.glob(seriesdirpath+'\\OA2XML\\*\\xml\\1.0\\*'):
                             print(name)
@@ -274,27 +305,35 @@ if __name__ == '__main__':
             del completeappids[:]
             del notfoundappids[:]
             del nofileappids[:]
-        else:
-            #hard-coded for testing.  Needs to be changed!
-            #search seriespath for files, for each file, process
-            filename = '14092037_WLKDS109837_Final_Rejection.xml'
-            logging.info('-- Processing file: '+filename)
-            fname = os.path.join(seriespath, filename)
-            fileappid = filename.split('_')[0]
-            doccontent['type'] = 'oa'
-            doccontent['appid'] = fileappid
-            
-            if parseXML(fname):
-                fn = changeExt(fname, 'json')
-                if extractPALMData(fileappid):
-                    if getDocDate(fileappid):
+        elif not args.skipparsing:
+            print('seriespath: '+seriespath)
+            for filename in glob.glob(os.path.join(seriespath,'*.xml')):
+                print('filename: '+filename)
+                #filename = '14092037_WLKDS109837_Final_Rejection.xml'
+                logging.info('-- Processing file: '+filename)
+                fname = os.path.join(seriespath, filename)
+                fileappid = filename.split('_')[0]
+                doccontent['type'] = 'oa'
+                doccontent['appid'] = fileappid
+
+                if parseXML(fname):
+                    fn = changeExt(fname, 'json')
+                    if extractPALMData():
+                        if getDocDate(fileappid):
                             writeToJSON(fn)
                             logging.info('-- Processing of file: '+filename+' is complete')
+                        else:
+                            logging.error('-- Retrieval of Doc Date for file: '+filename+' failed')
                     else:
-                        logging.error('-- Retrieval of Doc Date for file: '+filename+' failed')
+                        logging.error('-- Extraction of PALM data for file: '+filename+' failed')
                 else:
-                    logging.error('-- Extraction of PALM data for file: '+filename+' failed')
-            else:
-                logging.error('-- Parsing of file: '+filename+' failed')
-            doccontent.clear()
+                    logging.error('-- Parsing of file: '+filename+' failed')
+                doccontent.clear()
+                del notfoundPALM[:]
+                del notfoundCMS[:]
+            writeLogs(os.path.join(seriespath,'notfoundPALM.log'),notfoundPALM)
+            writeLogs(os.path.join(seriespath,'notfoundCMS.log'),notfoundCMS)
+        #Placeholder for solr processing
+        #elif not args.skipsolr:
+        #for other file directory, set blank doc_date for now.
     logging.info("-- [JOB END] -------------------")
