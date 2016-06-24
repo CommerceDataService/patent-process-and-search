@@ -186,7 +186,9 @@ def extractPALMData(appid):
 #get official application doc date
 def getDocDate(appid):
     try:
-        
+        url = 'http://pelp-services-eap-0.dev.uspto.gov:8080/cmsservice/api/#/'
+        #appid?
+        response = requests.get(url, data=data)
     requests.exceptions.RequestException as e:
         logging.error('-- CMS Restful error: '+e)
 
