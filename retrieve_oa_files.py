@@ -1,8 +1,18 @@
 #!/usr/bin/env python 3.5
 
-import sys, os, glob, shutil, logging, time, argparse, glob, json, requests, csv
+#Author:        Sasan Bahadaran
+#Date:          6/27/16
+#Organization:  Commerce Data Service
+#Description:   This script crawls specific directory structures of Office Action
+#files, renames them with app ID and IFW number, parses the XML, combines the XML
+#with PALM data from flat files, and gets the post date from a CMS RESTFUL service.
+#It then transforms the resulting dictionary to JSON and sends it to Solr for indexing.
+
+import sys, os, glob, shutil, logging, time, argparse, glob, json, requests, csv, collections
+
 from datetime import datetime
 from lxml import etree
+
 
 def getAppIDs(fname,series):
     try:
@@ -27,7 +37,7 @@ def makeDirectory(directory):
     if not os.path.isdir(directory):
         os.makedirs(directory)
 
-
+#split path to get app ID
 def splitAll(path):
     allparts = []
     while 1:
@@ -43,6 +53,7 @@ def splitAll(path):
             allparts.insert(0, parts[1])
     return allparts
 
+#construct file name from app ID, ifw number, and original name
 def constructFilename(fname,paramList):
     fpath,filename = os.path.split(fname)
     filename = os.path.splitext(filename)[0]
@@ -52,6 +63,7 @@ def constructFilename(fname,paramList):
     print("new filename: "+newfname)
     return newfname
 
+#copy extracted file to central directory
 def copyFile(old,new):
     try:
         fpath, fname = os.path.split(new)
@@ -67,6 +79,7 @@ def copyFile(old,new):
         logging.error('-- Unexpected error:', sys.exc_info()[0])
         raise
 
+#write list of app ID's to specified log file
 def writeLogs(logfname,idlist):
     try:
         with open(logfname,'a+') as logfile:
@@ -87,7 +100,11 @@ def getText(node):
         contents += (node.get('{http://www.wipo.int/standards/XMLSchema/ST96/Common}liNumber')+' '+node.text +
                      ''.join(map(getText, node)) +
                      (node.tail or ''))
+    #ignore data table text
     elif node.tag == '{urn:us:gov:doc:uspto:common}DataTable':
+        return contents
+    #ignore image paragraphs
+    elif node.tag == '{http://www.wipo.int/standards/XMLSchema/ST96/Common}Image':
         return contents
     else:
         contents += ((node.text or '') +
@@ -127,6 +144,8 @@ def parseXML(fname):
             for item in root.xpath('//uscom:P',namespaces=namespaces):
                 textdata += getText(item)+'\n'
 
+            print("file: "+fname)
+            print("TEXT: "+textdata)
             doccontent['textdata'] = textdata
             return True
         else:
@@ -137,6 +156,7 @@ def parseXML(fname):
         raise
         return False
 
+#convert day-month-year to UTC timestamp
 def convertToUTC(date):
     dt = datetime.strptime(date, '%d-%b-%y')
     return time.mktime(dt.timetuple())
@@ -144,26 +164,13 @@ def convertToUTC(date):
 #code for extracting PALM data from PALM series file and combine with other elements from XML file
 def extractPALMData(fileappid):
     try:
-        #with open(os.path.join(scriptpath,'files','OFFICEACTIONS','app'+series+'.json'),'r',encoding='latin-1') as datafile:
-        #with json.load(os.path.join(scriptpath,'files','OFFICEACTIONS','app'+series+'.json')) as jsondoc:
-         #   jsoncontent = json.loads(datafile.read())
-            #jsoncontent = jsoncontent.encode('utf-8').strip()
-         #   for item in jsondoc['items']:
-         #       print(item)
-        
-        #convert dates to UTC!!!
-        #from datetime import datetime
-        #timestamp = dt.replace(tzinfo=timezone.utc).timestamp()
-
         #need to set path to share drive on PTO computer
         with open(os.path.join(scriptpath, 'files', 'OFFICEACTIONS', 'app'+series+'.csv'), 'r', encoding = 'latin-1') as datafile:
             reader = csv.reader(datafile)
             next(reader, None)  #skip the header
-            print("FILEAPPID: "+fileappid)
             for row in reader:
                 match = row[0]
                 if match == fileappid:
-                    print(row)
                     doccontent['appl_id'] = row[0].strip()
                     doccontent['file_dt'] = row[1].strip()
                     doccontent['effective_filing_dt'] = convertToUTC(row[2].strip())
@@ -207,11 +214,9 @@ def extractPALMData(fileappid):
 #get official application doc date
 def getDocDate(appid, ifwnum):
     try:
-        #change url to add document ID
-        documentId = ''
         url = 'http://pelp-services-eap-0.dev.uspto.gov:8080/cmsservice/api/#/patent/getDocumentsByType/'+appid+'/'+ifwnum+'/xml'
-        #appid?
         #response = requests.get(url, data=data)
+        #convert date to UTC!
         doccontent['doc_date'] = ''
         return True
     except requests.exceptions.RequestException as e:
@@ -219,20 +224,28 @@ def getDocDate(appid, ifwnum):
         notfoundCMS.append(appid)
         return False
 
+#read JSON file and set up for sending to Solr
+#def readJSON():
+
 #send document to Solr for indexing
 #placeholder for now
 def sendToSolr(core, json):
     #add try-catch block
-    jsontext = '{"add":{ "doc":'+json+',"boost":1.0,"overwrite":true, "commitWithin": 1000}}'
-    url = os.path.join(solrURL,"solr",core,"update")
-    headers = {"Content-type" : "application/json"}
+    try:
+        jsontext = '{"add":{ "doc":'+json+',"boost":1.0,"overwrite":true, "commitWithin": 1000}}'
+        #url = os.path.join(solrURL,"solr",core,"update")
+        #headers = {"Content-type" : "application/json"}
+        #return requests.post(url, data=jsontext, headers=headers)
 
-    return requests.post(url, data=jsontext, headers=headers)
+    except requests.exceptions.RequestException as e:
+        logging.error('-- Solr indexing error: '+e)
+        #add to solrFailed
 
 if __name__ == '__main__':
     scriptpath = os.path.dirname(os.path.abspath(__file__))
     pubidfname = 'pair_app_ids.txt'
     oafilespath = '\\\\s-mdw-isl-b02-smb.uspto.gov\\BigData\\PE2E-ELP\\PATENT'
+    solrURL = ''
     appids = []
     completeappids = []
     notfoundappids = []
@@ -241,7 +254,7 @@ if __name__ == '__main__':
     notfoundCMS = []
     #solrFailed = []
     currentapp = ''
-    doccontent = {}
+    doccontent = collections.OrderedDict()
 
     #logging configuration
     logging.basicConfig(
@@ -273,12 +286,20 @@ if __name__ == '__main__':
                         help='Pass this flag to skip File parsing',
                         action='store_true'
                        )
+    parser.add_argument(
+                        '-i',
+                        '--skipsolr',
+                        required=False,
+                        help='Pass this flag to skip Solr indexing',
+                        action='store_true'
+                       )
     args = parser.parse_args()
     logging.info("-- SCRIPT ARGUMENTS ------------")
     if args.series:
         logging.info("-- Series passed for processing: "+", ".join(args.series))
     logging.info("-- Skip Extraction flag set to: "+str(args.skipextraction))
     logging.info("-- Skip Parsing flag set to: "+str(args.skipparsing))
+    logging.info("-- Skip Solr flag set to: "+str(args.skipsolr))
     logging.info("-- [JOB START]  ----------------")
 
     for series in args.series:
@@ -295,7 +316,6 @@ if __name__ == '__main__':
                     #no file, then do not keep any of the files for that app ID
                     if os.path.isdir(seriesdirpath):
                         for name in glob.glob(seriesdirpath+'\\OA2XML\\*\\xml\\1.0\\*'):
-                            print(name)
                             if os.path.isdir(name):
                                 nofileappids.append(currentapp)
                                 logging.info("-- No XML file present for path: "+name)
@@ -323,15 +343,16 @@ if __name__ == '__main__':
             del notfoundappids[:]
             del nofileappids[:]
         elif not args.skipparsing:
-            print('seriespath: '+seriespath)
             for filename in glob.glob(os.path.join(seriespath,'*.xml')):
                 fileappid = (os.path.basename(filename)).split('_')[0]
                 ifwnum = (os.path.basename(filename)).split('_')[1]
                 logging.info('-- Processing file: '+filename)
                 fname = os.path.join(seriespath, filename)
+                #type set to oa for office actions
                 doccontent['type'] = 'oa'
                 doccontent['appid'] = fileappid
-
+                #IFW number for action
+                doccontent['ifwnumber'] = ifwnum
                 if parseXML(fname):
                     fn = changeExt(fname, 'json')
                     if extractPALMData(fileappid):
@@ -349,7 +370,9 @@ if __name__ == '__main__':
                 del notfoundCMS[:]
             writeLogs(os.path.join(seriespath,'notfoundPALM.log'),notfoundPALM)
             writeLogs(os.path.join(seriespath,'notfoundCMS.log'),notfoundCMS)
-        #Placeholder for solr processing
         #elif not args.skipsolr:
+            #readJSON
+            #sendToSolr('oa', ) - for each completed json, send to solr
+            #gather completed Solr apps and write to log
         #for other file directory, set blank doc_date for now.
     logging.info("-- [JOB END] -------------------")
