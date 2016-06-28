@@ -308,11 +308,11 @@ if __name__ == '__main__':
     logging.info("-- [JOB START]  ----------------")
 
     for series in args.series:
-        seriespath = os.path.join(scriptpath,'extractedfiles',series)
+        seriespath = os.path.join(scriptpath,'extractedfiles', series)
         if not args.skipextraction:
             logging.info("-- Processing series: "+series)
-            getAppIDs(os.path.join(scriptpath,pubidfname),series)
-            makeDirectory(os.path.join(scriptpath,'extractedfiles',series))
+            getAppIDs(os.path.join(scriptpath, 'files', 'PAIR', pubidfname), series)
+            makeDirectory(os.path.join(scriptpath, 'extractedfiles', series))
             for x in appids:
                 try:
                     currentapp = x

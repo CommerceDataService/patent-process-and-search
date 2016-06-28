@@ -63,7 +63,10 @@ target/
 
 .htpasswd
 
-files/*
+files/GRANTS/*
+files/OFFICEACTIONS/*
+files/PTAB/*
+files/PUBS/*
 logs/*
 json_files/*
 extractedfiles/*
