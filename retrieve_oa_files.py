@@ -117,9 +117,9 @@ def writeToJSON(fname):
     try:
         with open(fname,'w') as outfile:
             json.dump(doccontent,outfile)
-            logging.info("-- Processing of XML file complete")
+            logging.info('-- File written to : '+fname)
     except IOError as e:
-        logging.error('I/O error({0}): {1}'.format(e.errno.e.strerror))
+        logging.error('I/O error({0}): {1}'.format(e.errno,e.strerror))
         raise
 
 #code for parsing XML file
@@ -134,38 +134,34 @@ def parseXML(fname):
             namespaces = {'uspat':'urn:us:gov:doc:uspto:patent',
                           'uscom':'urn:us:gov:doc:uspto:common',
                           'com':'http://www.wipo.int/standards/XMLSchema/ST96/Common'}
-
             for item in root.xpath('//uspat:DocumentMetadata', namespaces=namespaces):
                 doccontent['documentcode'] = item.find('uscom:DocumentCode', namespaces=namespaces).text
                 doccontent['documentsourceidentifier'] = item.find('uscom:DocumentSourceIdentifier', namespaces=namespaces).text
                 doccontent['partyidentifier'] = item.find('com:PartyIdentifier', namespaces=namespaces).text
                 doccontent['groupartunitnumber'] = item.find('uscom:GroupArtUnitNumber', namespaces = namespaces).text
-
-            for item in root.xpath('//uscom:P',namespaces=namespaces):
+            for item in root.xpath('//uscom:P', namespaces=namespaces):
                 textdata += getText(item)+'\n'
-
-            print("file: "+fname)
-            print("TEXT: "+textdata)
             doccontent['textdata'] = textdata
             return True
         else:
             logging.info('File: '+fname+' already exists')
             return False
     except IOError as e:
-        logging.error('I/O error({0}): {1}'.format(e.errno.e.strerror))
+        logging.error('I/O error({0}): {1}'.format(e.errno,e.strerror))
         raise
         return False
 
 #convert day-month-year to UTC timestamp
-def convertToUTC(date):
-    dt = datetime.strptime(date, '%d-%b-%y')
+def convertToUTC(date,format):
+    dt = datetime.strptime(date, format)
     return time.mktime(dt.timetuple())
 
 #code for extracting PALM data from PALM series file and combine with other elements from XML file
 def extractPALMData(fileappid):
     try:
         #need to set path to share drive on PTO computer
-        with open(os.path.join(scriptpath, 'files', 'OFFICEACTIONS', 'app'+series+'.csv'), 'r', encoding = 'latin-1') as datafile:
+        print("PALM FILE: "+os.path.join(palmfilespath, 'app'+series+'.csv'))
+        with open(os.path.join(palmfilespath, 'app'+series+'.csv'), 'r', encoding = 'latin-1') as datafile:
             reader = csv.reader(datafile)
             next(reader, None)  #skip the header
             for row in reader:
@@ -173,7 +169,7 @@ def extractPALMData(fileappid):
                 if match == fileappid:
                     doccontent['appl_id'] = row[0].strip()
                     doccontent['file_dt'] = row[1].strip()
-                    doccontent['effective_filing_dt'] = convertToUTC(row[2].strip())
+                    doccontent['effective_filing_dt'] = convertToUTC(row[2].strip(), '%d-%b-%y')
                     doccontent['inv_subj_matter_ty'] = row[3].strip()
                     doccontent['appl_ty'] = row[4].strip()
                     doccontent['dn_examiner_no'] = row[5].strip()
@@ -184,13 +180,13 @@ def extractPALMData(fileappid):
                     doccontent['dn_intppty_cust_no'] = row[10].strip()
                     doccontent['atty_dkt_no'] = row[11].strip()
                     doccontent['dn_nsrd_curr_loc_cd'] = row[12].strip()
-                    doccontent['dn_nsrd_curr_loc_dt'] = convertToUTC(row[13].strip())
+                    doccontent['dn_nsrd_curr_loc_dt'] = convertToUTC(row[13].strip(), '%d-%b-%y')
                     doccontent['app_status_no'] = row[14].strip()
-                    doccontent['app_status_dt'] = convertToUTC(row[15].strip())
+                    doccontent['app_status_dt'] = convertToUTC(row[15].strip(), '%d-%b-%y')
                     doccontent['wipo_pub_no'] = row[16].strip()
                     doccontent['patent_no'] = row[17].strip()
-                    doccontent['patent_issue_dt'] = convertToUTC(row[18].strip())
-                    doccontent['abandon_dt'] = convertToUTC(row[19].strip())
+                    doccontent['patent_issue_dt'] = convertToUTC(row[18].strip(), '%d-%b-%y')
+                    doccontent['abandon_dt'] = convertToUTC(row[19].strip(), '%d-%b-%y')
                     doccontent['disposal_type'] = row[20].strip()
                     doccontent['se_in'] = row[21].strip()
                     doccontent['pct_no'] = row[22].strip()
@@ -208,7 +204,7 @@ def extractPALMData(fileappid):
                 notfoundPALM.append(appid)
                 return False
     except IOError as e:
-        logging.error('I/O error({0}): {1}'.format(e.errno.e.strerror))
+        logging.error('I/O error({0}): {1}'.format(e.errno,e.strerror))
         return False
 
 #get official application doc date
@@ -220,8 +216,9 @@ def getDocDate(appid, ifwnum):
         headers = {'Content-type': 'application/json'}
         response = requests.post(url, json=params, headers=headers)
         r = response.json()
-        print(r[0]['officialDocumentDate'])
-        doccontent['doc_date'] = convertToUTC(r[0]['officialDocumentDate'])
+        print('Doc DATE: '+r[0]['officialDocumentDate'])
+        doccontent['doc_date'] = convertToUTC(r[0]['officialDocumentDate'], '%Y-%m-%d')
+        logging.info('-- Retrieved mail date from CMS for app: '+appid+' and IFW number: '+ifwnum)
         return True
     except requests.exceptions.RequestException as e:
         logging.error('-- CMS Restful error: '+e)
@@ -248,8 +245,8 @@ def sendToSolr(core, json):
 if __name__ == '__main__':
     scriptpath = os.path.dirname(os.path.abspath(__file__))
     pubidfname = 'pair_app_ids.txt'
-    #test using os.path.join instead of escaping slashes to make sure it works
     oafilespath = '\\\\s-mdw-isl-b02-smb.uspto.gov\\BigData\\PE2E-ELP\\PATENT'
+    palmfilespath = '\\\\nsx-orgshares\\CIO-OCIO\\BDR_Access\\PALM'
     solrURL = ''
     appids = []
     completeappids = []
@@ -317,10 +314,12 @@ if __name__ == '__main__':
                 try:
                     currentapp = x
                     seriesdirpath = constructPath(x)
+                    print("SERIESDIRPATH: "+seriesdirpath)
                     if os.path.isdir(seriesdirpath):
                         filenotfound = False
                         dirfiles = []
                         for name in glob.glob(os.path.join(seriesdirpath, 'OA2XML', '*', 'xml', '1.0', '*')):
+                            print("NAME: "+name)
                             if os.path.isdir(name):
                                 filenotfound = True
                             elif os.path.splitext(name)[1] == '.xml':
