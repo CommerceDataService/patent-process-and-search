@@ -248,6 +248,7 @@ def sendToSolr(core, json):
 if __name__ == '__main__':
     scriptpath = os.path.dirname(os.path.abspath(__file__))
     pubidfname = 'pair_app_ids.txt'
+    #test using os.path.join instead of escaping slashes to make sure it works
     oafilespath = '\\\\s-mdw-isl-b02-smb.uspto.gov\\BigData\\PE2E-ELP\\PATENT'
     solrURL = ''
     appids = []
@@ -316,23 +317,41 @@ if __name__ == '__main__':
                 try:
                     currentapp = x
                     seriesdirpath = constructPath(x)
-                    #add code so that for each app ID, if there is a case where a directory is found, but
-                    #no file, then do not keep any of the files for that app ID
                     if os.path.isdir(seriesdirpath):
-                        for name in glob.glob(seriesdirpath+'\\OA2XML\\*\\xml\\1.0\\*'):
+                        filenotfound = False
+                        dirfiles = []
+                        for name in glob.glob(os.path.join(seriesdirpath, 'OA2XML', '*', 'xml', '1.0', '*')):
                             if os.path.isdir(name):
-                                nofileappids.append(currentapp)
-                                logging.info("-- No XML file present for path: "+name)
+                                filenotfound = True
                             elif os.path.splitext(name)[1] == '.xml':
                                 allparts = splitAll(os.path.dirname(name))
-                                newfname = constructFilename(name,allparts)
+                                newfname = constructFilename(name, allparts)
                                 logging.info("-- New file name: "+newfname)
-                                copyFile(name,newfname)
+                                dirfiles.append(newfname)
+                        if filenotfound == False:
+                            #for each file, run copy
+                            copyFile(name, newfname)
+                        else:
+                            logging.info('-- One of the files for app ID: '+currentapp+' not found')
+                            nofileappids.append(currentapp)
+                    #add code so that for each app ID, if there is a case where a directory is found, but
+                    #no file, then do not keep any of the files for that app ID
+                    #if os.path.isdir(seriesdirpath):
+                    #    for name in glob.glob(seriesdirpath+'\\OA2XML\\*\\xml\\1.0\\*'):
+                    #        if os.path.isdir(name):
+                    #            nofileappids.append(currentapp)
+                    #            logging.info("-- No XML file present for path: "+name)
+                    #        elif os.path.splitext(name)[1] == '.xml':
+                    #            allparts = splitAll(os.path.dirname(name))
+                    #            newfname = constructFilename(name,allparts)
+                    #            logging.info("-- New file name: "+newfname)
+                    #            copyFile(name,newfname)
                     else:
                         print("in else: "+currentapp)
                         logging.info("-- App ID: "+currentapp+" not found")
                         notfoundappids.append(currentapp)
                     currentapp = ''
+                    del dirfiles[:]
                 except IOError as e:
                     logging.error('-- I/O error({0}): {1}'.format(e.errno,e.strerror))
                 except:
