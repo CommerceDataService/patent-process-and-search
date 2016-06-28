@@ -67,6 +67,7 @@ files/GRANTS/*
 files/OFFICEACTIONS/*
 files/PTAB/*
 files/PUBS/*
+files/PAIR/*
 logs/*
 json_files/*
 extractedfiles/*
