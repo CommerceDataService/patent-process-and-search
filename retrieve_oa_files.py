@@ -214,10 +214,14 @@ def extractPALMData(fileappid):
 #get official application doc date
 def getDocDate(appid, ifwnum):
     try:
-        url = 'http://pelp-services-eap-0.dev.uspto.gov:8080/cmsservice/api/#/patent/getDocumentsByType/'+appid+'/'+ifwnum+'/xml'
-        #response = requests.get(url, data=data)
-        #convert date to UTC!
-        doccontent['doc_date'] = ''
+        url = 'http://p-elp-services.uspto.gov/cmsservice/pto/PATENT/documentMetadataByAccess'
+        params = [{"businessUnitId": appid,
+              "documentId": ifwnum}]
+        headers = {'Content-type': 'application/json'}
+        response = requests.post(url, json=params, headers=headers)
+        r = response.json()
+        print(r[0]['officialDocumentDate'])
+        doccontent['doc_date'] = convertToUTC(r[0]['officialDocumentDate'])
         return True
     except requests.exceptions.RequestException as e:
         logging.error('-- CMS Restful error: '+e)
