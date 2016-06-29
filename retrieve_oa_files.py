@@ -85,6 +85,7 @@ def writeLogs(logfname,idlist):
         with open(logfname,'a+') as logfile:
             for appid in idlist:
                 logfile.write(appid+"\n")
+        logging.info('-- Log entries for: '+logfilename+' written to file')
     except IOError as e:
         logging.error('-- Write Log: '+logfname+' I/O error({0}): {1}'.format(e.errno,e.strerror))
 
@@ -111,16 +112,6 @@ def getText(node):
                     ''.join(map(getText, node)) +
                     (node.tail or ''))
     return contents
-
-#write dictionary to JSON file
-def writeToJSON(fname):
-    try:
-        with open(fname,'w') as outfile:
-            json.dump(doccontent,outfile)
-            logging.info('-- File written to : '+fname)
-    except IOError as e:
-        logging.error('Write to JSON: '+fname+' I/O error({0}): {1}'.format(e.errno,e.strerror))
-        raise
 
 #code for parsing XML file
 def parseXML(fname):
@@ -225,8 +216,50 @@ def getDocDate(appid, ifwnum):
         notfoundCMS.append(appid)
         return False
 
+#write dictionary to JSON file
+def writeToJSON(fname):
+    try:
+        with open(fname,'w') as outfile:
+            json.dump(doccontent,outfile)
+            logging.info('-- File written to : '+fname)
+            return True
+    except IOError as e:
+        logging.error('Write to JSON: '+fname+' I/O error({0}): {1}'.format(e.errno,e.strerror))
+        raise
+        return False
+
 #read JSON file and set up for sending to Solr
-#def readJSON():
+def readJSON(fname):
+    try:
+        with open(os.path.abspath(fname)) as fd:
+            doc = json.loads(fd.read())
+            records = doc['main']['DATA_RECORD']
+            for x in records:
+                docid = x.get('DOCUMENT_IMAGE_ID',x.get('DOCUMENT_NM'))
+                jsontext = json.dumps(x)
+                #need to change this line
+                print(os.path.join(os.path.dirname(fname)))
+                with open(os.path.join(os.path.dirname(fname),'solrcomplete.txt'),'a+') as logfile:
+                    logfile.seek(0)
+                    if docid+'\n' in logfile:
+                       logging.info('-- file: '+docid+' already processed by Solr')
+                       continue
+                    else:
+                       logging.info('-- Sending file: '+docid+' to Solr')
+                       response = sendToSolr('oa', jsontext)
+                       r = response.json()
+                       status = r['responseHeader']['status']
+                       if status == 0:
+                           solrComplete.append(docid)
+                           logging.info('-- Solr update for file: '+docid+' complete')
+                       else:
+                           logging.info('-- Solr error for doc: '+docid+' error: '+', '.join('{!s}={!r}'.format(k,v) for (k,v) in rdict.items()))
+                           solrFailed.append(docid)
+    except IOError as e:
+        logging.error('Read JSON file: '+fname+' I/O error({0}): {1}'.format(e.errno,e.strerror))
+    except:
+        logging.error('Unexpected error:', sys.exc_info()[0])
+        raise
 
 #send document to Solr for indexing
 #placeholder for now
@@ -254,7 +287,8 @@ if __name__ == '__main__':
     nofileappids = []
     notfoundPALM = []
     notfoundCMS = []
-    #solrFailed = []
+    solrFailed = []
+    solrComplete = []
     currentapp = ''
     doccontent = collections.OrderedDict()
 
@@ -321,6 +355,7 @@ if __name__ == '__main__':
                             print("NAME: "+name)
                             if os.path.isdir(name):
                                 filenotfound = True
+                                logging.info('-- No XML file found for path: '+name)
                                 print("File not found in dir: "+name)
                             elif os.path.splitext(name)[1] == '.xml':
                                 allparts = splitAll(os.path.dirname(name))
@@ -335,18 +370,6 @@ if __name__ == '__main__':
                             logging.info('-- One of the files for app ID: '+currentapp+' not found')
                             print("one of the files for app ID: "+currentapp+' not found')
                             nofileappids.append(currentapp)
-                    #add code so that for each app ID, if there is a case where a directory is found, but
-                    #no file, then do not keep any of the files for that app ID
-                    #if os.path.isdir(seriesdirpath):
-                    #    for name in glob.glob(seriesdirpath+'\\OA2XML\\*\\xml\\1.0\\*'):
-                    #        if os.path.isdir(name):
-                    #            nofileappids.append(currentapp)
-                    #            logging.info("-- No XML file present for path: "+name)
-                    #        elif os.path.splitext(name)[1] == '.xml':
-                    #            allparts = splitAll(os.path.dirname(name))
-                    #            newfname = constructFilename(name,allparts)
-                    #            logging.info("-- New file name: "+newfname)
-                    #            copyFile(name,newfname)
                     else:
                         print("in else: "+currentapp)
                         logging.info("-- App ID: "+currentapp+" not found")
@@ -380,8 +403,13 @@ if __name__ == '__main__':
                     fn = changeExt(fname, 'json')
                     if extractPALMData(fileappid):
                         if getDocDate(fileappid, ifwnum):
-                            writeToJSON(fn)
-                            logging.info('-- Processing of file: '+filename+' is complete')
+                            if writeToJSON(fn):
+                                logging.info('-- Processing of file: '+filename+' is complete')
+                                if not args.skipsolr:
+                                    logging.info('-- Reading JSON file: '+filename)
+                                    #readJSON(fn)
+                            else:
+                                logging.error('-- write to JSON for file: '+fn+' failed')
                         else:
                             logging.error('-- Retrieval of Doc Date for file: '+filename+' failed')
                     else:
@@ -389,13 +417,12 @@ if __name__ == '__main__':
                 else:
                     logging.error('-- Parsing of file: '+filename+' failed')
                 doccontent.clear()
-                del notfoundPALM[:]
-                del notfoundCMS[:]
             writeLogs(os.path.join(seriespath,'notfoundPALM.log'),notfoundPALM)
             writeLogs(os.path.join(seriespath,'notfoundCMS.log'),notfoundCMS)
-        #elif not args.skipsolr:
-            #readJSON
-            #sendToSolr('oa', ) - for each completed json, send to solr
-            #gather completed Solr apps and write to log
-        #for other file directory, set blank doc_date for now.
+            #writeLogs(os.pathjoin(seriespath,'solrFailed.log'),solrFailed)
+            #writeLogs(os.pathjoin(seriespath,'solrComplete.log'),solrComplete)
+            del notfoundPALM[:]
+            del notfoundCMS[:]
+            del solrFailed[:]
+            del solrComplete[:]
     logging.info("-- [JOB END] -------------------")
