@@ -22,7 +22,7 @@ def getAppIDs(fname,series):
                     appids.append(line.strip())
         logging.info("-- Number of appids for this series: "+str(len(appids)))
     except IOError as e:
-         logging.error('-- I/O error({0}): {1}'.format(e.errno,e.strerror))
+         logging.error('-- Get App IDs I/O error({0}): {1}'.format(e.errno,e.strerror))
     except:
          logging.error('-- Unexpected error:', sys.exc_info()[0])
          raise
@@ -74,7 +74,7 @@ def copyFile(old,new):
         else:
             logging.info("-- File: "+fname+" already exists")
     except IOError as e:
-         logging.error('-- I/O error({0}): {1}'.format(e.errno,e.strerror))
+         logging.error('-- Copy File I/O error({0}): {1}'.format(e.errno,e.strerror))
     except:
         logging.error('-- Unexpected error:', sys.exc_info()[0])
         raise
@@ -86,7 +86,7 @@ def writeLogs(logfname,idlist):
             for appid in idlist:
                 logfile.write(appid+"\n")
     except IOError as e:
-        logging.error('-- I/O error({0}): {1}'.format(e.errno,e.strerror))
+        logging.error('-- Write Log: '+logfname+' I/O error({0}): {1}'.format(e.errno,e.strerror))
 
 #change extension of file name to specified extension
 def changeExt(fname, ext):
@@ -119,7 +119,7 @@ def writeToJSON(fname):
             json.dump(doccontent,outfile)
             logging.info('-- File written to : '+fname)
     except IOError as e:
-        logging.error('I/O error({0}): {1}'.format(e.errno,e.strerror))
+        logging.error('Write to JSON: '+fname+' I/O error({0}): {1}'.format(e.errno,e.strerror))
         raise
 
 #code for parsing XML file
@@ -147,7 +147,7 @@ def parseXML(fname):
             logging.info('File: '+fname+' already exists')
             return False
     except IOError as e:
-        logging.error('I/O error({0}): {1}'.format(e.errno,e.strerror))
+        logging.error('XML Parse file: '+fname+' I/O error({0}): {1}'.format(e.errno,e.strerror))
         raise
         return False
 
@@ -204,7 +204,7 @@ def extractPALMData(fileappid):
                 notfoundPALM.append(appid)
                 return False
     except IOError as e:
-        logging.error('I/O error({0}): {1}'.format(e.errno,e.strerror))
+        logging.error('PALM Extract file: '+appid+' I/O error({0}): {1}'.format(e.errno,e.strerror))
         return False
 
 #get official application doc date
@@ -314,24 +314,26 @@ if __name__ == '__main__':
                 try:
                     currentapp = x
                     seriesdirpath = constructPath(x)
-                    print("SERIESDIRPATH: "+seriesdirpath)
                     if os.path.isdir(seriesdirpath):
                         filenotfound = False
-                        dirfiles = []
+                        dirfiles = {}
                         for name in glob.glob(os.path.join(seriesdirpath, 'OA2XML', '*', 'xml', '1.0', '*')):
                             print("NAME: "+name)
                             if os.path.isdir(name):
                                 filenotfound = True
+                                print("File not found in dir: "+name)
                             elif os.path.splitext(name)[1] == '.xml':
                                 allparts = splitAll(os.path.dirname(name))
                                 newfname = constructFilename(name, allparts)
                                 logging.info("-- New file name: "+newfname)
-                                dirfiles.append(newfname)
+                                dirfiles[name] = newfname
                         if filenotfound == False:
                             #for each file, run copy
-                            copyFile(name, newfname)
+                            for k, v in dirfiles.items():
+                                copyFile(k, v)
                         else:
                             logging.info('-- One of the files for app ID: '+currentapp+' not found')
+                            print("one of the files for app ID: "+currentapp+' not found')
                             nofileappids.append(currentapp)
                     #add code so that for each app ID, if there is a case where a directory is found, but
                     #no file, then do not keep any of the files for that app ID
@@ -350,9 +352,8 @@ if __name__ == '__main__':
                         logging.info("-- App ID: "+currentapp+" not found")
                         notfoundappids.append(currentapp)
                     currentapp = ''
-                    del dirfiles[:]
                 except IOError as e:
-                    logging.error('-- I/O error({0}): {1}'.format(e.errno,e.strerror))
+                    logging.error('-- Extraction file: '+' I/O error({0}): {1}'.format(e.errno,e.strerror))
                 except:
                     logging.error('-- Unexpected error:', sys.exc_info()[0])
                     raise
