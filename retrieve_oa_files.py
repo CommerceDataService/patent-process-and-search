@@ -280,6 +280,7 @@ if __name__ == '__main__':
     notfoundCMS = [] #records appid and ifw number
     badfiles = []
     currentapp = ''
+    numoffileswritten = 0
     doccontent = collections.OrderedDict()
 
     #logging configuration
@@ -377,7 +378,7 @@ if __name__ == '__main__':
         elif not args.skipparsing:
             df = loadPALMdata()
             for filename in glob.glob(os.path.join(seriespath,'*.xml')):
-                logging.info('-- Processing file: '+filename)
+                logging.info('-- Start Processing file: '+filename)
                 fname = os.path.join(seriespath, filename)
                 fn = changeExt(fname, 'json')
                 if not os.path.isfile(fn):
@@ -392,7 +393,8 @@ if __name__ == '__main__':
                         if getPALMData(fileappid):
                             if getDocDate(fileappid, ifwnum):
                                 if writeToJSON(fn):
-                                    logging.info('-- Processing of file: '+fn+' is complete')
+                                    numoffileswritten += 1
+                                    logging.info('-- {} - Complete processing for file: {}'.format(numoffileswritten,fn))
                                     if not args.skipsolr:
                                         logging.info('-- Reading JSON file: '+fn)
                                         #readJSON(fn)
