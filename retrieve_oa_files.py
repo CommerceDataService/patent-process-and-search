@@ -8,7 +8,8 @@
 #with PALM data from flat files, and gets the post date from a CMS RESTFUL service.
 #It then transforms the resulting dictionary to JSON and sends it to Solr for indexing.
 
-import sys, os, glob, shutil, logging, time, argparse, glob, json, requests, csv, collections
+import sys, os, glob, shutil, logging, time, argparse, glob, json, requests,\
+csv, collections, math
 
 from datetime import datetime
 from lxml import etree
@@ -140,8 +141,12 @@ def parseXML(fname):
 
 #convert day-month-year to UTC timestamp
 def convertToUTC(date,format):
-    dt = datetime.strptime(date, format)
-    return time.mktime(dt.timetuple())
+    if date != '' and date != None:
+        dt = datetime.strptime(date, format)
+        dt = time.mktime(dt.timetuple())
+    else:
+        dt = ''
+    return dt
 
 def loadPALMdata():
     logging.info('-- Loading PALM data')
@@ -149,11 +154,20 @@ def loadPALMdata():
     return pd.read_csv(os.path.join(palmfilespath, 'app'+series+'.csv'), encoding = 'latin-1')
     logging.info('-- PALM data loaded into dataframe')
 
+#deal with na values and set type as string
+def fixNaValues(dataframe,series):
+    for col in series:
+        values[col] = values[col].fillna('')
+        values[col] = values[col].astype('str')
+
 #code for extracting PALM data from PALM series file and combine with other elements from XML file
 def getPALMData(fileappid):
     try:
         logging.info('-- Starting PALM data match process')
         values = df[(df['APPL_ID'] == float(fileappid))]
+        series = ['FILE_DT','EFFECTIVE_FILING_DT','ABANDON_DT','DN_NSRD_CURR_LOC_DT',\
+        'APP_STATUS_DT','PATENT_ISSUE_DT','ABANDON_DT']
+        fixNaValues(values, series)
         if len(values.index) == 1:
             for index, row in values.iterrows():
                 doccontent['appl_id'] = row.APPL_ID
