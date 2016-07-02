@@ -151,14 +151,15 @@ def convertToUTC(date,format):
 def loadPALMdata():
     logging.info('-- Loading PALM data')
     print('LOAD PALM DATA')
-    return pd.read_csv(os.path.join(palmfilespath, 'app'+series+'.csv'), encoding = 'latin-1')
+    dataframe =  pd.read_csv(os.path.join(palmfilespath, 'app'+series+'.csv'), encoding = 'latin-1')
     logging.info('-- PALM data loaded into dataframe')
+    return dataframe
 
 #deal with na values and set type as string
 def fixNaValues(dataframe,series):
     for col in series:
-        values[col] = values[col].fillna('')
-        values[col] = values[col].astype('str')
+        dataframe[col] = dataframe[col].fillna('')
+        dataframe[col] = dataframe[col].astype('str')
 
 #code for extracting PALM data from PALM series file and combine with other elements from XML file
 def getPALMData(fileappid):
@@ -168,6 +169,7 @@ def getPALMData(fileappid):
         series = ['FILE_DT','EFFECTIVE_FILING_DT','ABANDON_DT','DN_NSRD_CURR_LOC_DT',\
         'APP_STATUS_DT','PATENT_ISSUE_DT','ABANDON_DT']
         fixNaValues(values, series)
+
         if len(values.index) == 1:
             for index, row in values.iterrows():
                 doccontent['appl_id'] = row.APPL_ID
@@ -225,6 +227,9 @@ def getDocDate(appid, ifwnum):
             notfoundCMS.append(appid+', '+ifwnum)
         elif 'officialDocumentDate' in r[0]:
             doc_date = convertToUTC(r[0]['officialDocumentDate'], '%Y-%m-%d')
+        else:
+            logging.info('-- CMS RESTFUL call neither contained an error or the doc date')
+            doc_date = ''
         doccontent['doc_date'] = doc_date
         return True
     except requests.exceptions.RequestException as e:
@@ -422,6 +427,9 @@ if __name__ == '__main__':
                         logging.error('-- Parsing of file: '+filename+' failed')
                 else:
                     logging.info('File: '+fn+' already exists')
+                    if not args.skipsolr:
+                        logging.info('-- Reading JSON file: '+fn)
+
                 doccontent.clear()
             writeLogs(os.path.join(seriespath,'notfoundPALM.log'),notfoundPALM)
             writeLogs(os.path.join(seriespath,'notfoundCMS.log'),notfoundCMS)
