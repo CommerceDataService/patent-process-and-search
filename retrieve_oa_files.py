@@ -151,14 +151,15 @@ def convertToUTC(date,format):
 def loadPALMdata():
     logging.info('-- Loading PALM data')
     print('LOAD PALM DATA')
-    return pd.read_csv(os.path.join(palmfilespath, 'app'+series+'.csv'), encoding = 'latin-1')
+    dataframe =  pd.read_csv(os.path.join(palmfilespath, 'app'+series+'.csv'), encoding = 'latin-1')
     logging.info('-- PALM data loaded into dataframe')
+    return dataframe
 
 #deal with na values and set type as string
 def fixNaValues(dataframe,series):
     for col in series:
-        values[col] = values[col].fillna('')
-        values[col] = values[col].astype('str')
+        dataframe[col] = dataframe[col].fillna('')
+        dataframe[col] = dataframe[col].astype('str')
 
 #code for extracting PALM data from PALM series file and combine with other elements from XML file
 def getPALMData(fileappid):
@@ -168,6 +169,7 @@ def getPALMData(fileappid):
         series = ['FILE_DT','EFFECTIVE_FILING_DT','ABANDON_DT','DN_NSRD_CURR_LOC_DT',\
         'APP_STATUS_DT','PATENT_ISSUE_DT','ABANDON_DT']
         fixNaValues(values, series)
+
         if len(values.index) == 1:
             for index, row in values.iterrows():
                 doccontent['appl_id'] = row.APPL_ID
@@ -225,6 +227,9 @@ def getDocDate(appid, ifwnum):
             notfoundCMS.append(appid+', '+ifwnum)
         elif 'officialDocumentDate' in r[0]:
             doc_date = convertToUTC(r[0]['officialDocumentDate'], '%Y-%m-%d')
+        else:
+            logging.info('-- CMS RESTFUL call neither contained an error or the doc date')
+            doc_date = ''
         doccontent['doc_date'] = doc_date
         return True
     except requests.exceptions.RequestException as e:
@@ -248,7 +253,8 @@ def readJSON(fname):
     try:
         docid = fname.split('_')[0]+', '+fname.split('_')[1]
         with open(fname, 'r') as fd:
-            jsontext = json.load(fd)
+            jsontext = fd.read().replace('\n', '')
+            print(jsontext)
             with open(os.path.join(os.path.dirname(fname), 'solrComplete.log'), 'a+') as logfile:
                 logfile.seek(0)
                 if docid+'\n' in logfile:
@@ -256,18 +262,24 @@ def readJSON(fname):
                 else:
                     logging.info('-- Sending file: '+docid+' to Solr')
                     response = sendToSolr('oa', jsontext)
+                    print(response)
                     r = response.json()
                     status = r['responseHeader']['status']
                     if status == 0:
                         logfile.write(docid+"\n")
                         logging.info("-- Solr update for file: "+docid+" complete")
+                        return True
                     else:
-                        logging.info("-- Solr error for doc: "+docid+" error: "+', '.join("{!s}={!r}".format(k,v) for (k,v) in rdict.items()))
+                        logging.info("-- Solr error for doc: "+docid+" error: "+\
+                        ', '.join("{!s}={!r}".format(k,v) for (k,v) in rdict.items()))
+                        return False
     except IOError as e:
         logging.error('Read JSON file: '+fname+' I/O error({0}): {1}'.format(e.errno,e.strerror))
+        return False
     except:
         logging.error('Unexpected error:', sys.exc_info()[0])
         raise
+        return False
 
 #send document to Solr for indexin
 def sendToSolr(core, json):
@@ -277,7 +289,7 @@ def sendToSolr(core, json):
         headers = {"Content-type" : "application/json"}
         return requests.post(url, data=jsontext, headers=headers)
     except requests.exceptions.RequestException as e:
-        logging.error('-- Solr indexing error: '+e)
+        logging.error('-- Solr indexing error: {}'.format(e))
 
 if __name__ == '__main__':
     scriptpath = os.path.dirname(os.path.abspath(__file__))
@@ -285,7 +297,7 @@ if __name__ == '__main__':
     oafilespath = '\\\\s-mdw-isl-b02-smb.uspto.gov\\BigData\\PE2E-ELP\\PATENT'
     palmfilespath = '\\\\nsx-orgshares\\CIO-OCIO\\BDR_Access\\PALM'
     cmsURL = 'http://p-elp-services.uspto.gov/cmsservice/pto/PATENT/documentMetadataByAccess'
-    solrURL = ''
+    solrURL = 'http://52.90.109.169:8983'
     appids = []
     completeappids = []
     notfoundappids = []
@@ -295,6 +307,7 @@ if __name__ == '__main__':
     badfiles = []
     currentapp = ''
     numoffileswritten = 0
+
     doccontent = collections.OrderedDict()
 
     #logging configuration
@@ -422,6 +435,9 @@ if __name__ == '__main__':
                         logging.error('-- Parsing of file: '+filename+' failed')
                 else:
                     logging.info('File: '+fn+' already exists')
+                    if not args.skipsolr:
+                        logging.info('-- Reading JSON file: '+fn)
+
                 doccontent.clear()
             writeLogs(os.path.join(seriespath,'notfoundPALM.log'),notfoundPALM)
             writeLogs(os.path.join(seriespath,'notfoundCMS.log'),notfoundCMS)
@@ -429,4 +445,12 @@ if __name__ == '__main__':
             del notfoundPALM[:]
             del notfoundCMS[:]
             del badfiles[:]
+        if not args.skipsolr:
+            filecounter = 0
+            for filename in glob.glob(os.path.join(seriespath,'*.json')):
+                #print(filename)
+                logging.info('-- Reading JSON file: '+filename)
+                while filecounter < 10001:
+                    if readJSON(filename):
+                        filecounter += 1
     logging.info("-- [JOB END] -------------------")
