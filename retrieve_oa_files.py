@@ -253,7 +253,8 @@ def readJSON(fname):
     try:
         docid = fname.split('_')[0]+', '+fname.split('_')[1]
         with open(fname, 'r') as fd:
-            jsontext = json.load(fd)
+            jsontext = fd.read().replace('\n', '')
+            print(jsontext)
             with open(os.path.join(os.path.dirname(fname), 'solrComplete.log'), 'a+') as logfile:
                 logfile.seek(0)
                 if docid+'\n' in logfile:
@@ -261,18 +262,24 @@ def readJSON(fname):
                 else:
                     logging.info('-- Sending file: '+docid+' to Solr')
                     response = sendToSolr('oa', jsontext)
+                    print(response)
                     r = response.json()
                     status = r['responseHeader']['status']
                     if status == 0:
                         logfile.write(docid+"\n")
                         logging.info("-- Solr update for file: "+docid+" complete")
+                        return True
                     else:
-                        logging.info("-- Solr error for doc: "+docid+" error: "+', '.join("{!s}={!r}".format(k,v) for (k,v) in rdict.items()))
+                        logging.info("-- Solr error for doc: "+docid+" error: "+\
+                        ', '.join("{!s}={!r}".format(k,v) for (k,v) in rdict.items()))
+                        return False
     except IOError as e:
         logging.error('Read JSON file: '+fname+' I/O error({0}): {1}'.format(e.errno,e.strerror))
+        return False
     except:
         logging.error('Unexpected error:', sys.exc_info()[0])
         raise
+        return False
 
 #send document to Solr for indexin
 def sendToSolr(core, json):
@@ -282,7 +289,7 @@ def sendToSolr(core, json):
         headers = {"Content-type" : "application/json"}
         return requests.post(url, data=jsontext, headers=headers)
     except requests.exceptions.RequestException as e:
-        logging.error('-- Solr indexing error: '+e)
+        logging.error('-- Solr indexing error: {}'.format(e))
 
 if __name__ == '__main__':
     scriptpath = os.path.dirname(os.path.abspath(__file__))
@@ -290,7 +297,7 @@ if __name__ == '__main__':
     oafilespath = '\\\\s-mdw-isl-b02-smb.uspto.gov\\BigData\\PE2E-ELP\\PATENT'
     palmfilespath = '\\\\nsx-orgshares\\CIO-OCIO\\BDR_Access\\PALM'
     cmsURL = 'http://p-elp-services.uspto.gov/cmsservice/pto/PATENT/documentMetadataByAccess'
-    solrURL = ''
+    solrURL = 'http://52.90.109.169:8983'
     appids = []
     completeappids = []
     notfoundappids = []
@@ -300,6 +307,7 @@ if __name__ == '__main__':
     badfiles = []
     currentapp = ''
     numoffileswritten = 0
+
     doccontent = collections.OrderedDict()
 
     #logging configuration
@@ -437,4 +445,12 @@ if __name__ == '__main__':
             del notfoundPALM[:]
             del notfoundCMS[:]
             del badfiles[:]
+        if not args.skipsolr:
+            filecounter = 0
+            for filename in glob.glob(os.path.join(seriespath,'*.json')):
+                #print(filename)
+                logging.info('-- Reading JSON file: '+filename)
+                while filecounter < 10001:
+                    if readJSON(filename):
+                        filecounter += 1
     logging.info("-- [JOB END] -------------------")
