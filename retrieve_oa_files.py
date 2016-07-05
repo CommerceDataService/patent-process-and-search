@@ -150,7 +150,6 @@ def convertToUTC(date,format):
 
 def loadPALMdata():
     logging.info('-- Loading PALM data')
-    print('LOAD PALM DATA')
     dataframe =  pd.read_csv(os.path.join(palmfilespath, 'app'+series+'.csv'), encoding = 'latin-1')
     logging.info('-- PALM data loaded into dataframe')
     return dataframe
@@ -251,26 +250,25 @@ def writeToJSON(fname):
 #read JSON file and set up for sending to Solr
 def readJSON(fname):
     try:
-        docid = fname.split('_')[0]+', '+fname.split('_')[1]
+        fpath,filename = os.path.split(fname)
+        docid = filename.split('_')[0]+', '+filename.split('_')[1]
         with open(fname, 'r') as fd:
             jsontext = fd.read().replace('\n', '')
-            print(jsontext)
             with open(os.path.join(os.path.dirname(fname), 'solrComplete.log'), 'a+') as logfile:
                 logfile.seek(0)
                 if docid+'\n' in logfile:
                     logging.info('-- File: '+docid+' already processed by Solr')
                 else:
-                    logging.info('-- Sending file: '+docid+' to Solr')
-                    response = sendToSolr('oa', jsontext)
-                    print(response)
+                    logging.info('-- Sending file: '+fname+' to Solr')
+                    response = sendToSolr('oadata_2_shard1_replica1', jsontext)
                     r = response.json()
                     status = r['responseHeader']['status']
                     if status == 0:
                         logfile.write(docid+"\n")
-                        logging.info("-- Solr update for file: "+docid+" complete")
+                        logging.info('-- Solr update for file: '+docid+' complete')
                         return True
                     else:
-                        logging.info("-- Solr error for doc: "+docid+" error: "+\
+                        logging.info('-- Solr error for doc: '+docid+' error: '+\
                         ', '.join("{!s}={!r}".format(k,v) for (k,v) in rdict.items()))
                         return False
     except IOError as e:
@@ -331,21 +329,24 @@ if __name__ == '__main__':
                         '--skipextraction',
                         required=False,
                         help='Pass this flag to skip File extraction',
-                        action='store_true'
+                        action="store_true",
+                        default = False
                        )
     parser.add_argument(
                         '-p',
                         '--skipparsing',
                         required=False,
                         help='Pass this flag to skip File parsing',
-                        action='store_true'
+                        action="store_true",
+                        default=False
                        )
     parser.add_argument(
                         '-i',
                         '--skipsolr',
                         required=False,
                         help='Pass this flag to skip Solr indexing',
-                        action='store_true'
+                        action="store_true",
+                        default=False
                        )
     args = parser.parse_args()
     logging.info("-- SCRIPT ARGUMENTS ------------")
@@ -402,7 +403,7 @@ if __name__ == '__main__':
             del completeappids[:]
             del notfoundappids[:]
             del nofileappids[:]
-        elif not args.skipparsing:
+        if not args.skipparsing:
             df = loadPALMdata()
             for filename in glob.glob(os.path.join(seriespath,'*.xml')):
                 logging.info('-- Start Processing file: '+filename)
@@ -422,9 +423,6 @@ if __name__ == '__main__':
                                 if writeToJSON(fn):
                                     numoffileswritten += 1
                                     logging.info('-- {} - Complete processing for file: {}'.format(numoffileswritten,fn))
-                                    if not args.skipsolr:
-                                        logging.info('-- Reading JSON file: '+fn)
-                                        #readJSON(fn)
                                 else:
                                     logging.error('-- write to JSON for file: '+filename+' failed')
                             else:
@@ -448,9 +446,10 @@ if __name__ == '__main__':
         if not args.skipsolr:
             filecounter = 0
             for filename in glob.glob(os.path.join(seriespath,'*.json')):
-                #print(filename)
                 logging.info('-- Reading JSON file: '+filename)
-                while filecounter < 10001:
+                if filecounter < 10001:
                     if readJSON(filename):
                         filecounter += 1
+                else:
+                    logging.info('Total number of files processed: '+filecounter)
     logging.info("-- [JOB END] -------------------")
