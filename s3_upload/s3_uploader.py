@@ -24,4 +24,7 @@ class S3Uploader(object):
 
     def post_file(self, filename, fname, series):
         data = open(filename, 'rb')
-        self.bucket.put_object(Key=series+'/'+fname, Body=data)
+        self.bucket.put_object(Key=series + '/' + fname, Body=data)
+
+    def get_file_list(self, prefix):
+        return self.bucket.objects.filter(Prefix=prefix)
