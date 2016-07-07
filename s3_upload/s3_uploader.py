@@ -22,6 +22,6 @@ class S3Uploader(object):
 
         self.bucket = self.s3.Bucket(bucket)
 
-    def post_file(self, filename):
+    def post_file(self, filename, fname, series):
         data = open(filename, 'rb')
-        self.bucket.put_object(Key='TestObject', Body=data)
+        self.bucket.put_object(Key=series+'/'+fname, Body=data)
