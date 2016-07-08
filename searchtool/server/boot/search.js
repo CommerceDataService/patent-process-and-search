@@ -26,13 +26,9 @@ exports.buildSearch = function (req, res) {
     // Only doing this for readiblity. Do not accept blank or undefined dates
 
     if ((typeof req.query.fromdate !== 'undefined' && req.query.todate !== 'undefined') &&  (req.query.fromdate.length > 2 && req.query.todate.length > 2)) {
-        var fromdate =  moment(req.query.fromdate).format('YYYY-MM-DD');
-        var todate   =  moment(req.query.todate).format('YYYY-MM-DD');
-
-        todate = todate + 'T00:00:00Z';
-        fromdate = fromdate + 'T00:00:00Z';
-
-        dateRange = '%20AND%20doc_date:['+ fromdate+'%20TO%20'+todate+']';
+        var fromDate = +new Date(req.query.fromdate)/1000;
+        var toDate   = +new Date(req.query.todate)/1000;
+        dateRange = '%20AND%20doc_date:['+ fromDate+'%20TO%20'+toDate+']';
     }
 
     // Ensure q var is cast to string
