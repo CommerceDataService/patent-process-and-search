@@ -21,19 +21,18 @@
 #It then transforms the resulting dictionary to JSON and sends it to Solr for indexing.
 
 import sys, os, glob, shutil, logging, time, argparse, glob, json, requests,\
-csv, collections, math
+csv, collections, math, itertools
 
 from datetime import datetime
 from lxml import etree
 import pandas as pd
 
 #get public app IDs from app ID file
-def getAppIDs(fname):
+def getAppIDs(fname, start, end):
     try:
         with open(os.path.abspath(fname)) as fd:
-            for line in fd:
-                if line.startswith(series):
-                    appids.append(line.strip())
+            for line in itertools.islice(fd, start, end):
+                appids.append(line.strip())
         logging.info("-- Number of appids for this series: "+str(len(appids)))
     except IOError as e:
          logging.error('-- Get App IDs I/O error({0}): {1}'.format(e.errno,e.strerror))
@@ -309,6 +308,7 @@ if __name__ == '__main__':
     appnotfoundfname = 'appnotfound.log'
     nofilefoundfname = 'nofilefound.log'
     notfoundpalmfname = 'notfoundPALM.log'
+    docdatefile = os.path.join(scriptpath, 'files', 'staging_doc_date.csv')
     oafilespath = '\\\\s-mdw-isl-b02-smb.uspto.gov\\BigData\\BackFile'
     #cmsURL = 'http://p-elp-services.uspto.gov/cmsservice/pto/PATENT/documentMetadataByAccess'
     solrURL = ''
@@ -326,7 +326,7 @@ if __name__ == '__main__':
 
     #logging configuration
     logging.basicConfig(
-                        filename='logs/extract-staging-files-log-'+time.strftime('%Y%m%d')+'.txt',
+                        filename='logs/extract-staging-files-13-log-'+time.strftime('%Y%m%d')+'.txt',
                         level=logging.INFO,
                         format='%(asctime)s - %(name)s - %(levelname)s -%(message)s',
                         datefmt='%Y%m%d %H:%M:%S'
@@ -361,6 +361,20 @@ if __name__ == '__main__':
                         help='Pass this flag to skip Solr indexing',
                         action='store_true'
                        )
+    parser.add_argument(
+                        '-f',
+                        '--startappid',
+                        required=False,
+                        help='Pass this flag to specify the line number of the app ID file to start processing from for extraction - format #',
+                        type=int
+                       )
+    parser.add_argument(
+                        '-l',
+                        '--endappid',
+                        required=False,
+                        help='Pass this flag to specify the line number of the app ID file to end processing from for extraction - format #',
+                        type=int
+                       )
     args = parser.parse_args()
     logging.info("-- SCRIPT ARGUMENTS ------------")
     if args.series:
@@ -368,6 +382,8 @@ if __name__ == '__main__':
     logging.info("-- Skip Extraction flag set to: "+str(args.skipextraction))
     logging.info("-- Skip Parsing flag set to: "+str(args.skipparsing))
     logging.info("-- Skip Solr flag set to: "+str(args.skipsolr))
+    logging.info("-- Start  range of files to process set to: "+str(args.startappid))
+    logging.info("-- End range of files to process set to: "+str(args.endappid))
     logging.info("-- [JOB START]  ----------------")
 
     for series in args.series:
@@ -375,9 +391,10 @@ if __name__ == '__main__':
         print("seriespath: "+seriespath)
         if not args.skipextraction:
             logging.info("-- Processing series: "+series)
-            getAppIDs(os.path.join(scriptpath, 'extractedfiles', series, appnotfoundfname))
-            getAppIDs(os.path.join(scriptpath, 'extractedfiles', series, nofilefoundfname))
-            getAppIDs(os.path.join(scriptpath, 'extractedfiles', series, notfoundpalmfname))
+            # getAppIDs(os.path.join(scriptpath, 'extractedfiles', series, appnotfoundfname))
+            # getAppIDs(os.path.join(scriptpath, 'extractedfiles', series, nofilefoundfname))
+            # getAppIDs(os.path.join(scriptpath, 'extractedfiles', series, notfoundpalmfname))
+            getAppIDs(os.path.join(scriptpath, 'extractedfiles', series, 'OA2XML_notfound_sorted.log'), args.startappid, args.endappid)
             makeDirectory(os.path.join(scriptpath, 'extractedfiles', series, 'staging'))
             for x in appids:
                 try:
