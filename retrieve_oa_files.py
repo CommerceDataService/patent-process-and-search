@@ -251,7 +251,7 @@ def writeToJSON(fname):
 def readJSON(fname):
     try:
         fpath,filename = os.path.split(fname)
-        docid = filename.rsplit('_', 1)
+        docid = filename.split('_')[0]+', '+filename.split('_')[1]
         with open(fname, 'r') as fd:
             jsontext = fd.read().replace('\n', '')
             with open(os.path.join(os.path.dirname(fname), 'solrComplete.log'), 'a+') as logfile:
