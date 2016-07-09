@@ -8,10 +8,11 @@ def uploader():
 
 
 def test_that_we_can_post_file_to_s3(uploader):
-    uploader.post_file("test_file.txt")
+    uploader.post_file("test_file.txt", '9900011_Test99', 'T99')
 
 
-def test_that_we_can_retrieve_list_of_files_s14(uploader):
+
+def xtest_that_we_can_retrieve_list_of_files_s14(uploader):
     files = uploader.get_file_list("14")
 
     count = sum(1 for x in files)
@@ -19,7 +20,7 @@ def test_that_we_can_retrieve_list_of_files_s14(uploader):
     assert count == 170867
 
 
-def test_that_we_can_retrieve_list_of_files_s13(uploader):
+def xtest_that_we_can_retrieve_list_of_files_s13(uploader):
 
     files = uploader.get_file_list("13")
 
@@ -27,7 +28,7 @@ def test_that_we_can_retrieve_list_of_files_s13(uploader):
     assert count == 225708
 
 
-def test_that_we_can_get_subset_of_data(uploader):
+def xtest_that_we_can_get_subset_of_data(uploader):
 
     files = uploader.get_file_list("13/130000")
     files = list(files)

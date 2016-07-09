@@ -15,6 +15,9 @@ from datetime import datetime
 from lxml import etree
 import pandas as pd
 
+from s3_upload.s3_uploader import S3Uploader
+from s3_upload.util import Util
+
 #get public app IDs from app ID file
 def getAppIDs(fname,series):
     try:
@@ -269,7 +272,7 @@ def readJSON(fname):
                         return True
                     else:
                         logging.info('-- Solr error for doc: '+docid+' error: '+\
-                        ', '.join("{!s}={!r}".format(k,v) for (k,v) in rdict.items()))
+                        ', '.join("{!s}={!r}".format(k,v) for (k,v) in r.items()))
                         return False
     except IOError as e:
         logging.error('Read JSON file: '+fname+' I/O error({0}): {1}'.format(e.errno,e.strerror))
@@ -279,10 +282,48 @@ def readJSON(fname):
         raise
         return False
 
+#read JSON file and set up for sending to Solr
+def postFromS3ToJSon(obj):
+    try:
+        log_dir_path = os.path.join("logs", "solr_upload", Util.log_directory(obj.key))
+        logging.info("Log dir for file " + log_dir_path )
+        os.makedirs(log_dir_path, exist_ok=True)
+
+        docid = Util.doc_id(obj.key)
+        objdata = obj.get()
+        jsontext = objdata['Body'].read()
+        jsontext = jsontext.replace(b'\n', b'')
+
+        with open(os.path.join(log_dir_path  , 'solrComplete.log'), 'a+') as logfile:
+                logfile.seek(0)
+                if docid+'\n' in logfile:
+                    logging.info('-- File: '+docid+' already processed by Solr')
+                else:
+                    logging.info('-- Sending file: '+obj.key+' to Solr')
+                    response = sendToSolr('oadata_2_shard1_replica1', jsontext)
+                    r = response.json()
+                    status = r['responseHeader']['status']
+                    if status == 0:
+                        logfile.write(docid+"\n")
+                        logging.info('-- Solr update for file: '+docid+' complete')
+                        return True
+                    else:
+                        logging.info('-- Solr error for doc: '+docid+' error: '+ \
+                        ', '.join("{!s}={!r}".format(k,v) for (k,v) in r.items()))
+                        return False
+    except IOError as e:
+        logging.error('Read JSON file: '+fname+' I/O error({0}): {1}'.format(e.errno,e.strerror))
+        return False
+    except:
+        logging.error('Unexpected error:', sys.exc_info()[0])
+        raise
+        return False
+
+
 #send document to Solr for indexin
 def sendToSolr(core, json):
     try:
-        jsontext = '{"add":{ "doc":'+json+',"boost":1.0,"overwrite":true, "commitWithin": 1000}}'
+        jsontext = b'{"add":{ "doc":'+json+b',"boost":1.0,"overwrite":true, "commitWithin": 1000}}'
         url = os.path.join(solrURL,"solr",core,"update")
         headers = {"Content-type" : "application/json"}
         return requests.post(url, data=jsontext, headers=headers)
@@ -345,6 +386,14 @@ if __name__ == '__main__':
                         '--skipsolr',
                         required=False,
                         help='Pass this flag to skip Solr indexing',
+                        action="store_true",
+                        default=False
+                       )
+    parser.add_argument(
+                        '-3',
+                        '--s3tosolr',
+                        required=False,
+                        help='Pass this flag to send from S3 to SOLR',
                         action="store_true",
                         default=False
                        )
@@ -452,4 +501,15 @@ if __name__ == '__main__':
                         filecounter += 1
                 else:
                     logging.info('Total number of files processed: '+filecounter)
+        if args.s3tosolr:
+            logging.info("From S3 to SOLR : Series [" + series + "]")
+
+            uploader = S3Uploader('uspto-bdr')
+            files = uploader.get_file_list(series + "/" + "130000")
+            for x in files:
+                logging.info( "Uploading " + x.key )
+                postFromS3ToJSon(x)
+
+
+
     logging.info("-- [JOB END] -------------------")
