@@ -30,7 +30,7 @@
     "hbs": "^4.0.0",
     "helmet": "^1.3.0",
     "humanize": "^0.0.9",
-    "loopback": "2.22.2",
+    "loopback": "2.22.0",
     "loopback-boot": "^2.6.5",
     "loopback-component-explorer": "^2.4.0",
     "loopback-connector-mysql": "2.2.1",
