@@ -24,19 +24,14 @@ exports.buildSearch = function (req, res) {
     // Get From Date
     var dateRange='';
     // Only doing this for readiblity. Do not accept blank or undefined dates
-
     if ((typeof req.query.fromdate !== 'undefined' && req.query.todate !== 'undefined') &&  (req.query.fromdate.length > 2 && req.query.todate.length > 2)) {
-        var fromdate =  moment(req.query.fromdate).format('YYYY-MM-DD');
-        var todate   =  moment(req.query.todate).format('YYYY-MM-DD');
-
-        todate = todate + 'T00:00:00Z';
-        fromdate = fromdate + 'T00:00:00Z';
-
-        dateRange = '%20AND%20doc_date:['+ fromdate+'%20TO%20'+todate+']';
+        var fromDate = +new Date(req.query.fromdate)/1000;
+        var toDate   = +new Date(req.query.todate)/1000;
+        dateRange = 'doc_date:['+ fromDate+'%20TO%20'+toDate+']';
     }
 
     // Ensure q var is cast to string
-    var q;
+    var q, fq;
     if (req.query.q) {
         q=req.query.q.toString();
     }
@@ -48,11 +43,12 @@ exports.buildSearch = function (req, res) {
         s = (req.query.pageno -1) *20;
         currentPage = parseInt(req.query.pageno) ;
     }
-    q = q+dateRange;
+    fq = "&fq=type:" + req.query.dataset;
+    fq += "&fq=" + dateRange;
     // Build Search .. if no page number set then only show
-    var SEARCH_URL = config.solrURI+'/'+req.query.dataset+'/select?q='+q+'&wt=json&indent=true&rows=20&start='+s+'&hl=true&hl.snippets=10&hl.fl=textdata&hl.fragsize=200&hl.simple.pre=<code>&hl.simple.post=</code>&hl.usePhraseHighlighter=true&q.op=AND';
-    if (req.query.dataset == 'oafiledatanew'){
-       SEARCH_URL += '&fl=appid,action_type,filename,minread,id,textdata';
+    var SEARCH_URL = config.solrURI+'/select?q={!q.op=AND df=textdata}'+q+fq+'&wt=json&indent=true&rows=20&start='+s+'&hl=true&hl.snippets=10&hl.fl=textdata&hl.fragsize=200&hl.simple.pre=<code>&hl.simple.post=</code>&hl.usePhraseHighlighter=true&q.op=AND';
+    if (req.query.dataset == 'oa'){
+      //  SEARCH_URL += '&fl=appid,action_type,filename,minread,id,textdata';
     }else if (req.query.dataset == 'ptab'){
 	    var ptab = true;
             //add query fields here later for ptab
@@ -77,7 +73,9 @@ exports.buildSearch = function (req, res) {
                     term:q,
                     ptab: ptab,
                     email: req.body.email,
-                    accessOK: !!(! config.requireLogin || token.id)
+                    accessOK: !!(! config.requireLogin || token.id),
+                    todate: req.query.todate,
+                    fromdate:req.query.fromdate
                 });
             } else {
                 res.render('newview', {

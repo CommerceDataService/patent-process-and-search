@@ -32,12 +32,10 @@
           {{else}}
             <h1> No actions found for <span class="text-success">{{term}}</span> we may still be loading some </h1>
           {{/each}}
-
-        {{else}}
-
+      {{else}}
           {{#each result}}
             <div class="media">
-              <h4>  <a style="cursor:pointer"; onClick="javascript:document.getElementById('action_text').innerHTML =''; document.getElementById('action_text').innerHTML ='<h5>File Doc ID:{{filename}} , Action Type: {{action_type.[0]}}</h5><hr><b>Full Text</b><hr>{{breaklines textdata.[0]}}';"  data-item="{{filename}}" data-toggle="modal" data-target="#cancelModal">  Office Action ID: {{filename}}</a> | {{action_type.[0]}}</h4>
+              <h4>  <a style="cursor:pointer"; onClick="javascript:document.getElementById('action_text').innerHTML =''; document.getElementById('action_text').innerHTML ='<h5>File Doc ID:{{filename}} , Action Type: {{action_type.[0]}}</h5><hr><b>Full Text</b><hr>{{breaklines textdata.[0]}}';"  data-item="{{filename}}" data-toggle="modal" data-target="#cancelModal">  Office Action ID: {{appid}} - {{ifwnumber}}</a> |{{{convertDocCode documentcode}}}</h4>
               {{#with (lookup ../highlighting id) }}
                 {{#if textdata}}
                   {{#each textdata}}
