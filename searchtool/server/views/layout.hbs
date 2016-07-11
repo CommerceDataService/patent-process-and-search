@@ -106,6 +106,7 @@
           <div class="header keyline-bottom">
             <form role="form" action="/newsearch" class="padding-top-2 padding-right-2 padding-bottom-2">
               <h2 class="margin-top-0">Patent Data Search</h2>
+              {{#if accessOK}}
               <div class="input-search input-group">
                 <input type="text" name="q" value="{{#if term}}{{term}}{{/if}}" aria-label="Search all fields" title="Search all fields" class="form-control" placeholder="Search all fields" id="txt-find">
                 <span class="input-group-btn">
@@ -122,9 +123,13 @@
                 <b><i>Examples: Search for law 112(f) ..... <code>"112\(f\)"</code>  or search for Art Unit .. <code>"Art Unit 3669"~2</code>  </i></b>
                 <!-- <a href="#void">Show advanced search</a> -->
               </div>
+
               <div class="help-button">
                 <a href="/help" class="btn btn-primary">Help</a>
               </div>
+
+              {{/if}}
+
 
               <div class="tabs-results tabs-responsive btn-group hide">
                 <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-default dropdown-toggle hide" type="button">
@@ -187,11 +192,13 @@
                     </div>
                   </div>
                 </div>
+                {{#if acccessOK}}
                 <div class="input-search input-group" style="margin-left: 1em;">
                   <span class="input-group-btn">
                     <button class="btn btn-primary" style="z-index: 1;">Refine Search</button>
                   </span>
                 </div>
+                {{/if}}
                 </form>
                 <!--  <a class="filter-group-title" href="#void" data-toggle="collapse" data-target="#2filterGroup2"><i class="icon icon-angle-right pull-right"></i> <span class="badge pull-right">1</span> Application type</a>
         <div id="2filterGroup2" class="collapse">
