@@ -48,7 +48,7 @@ exports.buildSearch = function (req, res) {
     // Build Search .. if no page number set then only show
     var SEARCH_URL = config.solrURI+'/select?q={!q.op=AND df=textdata}'+q+fq+'&wt=json&indent=true&rows=20&start='+s+'&hl=true&hl.snippets=10&hl.fl=textdata&hl.fragsize=200&hl.simple.pre=<code>&hl.simple.post=</code>&hl.usePhraseHighlighter=true&q.op=AND';
     if (req.query.dataset == 'oa'){
-       SEARCH_URL += '&fl=appid,action_type,filename,minread,id,textdata';
+      //  SEARCH_URL += '&fl=appid,action_type,filename,minread,id,textdata';
     }else if (req.query.dataset == 'ptab'){
 	    var ptab = true;
             //add query fields here later for ptab
