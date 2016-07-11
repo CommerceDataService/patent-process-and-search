@@ -1,64 +1,42 @@
-import os, glob, time, botocore, boto3, logging, argparse
-from s3_uploader import S3Uploader
+import pytest
 
+
+@pytest.fixture
 def uploader():
-    logging.info('-- Connecting to s3')
+    from s3_uploader import S3Uploader
     return S3Uploader('uspto-bdr')
-    logging.info('-- Connected to s3')
 
-def post(filename, fname, series):
-    try:
-        s3session.post_file(filename, fname, series)
-        return True
-    except botocore.exceptions.ClientError as e:
-        logging.error('Unexpected error %s' % e)
-        raise
-        return False
 
-if __name__ == '__main__':
-    #logging configuration
-    logging.basicConfig(
-                        filename='uploadtos3-'+time.strftime('%Y%m%d')+'.txt',
-                        level=logging.INFO,
-                        format='%(asctime)s - %(name)s - %(levelname)s -%(message)s',
-                        datefmt='%Y%m%d %H:%M:%S'
-                       )
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-                        '-s',
-                        '--series',
-                        required=True,
-                        help='Specify series to process - format ## (separate each additional series with space)',
-                        nargs='*',
-                        type=str
-                       )
-    parser.add_argument(
-                        '-a',
-                        '--startappid',
-                        required=True,
-                        help='Specify an app ID to start with when uploading the files',
-                        type=str
-                       )
-    args = parser.parse_args()
-    logging.info("-- SCRIPT ARGUMENTS ------------")
-    if args.series:
-        logging.info("-- Series passed for processing: "+", ".join(args.series))
-    logging.info("-- Starting app ID set to: "+str(args.startappid))
-    logging.info("-- [JOB START]  ----------------")
+def test_that_we_can_post_file_to_s3(uploader):
+    uploader.post_file("test_file.txt", '9900011_Test99', 'T99')
 
-    mainpath = os.path.join('c:'+os.sep,'scripts','uspto_ptab','extractedfiles')
-    for series in args.series:
-        seriespath = os.path.join(mainpath,series)
-        startappid = args.startappid
-        logging.info('Processing seriespath: '+seriespath)
-        filecounter = 0
-        s3session = uploader()
-        for filename in glob.glob(os.path.join(seriespath,'*')):
-            fpath, fname = os.path.split(filename)
-            appid = fname.split('_')[0]
-            if fname.endswith('.json') and appid >= startappid:
-                if post(filename, fname, series):
-                    filecounter += 1
-                    logging.info('-- {} - posted file: {}'.format(filecounter,fname))
-                else:
-                    logging.error('-- File upload failed for: {}'.format(fname))
+
+
+def xtest_that_we_can_retrieve_list_of_files_s14(uploader):
+    files = uploader.get_file_list("14")
+
+    count = sum(1 for x in files)
+
+    assert count == 170867
+
+
+def xtest_that_we_can_retrieve_list_of_files_s13(uploader):
+
+    files = uploader.get_file_list("13")
+
+    count = sum(1 for x in files)
+    assert count == 225708
+
+
+def xtest_that_we_can_get_subset_of_data(uploader):
+
+    files = uploader.get_file_list("13/130000")
+    files = list(files)
+
+    assert 152 == len(files)
+    assert files[0].key == '13/13000002_HC0HIXUBPXXIFW4_Non-Final_Rejection.json'
+
+    file = files[0].get()
+
+    assert file['Body'].read().startswith(b'{"type": "oa", "appid": "13000002", '
+                                          b'"ifwnumber": "HC0HIXUBPXXIFW4", "documentcode": "CTNF",')
