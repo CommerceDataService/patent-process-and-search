@@ -25,6 +25,7 @@
   <link href="/bower_components/designpatterns/generated/styles/vendor.css" rel="stylesheet" />
   <link href="/bower_components/designpatterns/generated/styles/main.css" rel="stylesheet" />
   <link href="/bower_components/designpatterns/generated/styles/appDemo.min.css" rel="stylesheet" />
+  <link rel="stylesheet" type="text/css" href="/client/styles/layout_custom.css">
   <style>
     /* fix for IE transparent scroll bar */
 
@@ -122,7 +123,13 @@
                 <b><i>Examples: Search for law 112(f) ..... <code>"112\(f\)"</code>  or search for Art Unit .. <code>"Art Unit 3669"~2</code>  </i></b>
                 <!-- <a href="#void">Show advanced search</a> -->
               </div>
+
+              <div class="help-button">
+                <a href="/help" class="btn btn-primary">Help</a>
+              </div>
+
               {{/if}}
+
 
               <div class="tabs-results tabs-responsive btn-group hide">
                 <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-default dropdown-toggle hide" type="button">
@@ -185,7 +192,7 @@
                     </div>
                   </div>
                 </div>
-                {{#if acccessOK}}
+                {{#if accessOK}}
                 <div class="input-search input-group" style="margin-left: 1em;">
                   <span class="input-group-btn">
                     <button class="btn btn-primary" style="z-index: 1;">Refine Search</button>
