@@ -53,7 +53,13 @@ hbs.registerHelper('convertDocCode', function(code){
     'RTDI': 'RX - PETITION DECISION - DISMISSED'
   };
   return new hbs.SafeString(documentCodeDictionary[code]);
+});
 
+hbs.registerHelper('hyperlinkIt', function(source, appid){
+  switch(source){
+    case 'palm': return new hbs.SafeString('http://palmapps.uspto.gov/cgi-bin/expo/GenInfo/snquery.pl?APPL_ID='+appid);
+    case 'dav': return new hbs.SafeString('http://dav.uspto.gov/webapp/applicationViewer.html?casenumber='+appid)
+  }
 })
 // must be set to serve views properly when starting the app via `slc run` from
 // the project rootapp.set('views', path.join(__dirname, 'views'));
