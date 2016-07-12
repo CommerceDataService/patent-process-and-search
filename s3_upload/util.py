@@ -1,3 +1,5 @@
+import json
+
 class Util(object):
     @classmethod
     def log_directory(cls, objkey):
@@ -9,3 +11,7 @@ class Util(object):
     def doc_id(cls, objkey):
         past_series = objkey.split('/')[1]
         return past_series.split('_')[0] + ', ' + past_series.split('_')[1]
+
+    @classmethod
+    def parse_json(cls, obj):
+        return json.loads(obj.decode('utf-8'))
