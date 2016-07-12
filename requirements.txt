@@ -5,3 +5,4 @@ git+https://github.com/18F/doc_processing_toolkit.git#egg=textextraction
 boto3
 lxml
 pandas
+pytest
