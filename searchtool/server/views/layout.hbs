@@ -5,7 +5,11 @@
   <meta charset="utf-8">
   <title>Office Action Search</title>
   <meta name="description" content="Office Action Search">
-  <link rel="shortcut icon" href="/bower_components/designpatterns/generated/favicon.ico">
+  <meta name="keywords" content="office actions">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+  <meta name="theme-color" content="#004c97">
+  <meta property="og:title" content="Customize search results">
+  <meta property="og:description" content="">  <link rel="shortcut icon" href="/bower_components/designpatterns/generated/favicon.ico">
   <link href="/bower_components/designpatterns/generated/styles/vendor.css" rel="stylesheet" />
   <link href="/bower_components/designpatterns/generated/styles/main.css" rel="stylesheet" />
   <link href="/bower_components/designpatterns/generated/styles/appDemo.min.css" rel="stylesheet" />
@@ -22,10 +26,13 @@
     <nav class="navbar navbar-inverse">
       <div class="container-fluid container--full">
         <div class="navbar-header">
-          <button aria-controls="navbar" aria-expanded="false" data-target="#navbar" data-toggle="collapse" class="navbar-toggle collapsed" type="button">
-            <span class="sr-only">Toggle navigation</span>
-          </button>
+        <a href="/designpatterns/index.html" class="navbar-brand"><strong>USPTO</strong> <span class="light">Patent Quality Search Tool</span></a>
         </div>
+        <ul class="nav navbar-nav">
+          <li>
+            <a href="/help">Help</a>
+          </li>
+        </ul>
         <div class="navbar-collapse collapse" id="navbar">
           <ul class="nav navbar-nav navbar-right">
             <li class="dropdown">
@@ -45,40 +52,19 @@
 
   <main class="wrapper container-fluid container--full">
     <div class="row-grid">
-      <nav class="pane-left keyline-bottom">
-        <a tabindex="-1" id="contentNav"></a>
-        <div class="close-sidebar keyline-bottom clearfix">
-          <button type="button" class="btn-closeSidebar pull-right btn btn-sm btn-default btn-hover"><i class="icon icon-angle-double-left"></i> Close</button>
-        </div>
-        <ul role="tab-list" class="nav nav-stacked">
-          <li tabindex="0" class="category" role="presentation"><i class="icon icon-dashboard"></i> Dashboards</li>
-          <li role="presentation"><a href="#" role="tab">Systems summary</a></li>
-          <li role="presentation"><a href="#" role="tab">System A</a></li>
-          <li role="presentation"><a href="#" role="tab">System B</a></li>
-          <li role="presentation"><a href="#" role="tab">System C</a></li>
-          <li tabindex="0" class="category" role="presentation"><i class="icon icon-bar-chart"></i> Reports</li>
-          <li role="presentation"><a href="#" role="tab">Fees and transactions</a></li>
-          <li role="presentation"><a href="#" role="tab">Trends</a></li>
-          <li role="presentation"><a href="#" role="tab">Disposition</a></li>
-          <li role="presentation"><a href="#" role="tab">Custom</a></li>
-        </ul>
-      </nav>
       <div class="pane-center col">
         <div class="panel--page panel panel-default">
           <a tabindex="-1" id="search"></a>
           <div class="header keyline-bottom">
-            {{#unless accessOK}}
-              This Search engine is for Authorized users only.
-              <hr> For access, please contact Thomas Beach
-            {{/unless}}
             {{#if accessOK}}
               <form role="form" action="/newsearch" class="padding-top-2 padding-right-2 padding-bottom-2">
                 <h2 class="margin-top-0">Patent Data Search</h2>
+                <div class="form-group col-sm-5">
                 <div class="input-search input-group">
                   <input type="text" name="q" value="{{#if term}}{{term}}{{/if}}" aria-label="Search all fields" title="Search all fields" class="form-control" placeholder="Search all fields" id="txt-find">
                   <span class="input-group-btn">
-                  <button class="btn btn-primary"><i class="icon icon-inverse icon-search"></i></button>
-                </span>
+                    <button class="btn btn-primary"><i class="icon icon-inverse icon-search"></i></button>
+                  </span>
                 </div>
                 <label class="radio-inline">
                   <input type="radio" name="dataset" id="inlineRadio1" value="oa" {{#unless ptab}} checked {{/unless}}> Office Actions
@@ -87,48 +73,34 @@
                   <input type="radio" name="dataset" id="inlineRadio2" value="ptab" {{#if ptab}} checked {{/if}}> PTAB
                 </label>
                 <div style="margin-bottom: 0;" class="help-block">
-                  <b><i>Examples: Search for law 112(f) ..... <code>"112\(f\)"</code>  or search for Art Unit .. <code>"Art Unit 3669"~2</code>  </i></b>
+                  <b><i>Examples: Search for law 112(f)...<code>"112\(f\)"</code> or for Art Unit... <code>"Art Unit 3669"~2</code>  </i></b>
                 </div>
-                <div class="help-button">
-                  <a href="/help" class="btn btn-primary">Help</a>
+              </div>
+                <div class="form-group col-sm-1">
+                  <span class="input-icon icon icon-calendar-o"></span>
+                  <input name="fromdate" type="text" placeholder="Start" class="datepicker form-control" value="{{fromdate}}" data-inputmask="'mask': 'm/d/y', 'placeholder': 'mm/dd/yyyy'" title="Start date" aria-label="Start date">
                 </div>
-          </div>
-          <div class="main-wrapper row-grid">
-            <div class="app-sidebar filters keyline-right">
-              <a tabindex="-1" id="filters"></a>
-              <div class="close-sidebar keyline-bottom clearfix">
-                <button class="btn-closeSidebar pull-right btn btn-sm btn-default btn-hover"><i class="icon icon-angle-double-left"></i> Close</button>
-              </div>
-              <div class="filter-heading">
-                <span tabindex="0" class="h4">Refine by</span> <a class="filters-clear" href="">Clear</a>
-              </div>
-              <div class="filter-list">
-                <div class="filter-group-content">
-                  <div class="row">
-                    <div class="form-group col-sm-6">
-                      <span class="input-icon icon icon-calendar-o"></span>
-                      <input name="fromdate" type="text" placeholder="Start" class="datepicker form-control" value="{{fromdate}}" data-inputmask="'mask': 'm/d/y', 'placeholder': 'mm/dd/yyyy'" title="Start date" aria-label="Start date">
-                    </div>
-                    <div class="form-group col-sm-6">
-                      <span class="input-icon icon icon-calendar-o"></span>
-                      <input name="todate" type="text" placeholder="End" class="datepicker form-control" value="{{todate}}" data-inputmask="'mask': 'm/d/y', 'placeholder': 'mm/dd/yyyy'" title="End date" aria-label="End date">
-                    </div>
-                    <div class="form-group col-sm-6">
-                      <input type="text" name="art_unit" aria-label="Search Art Unit Number" title="Search Art Unit Number" class="form-control" placeholder="Search Art Unit Number" value="{{#if artUnit}} {{artUnit}}{{/if}}">
-                      <span>Please use 4-6 digit number</span>
-                    </div>
+                <div class="form-group col-sm-1">
+                  <span class="input-icon icon icon-calendar-o"></span>
+                  <input name="todate" type="text" placeholder="End" class="datepicker form-control" value="{{todate}}" data-inputmask="'mask': 'm/d/y', 'placeholder': 'mm/dd/yyyy'" title="End date" aria-label="End date">
+                </div>
+                <div class="form-group col-sm-2">
+                  <input type="text" name="art_unit" aria-label="Search Art Unit Number" title="Search Art Unit Number" class="form-control" placeholder="Search Art Unit Number" value="{{#if artUnit}}{{artUnit}}{{/if}}">
+                  <div style="margin-bottom: 0;" class="help-block">
+                    <b><i>Example: Search for Art Unit number <code>3669~2</code></i></b>
                   </div>
                 </div>
-              </div>
-              <div class="input-search input-group" style="margin-left: 1em;">
                 <span class="input-group-btn">
                   <button class="btn btn-primary" style="z-index: 1;">Refine Search</button>
                 </span>
-              </div>
               </form>
               {{/if}}
-            </div>
+              {{#unless accessOK}}
+              This Search engine is for authorized users only.
+              <hr> For access, please contact Thomas Beach
+              {{/unless}}
           </div>
+          <div class="main-wrapper row-grid">
           <div class="row-grid">
             <div class="main-content col">
               <div class="panel-body">
