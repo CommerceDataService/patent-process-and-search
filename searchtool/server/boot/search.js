@@ -40,8 +40,8 @@ exports.buildSearch = function (req, res) {
     }
 
     // Art Unit Filter
-    if ((typeof req.query.dn_dw_dn_gau_cd !== 'undefined') && (req.query.dn_dw_dn_gau_cd.length < 7) && (req.query.dn_dw_dn_gau_cd.length > 0)) {
-      var artUnit = 'dn_dw_dn_gau_cd:' + req.query.dn_dw_dn_gau_cd;
+    if ((typeof req.query.art_unit !== 'undefined') && (req.query.art_unit.length < 7) && (req.query.art_unit.length > 0)) {
+      var artUnit = 'dn_dw_dn_gau_cd:' + req.query.art_unit;
       fq += "&fq=" + artUnit;
     }
 
@@ -76,7 +76,7 @@ exports.buildSearch = function (req, res) {
                 res.render('newview', {
                     result:body.response.docs,
                     total:humanize.numberFormat(body.response.numFound,0),
-                    pagein:paginate({totalItem:body.response.numFound, itemPerPage:20, currentPage:currentPage, url:'/newsearch',params: {q: q, dataset: req.query.dataset, fromdate: req.query.fromdate, todate: req.query.todate, dn_dw_dn_gau_cd: req.query.dn_dw_dn_gau_cd} }),
+                    pagein:paginate({totalItem:body.response.numFound, itemPerPage:20, currentPage:currentPage, url:'/newsearch',params: {q: q, dataset: req.query.dataset, fromdate: req.query.fromdate, todate: req.query.todate, art_unit: req.query.art_unit} }),
                     took:humanize.numberFormat(body.responseHeader.QTime,0 ),
                     highlighting:body.highlighting,
                     term:q,
@@ -85,7 +85,7 @@ exports.buildSearch = function (req, res) {
                     accessOK: !!(! config.requireLogin || token.id),
                     todate: req.query.todate,
                     fromdate:req.query.fromdate,
-                    artUnit: req.query.dn_dw_dn_gau_cd
+                    artUnit: req.query.art_unit
                 });
             } else {
                 res.render('newview', {
