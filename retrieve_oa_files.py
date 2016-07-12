@@ -291,7 +291,9 @@ def postFromS3ToSOLR(obj):
         docid = Util.doc_id(obj.key)
         objdata = obj.get()
         jsontext = objdata['Body'].read()
-        jsontext = jsontext.replace(b'\n', b'')
+
+        jsontext = Util.reprocess_document(jsontext, obj.key)
+
 
         with open(os.path.join(log_dir_path  , 'solrComplete.log'), 'a+') as logfile:
                 logfile.seek(0)
