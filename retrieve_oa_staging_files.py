@@ -178,82 +178,94 @@ def convertToUTC(date,format):
         dt = ''
     return dt
 
-# #deal with na values and set type as string
-# def fixNaValues(dataframe,series):
-#     for col in series:
-#         values[col] = values[col].fillna('')
-#         values[col] = values[col].astype('str')
-#
-# #code for extracting PALM data from PALM series file and combine with other elements from XML file
-# def getPALMData(fileappid):
-#     try:
-#         logging.info('-- Starting PALM data match process')
-#         values = df[(df['APPL_ID'] == float(fileappid))]
-#         series = ['FILE_DT','EFFECTIVE_FILING_DT','ABANDON_DT','DN_NSRD_CURR_LOC_DT',\
-#         'APP_STATUS_DT','PATENT_ISSUE_DT','ABANDON_DT']
-#         fixNaValues(values, series)
-#         if len(values.index) == 1:
-#             for index, row in values.iterrows():
-#                 doccontent['appl_id'] = row.APPL_ID
-#                 doccontent['file_dt'] = convertToUTC(row.FILE_DT, '%d-%b-%y')
-#                 doccontent['effective_filing_dt'] = convertToUTC(row.EFFECTIVE_FILING_DT, '%d-%b-%y')
-#                 doccontent['inv_subj_matter_ty'] = row.INV_SUBJ_MATTER_TY
-#                 doccontent['appl_ty'] = row.APPL_TY
-#                 doccontent['dn_examiner_no'] = row.DN_EXAMINER_NO
-#                 doccontent['dn_dw_dn_gau_cd'] = row.DN_DW_DN_GAU_CD
-#                 doccontent['dn_pto_art_class_no'] = row.DN_PTO_ART_CLASS_NO
-#                 doccontent['dn_pto_art_subclass_no'] = row.DN_PTO_ART_SUBCLASS_NO
-#                 doccontent['confirm_no'] = row.CONFIRM_NO
-#                 doccontent['dn_intppty_cust_no'] = row.DN_INTPPTY_CUST_NO
-#                 doccontent['atty_dkt_no'] = row.ATTY_DKT_NO
-#                 doccontent['dn_nsrd_curr_loc_cd'] = row.DN_NSRD_CURR_LOC_CD
-#                 doccontent['dn_nsrd_curr_loc_dt'] = convertToUTC(row.DN_NSRD_CURR_LOC_DT, '%d-%b-%y')
-#                 doccontent['app_status_no'] = row.APP_STATUS_NO
-#                 doccontent['app_status_dt'] = convertToUTC(row.APP_STATUS_DT, '%d-%b-%y')
-#                 doccontent['wipo_pub_no'] = row.WIPO_PUB_NO
-#                 doccontent['patent_no'] = row.PATENT_NO
-#                 doccontent['patent_issue_dt'] = convertToUTC(row.PATENT_ISSUE_DT, '%d-%b-%y')
-#                 doccontent['abandon_dt'] = convertToUTC(row.ABANDON_DT, '%d-%b-%y')
-#                 doccontent['disposal_type'] = row.DISPOSAL_TYPE
-#                 doccontent['se_in'] = row.SE_IN
-#                 doccontent['pct_no'] = row.PCT_NO
-#                 doccontent['invn_ttl_tx'] = row.INVN_TTL_TX
-#                 doccontent['aia_in'] = row.AIA_IN
-#                 doccontent['continuity_type'] = row.CONTINUITY_TYPE
-#                 doccontent['frgn_priority_clm'] = row.FRGN_PRIORITY_CLM
-#                 doccontent['usc_119_met'] = row.USC_119_MET
-#                 doccontent['fig_qt'] = row.FIG_QT
-#                 doccontent['indp_claim_qt'] = row.INDP_CLAIM_QT
-#                 doccontent['efctv_claims_qt'] = row.EFCTV_CLAIMS_QT
-#                 logging.info('-- PALM data written to doccontent dictionary')
-#                 return True
-#         else:
-#             logging.error('-- Application ID: '+fileappid+' not found in PALM data')
-#             notfoundPALM.append(fileappid)
-#             return False
-#     except IOError as e:
-#         logging.error('PALM Extract file: '+fileappid+' I/O error({0}): {1}'.format(e.errno,e.strerror))
-#         return False
+def loadPALMdata():
+    logging.info('-- Loading PALM data')
+    dataframe =  pd.read_csv(os.path.join(palmfilespath, 'app'+series+'.csv'), encoding = 'latin-1')
+    logging.info('-- PALM data loaded into dataframe')
+    return dataframe
+
+def loadDateData():
+    logging.info('-- Loading date data')
+    dataframe =  pd.read_csv(datefilepath, encoding = 'latin-1')
+    logging.info('-- Date data loaded into dataframe')
+    return dataframe
+
+#deal with na values and set type as string
+def fixNaValues(dataframe,series):
+    for col in series:
+        dataframe[col] = dataframe[col].fillna('')
+        dataframe[col] = dataframe[col].astype('str')
+
+#code for extracting PALM data from PALM series file and combine with other elements from XML file
+def getPALMData(fileappid):
+    try:
+        logging.info('-- Starting PALM data match process')
+        values = df[(df['APPL_ID'] == float(fileappid))]
+        series = ['FILE_DT','EFFECTIVE_FILING_DT','ABANDON_DT','DN_NSRD_CURR_LOC_DT',\
+        'APP_STATUS_DT','PATENT_ISSUE_DT','ABANDON_DT','DN_EXAMINER_NO','DN_DW_DN_GAU_CD',\
+        'DN_NSRD_CURR_LOC_CD','PATENT_NO','PCT_NO','CONTINUITY_TYPE']
+        fixNaValues(values, series)
+        if len(values.index) == 1:
+            for index, row in values.iterrows():
+                doccontent['appl_id'] = row.APPL_ID
+                doccontent['file_dt'] = convertToUTC(row.FILE_DT, '%d-%b-%y')
+                doccontent['effective_filing_dt'] = convertToUTC(row.EFFECTIVE_FILING_DT, '%d-%b-%y')
+                doccontent['inv_subj_matter_ty'] = row.INV_SUBJ_MATTER_TY
+                doccontent['appl_ty'] = row.APPL_TY
+                doccontent['dn_examiner_no'] = row.DN_EXAMINER_NO.strip()
+                doccontent['dn_dw_dn_gau_cd'] = row.DN_DW_DN_GAU_CD.strip()
+                doccontent['dn_pto_art_class_no'] = row.DN_PTO_ART_CLASS_NO
+                doccontent['dn_pto_art_subclass_no'] = row.DN_PTO_ART_SUBCLASS_NO
+                doccontent['confirm_no'] = row.CONFIRM_NO
+                doccontent['dn_intppty_cust_no'] = row.DN_INTPPTY_CUST_NO
+                doccontent['atty_dkt_no'] = row.ATTY_DKT_NO
+                doccontent['dn_nsrd_curr_loc_cd'] = row.DN_NSRD_CURR_LOC_CD.strip()
+                doccontent['dn_nsrd_curr_loc_dt'] = convertToUTC(row.DN_NSRD_CURR_LOC_DT, '%d-%b-%y')
+                doccontent['app_status_no'] = row.APP_STATUS_NO
+                doccontent['app_status_dt'] = convertToUTC(row.APP_STATUS_DT, '%d-%b-%y')
+                doccontent['wipo_pub_no'] = row.WIPO_PUB_NO
+                doccontent['patent_no'] = row.PATENT_NO
+                doccontent['patent_issue_dt'] = convertToUTC(row.PATENT_ISSUE_DT, '%d-%b-%y')
+                doccontent['abandon_dt'] = convertToUTC(row.ABANDON_DT, '%d-%b-%y')
+                doccontent['disposal_type'] = row.DISPOSAL_TYPE
+                doccontent['se_in'] = row.SE_IN
+                doccontent['pct_no'] = row.PCT_NO.strip()
+                doccontent['invn_ttl_tx'] = row.INVN_TTL_TX
+                doccontent['aia_in'] = row.AIA_IN
+                doccontent['continuity_type'] = row.CONTINUITY_TYPE.strip()
+                doccontent['frgn_priority_clm'] = row.FRGN_PRIORITY_CLM
+                doccontent['usc_119_met'] = row.USC_119_MET
+                doccontent['fig_qt'] = row.FIG_QT
+                doccontent['indp_claim_qt'] = row.INDP_CLAIM_QT
+                doccontent['efctv_claims_qt'] = row.EFCTV_CLAIMS_QT
+                logging.info('-- PALM data written to doccontent dictionary')
+                return True
+        else:
+            logging.error('-- Application ID: '+fileappid+' not found in PALM data')
+            notfoundPALM.append(fileappid)
+            return False
+    except IOError as e:
+        logging.error('PALM Extract file: '+fileappid+' I/O error({0}): {1}'.format(e.errno,e.strerror))
+        return False
 
 #get official application doc date
 def getDocDate(appid, ifwnum):
     try:
-        params = [{"businessUnitId": appid,
-              "documentId": ifwnum}]
-        headers = {'Content-type': 'application/json'}
-        response = requests.post(cmsURL, json=params, headers=headers)
-        r = response.json()
-        if 'httpStatus' in r:
-            doc_date = ''
-            logging.info('-- App ID: '+appid+', IFW#: '+ifwnum+' not found from CMS service')
-            notfoundCMS.append(appid+', '+ifwnum)
-        elif 'officialDocumentDate' in r[0]:
-            doc_date = convertToUTC(r[0]['officialDocumentDate'], '%Y-%m-%d')
-        doccontent['doc_date'] = doc_date
-        return True
-    except requests.exceptions.RequestException as e:
-        logging.error('-- CMS Restful error for: '+appid+', '+ifwnum+', error: '+e)
-        notfoundCMS.append(appid+', '+ifwnum)
+        logging.info('-- Starting PALM data match process')
+        values = datefile[(datefile['Application_Id'] == float(fileappid)) & (datefile['Document_Id'] == ifwnum)]
+        series = ['Mailroom_Date']
+        fixNaValues(values, series)
+        if len(values.index) == 1:
+            for index, row in values.iterrows():
+                doccontent['doc_date'] = convertToUTC(row.Mailroom_Date, '%Y-%m-%d %H:%M:%S')
+                logging.info('-- Date data written to doccontent dictionary')
+                return True
+        else:
+            logging.error('-- Application ID: '+fileappid+' not found in Date data')
+            notfoundDate.append(fileappid)
+            return False
+    except IOError as e:
+        logging.error('PALM Extract file: '+fileappid+' I/O error({0}): {1}'.format(e.errno,e.strerror))
         return False
 
 #write dictionary to JSON file
@@ -308,16 +320,16 @@ if __name__ == '__main__':
     appnotfoundfname = 'appnotfound.log'
     nofilefoundfname = 'nofilefound.log'
     notfoundpalmfname = 'notfoundPALM.log'
-    docdatefile = os.path.join(scriptpath, 'files', 'staging_doc_date.csv')
     oafilespath = '\\\\s-mdw-isl-b02-smb.uspto.gov\\BigData\\BackFile'
-    #cmsURL = 'http://p-elp-services.uspto.gov/cmsservice/pto/PATENT/documentMetadataByAccess'
+    palmfilespath = '\\\\nsx-orgshares\\CIO-OCIO\\BDR_Access\\PALM'
+    datefilepath = '\\\\nsx-orgshares\\CIO-OCIO\\BDR_Access\\doc_date\staging_doc_date_sorted.csv'
     solrURL = ''
     appids = []
     completeappids = []
     notfoundappids = []
     nofileappids = []
     notfoundPALM = []
-    notfoundCMS = [] #records appid and ifw number
+    notfoundDate = [] #records appid and ifw number
     badfiles = []
     currentapp = ''
     numoffileswritten = 0
@@ -375,6 +387,14 @@ if __name__ == '__main__':
                         help='Pass this flag to specify the line number of the app ID file to end processing from for extraction - format #',
                         type=int
                        )
+    parser.add_argument(
+                        '-3',
+                        '--s3tosolr',
+                        required=False,
+                        help='Pass this flag to send from S3 to SOLR',
+                        action="store_true",
+                        default=False
+                       )
     args = parser.parse_args()
     logging.info("-- SCRIPT ARGUMENTS ------------")
     if args.series:
@@ -384,6 +404,7 @@ if __name__ == '__main__':
     logging.info("-- Skip Solr flag set to: "+str(args.skipsolr))
     logging.info("-- Start  range of files to process set to: "+str(args.startappid))
     logging.info("-- End range of files to process set to: "+str(args.endappid))
+    logging.info("-- Skip s3 to Solr flag set to: "+str(args.s3tosolr))
     logging.info("-- [JOB START]  ----------------")
 
     for series in args.series:
@@ -391,9 +412,6 @@ if __name__ == '__main__':
         print("seriespath: "+seriespath)
         if not args.skipextraction:
             logging.info("-- Processing series: "+series)
-            # getAppIDs(os.path.join(scriptpath, 'extractedfiles', series, appnotfoundfname))
-            # getAppIDs(os.path.join(scriptpath, 'extractedfiles', series, nofilefoundfname))
-            # getAppIDs(os.path.join(scriptpath, 'extractedfiles', series, notfoundpalmfname))
             getAppIDs(os.path.join(scriptpath, 'extractedfiles', series, 'OA2XML_notfound_sorted.log'), args.startappid, args.endappid)
             makeDirectory(os.path.join(scriptpath, 'extractedfiles', series, 'staging'))
             for x in appids:
@@ -453,43 +471,64 @@ if __name__ == '__main__':
             del completeappids[:]
             del notfoundappids[:]
             del nofileappids[:]
-        # elif not args.skipparsing:
-        #     for filename in glob.glob(os.path.join(seriespath,'*.xml')):
-        #         logging.info('-- Start Processing file: '+filename)
-        #         fname = os.path.join(seriespath, filename)
-        #         fn = changeExt(fname, 'json')
-        #         if not os.path.isfile(fn):
-        #             fileappid = (os.path.basename(filename)).split('_')[0]
-        #             ifwnum = (os.path.basename(filename)).split('_')[1]
-        #             #type set to oa for office actions
-        #             doccontent['type'] = 'oa'
-        #             doccontent['appid'] = fileappid
-        #             #IFW number for action
-        #             doccontent['ifwnumber'] = ifwnum
-        #             if parseXML(fname):
-        #                 if getPALMData(fileappid):
-        #                     if getDocDate(fileappid, ifwnum):
-        #                         if writeToJSON(fn):
-        #                             numoffileswritten += 1
-        #                             logging.info('-- {} - Complete processing for file: {}'.format(numoffileswritten,fn))
-        #                             if not args.skipsolr:
-        #                                 logging.info('-- Reading JSON file: '+fn)
-        #                                 #readJSON(fn)
-        #                         else:
-        #                             logging.error('-- write to JSON for file: '+filename+' failed')
-        #                     else:
-        #                         logging.error('-- Retrieval of Doc Date for file: '+filename+' failed')
-        #                 else:
-        #                     logging.error('-- Extraction of PALM data for file: '+filename+' failed')
-        #             else:
-        #                 logging.error('-- Parsing of file: '+filename+' failed')
-        #         else:
-        #             logging.info('File: '+fn+' already exists')
-        #         doccontent.clear()
-        #     writeLogs(os.path.join(seriespath,'notfoundPALM.log'),notfoundPALM)
-        #     writeLogs(os.path.join(seriespath,'notfoundCMS.log'),notfoundCMS)
-        #     writeLogs(os.path.join(seriespath,'badfiles.log'),badfiles)
-        #     del notfoundPALM[:]
-        #     del notfoundCMS[:]
-        #     del badfiles[:]
+        if not args.skipparsing:
+            df = loadPALMdata()
+            datefile = loadDateData()
+            for filename in glob.glob(os.path.join(seriespath,'*.xml')):
+                fpath,fname = os.path.split(filename)
+                if not fname.endswith('OACSConversion.xml'):
+                    logging.info('-- Start Processing file: '+fname)
+                    fname = os.path.join(seriespath, filename)
+                    fn = changeExt(fname, 'json')
+                    if not os.path.isfile(fn):
+                        fileappid = (os.path.basename(filename)).split('_')[0]
+                        ifwnum = (os.path.basename(filename)).split('_')[1]
+                        #type set to oa for office actions
+                        doccontent['type'] = 'oa'
+                        doccontent['appid'] = fileappid
+                        #IFW number for action
+                        doccontent['ifwnumber'] = ifwnum
+                        if parseXML(fname):
+                            if getPALMData(fileappid):
+                                if getDocDate(fileappid, ifwnum):
+                                    if writeToJSON(fn):
+                                        numoffileswritten += 1
+                                        logging.info('-- {} - Complete processing for file: {}'.format(numoffileswritten,fn))
+                                    else:
+                                        logging.error('-- write to JSON for file: '+fname+' failed')
+                                else:
+                                    logging.error('-- Retrieval of Doc Date for file: '+fname+' failed')
+                            else:
+                                logging.error('-- Extraction of PALM data for file: '+fname+' failed')
+                        else:
+                            logging.error('-- Parsing of file: '+fname+' failed')
+                    else:
+                        logging.info('File: '+fn+' already exists')
+                        if not args.skipsolr:
+                            logging.info('-- Reading JSON file: '+fn)
+
+                    doccontent.clear()
+            writeLogs(os.path.join(seriespath,'notfoundPALM.log'),notfoundPALM)
+            writeLogs(os.path.join(seriespath,'notfoundDate.log'),notfoundDate)
+            writeLogs(os.path.join(seriespath,'badfiles.log'),badfiles)
+            del notfoundPALM[:]
+            del notfoundDate[:]
+            del badfiles[:]
+        if not args.skipsolr:
+            filecounter = 0
+            for filename in glob.glob(os.path.join(seriespath,'*.json')):
+                logging.info('-- Reading JSON file: '+filename)
+                if filecounter < 10001:
+                    if readJSON(filename):
+                        filecounter += 1
+                else:
+                    logging.info('Total number of files processed: '+filecounter)
+        if args.s3tosolr:
+            logging.info("From S3 to SOLR : Series [" + series + "]")
+
+            uploader = S3Uploader('uspto-bdr')
+            files = uploader.get_file_list(series + "/" + "130000")
+            for x in files:
+                logging.info( "Uploading " + x.key )
+                postFromS3ToJSon(x)
     logging.info("-- [JOB END] -------------------")
