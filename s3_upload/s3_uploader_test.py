@@ -8,7 +8,7 @@ def uploader():
 
 
 def test_that_we_can_post_file_to_s3(uploader):
-    uploader.post_file("test_file.txt", '9900011_Test99', 'T99')
+    uploader.post_file("test_fixtures/test_file.txt", '9900011_Test99', 'T99')
 
 
 
