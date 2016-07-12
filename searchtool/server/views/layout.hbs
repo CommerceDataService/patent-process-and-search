@@ -7,7 +7,7 @@
   <title>Office Action Search</title>
 
   <meta name="description" content="Office Action Search">
-  <meta name="keywords" contnet="office actions">
+  <meta name="keywords" content="office actions">
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
   <meta name="theme-color" content="#004c97">
@@ -193,6 +193,14 @@
                   </div>
                 </div>
                 {{#if accessOK}}
+                
+              
+
+                <div>
+                  <input type="text" name="art_unit"  aria-label="Search Art Unit Number" title="Search Art Unit Number" class="form-control" placeholder="Search Art Unit Number" value="{{#if artUnit}} {{artUnit}}{{/if}}">
+                  <span>Please use 4-6 digit number</span>
+                </div>
+
                 <div class="input-search input-group" style="margin-left: 1em;">
                   <span class="input-group-btn">
                     <button class="btn btn-primary" style="z-index: 1;">Refine Search</button>
@@ -384,7 +392,10 @@
                     <div class="pg-actions clearfix">
                         <div class="row">
                             {{#if term}}<span> Search Term: <span class="label label-success subtle">{{term}}</span> </span>{{/if}}
-                            {{#if total}}
+
+                            {{#if artUnit}}<span> Art Unit: <span class="label label-success subtle">{{artUnit}}</span></span>{{/if}}
+
+                            {{#if total}}<br>
                             <span class="pull-left margin-top-0">{{total}} results took {{took}} ms</span>
                             <span><a href="javascript:void(0);" onclick="resizeText(1)" id="plustext"> [+] Make results bigger</a> | <a href="javascript:void(0);" onclick="resizeText(-1)" id="minustext">[-] Make results smaller</a></span>
                             {{/if}}
