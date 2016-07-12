@@ -8,8 +8,7 @@
 #with PALM data from flat files, and gets the post date from a CMS RESTFUL service.
 #It then transforms the resulting dictionary to JSON and sends it to Solr for indexing.
 
-import sys, os, glob, shutil, logging, time, argparse, glob, json, requests,\
-csv, collections, math
+import sys, os,  shutil, logging, time, argparse, glob, json, requests, collections
 
 from datetime import datetime
 from lxml import etree
@@ -283,7 +282,7 @@ def readJSON(fname):
         return False
 
 #read JSON file and set up for sending to Solr
-def postFromS3ToJSon(obj):
+def postFromS3ToSOLR(obj):
     try:
         log_dir_path = os.path.join("logs", "solr_upload", Util.log_directory(obj.key))
         logging.info("Log dir for file " + log_dir_path )
@@ -312,12 +311,11 @@ def postFromS3ToJSon(obj):
                         ', '.join("{!s}={!r}".format(k,v) for (k,v) in r.items()))
                         return False
     except IOError as e:
-        logging.error('Read JSON file: '+fname+' I/O error({0}): {1}'.format(e.errno,e.strerror))
+        logging.error('Read JSON file: '+ obj.key +' I/O error({0}): {1}'.format(e.errno,e.strerror))
         return False
     except:
         logging.error('Unexpected error:', sys.exc_info()[0])
         raise
-        return False
 
 
 #send document to Solr for indexin
@@ -508,8 +506,7 @@ if __name__ == '__main__':
             files = uploader.get_file_list(series + "/" + "130000")
             for x in files:
                 logging.info( "Uploading " + x.key )
-                postFromS3ToJSon(x)
-
+                postFromS3ToSOLR(x)
 
 
     logging.info("-- [JOB END] -------------------")
