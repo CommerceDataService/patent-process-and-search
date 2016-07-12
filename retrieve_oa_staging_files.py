@@ -338,7 +338,7 @@ if __name__ == '__main__':
 
     #logging configuration
     logging.basicConfig(
-                        filename='logs/extract-staging-files-13-log-'+time.strftime('%Y%m%d')+'.txt',
+                        filename='logs/extract-staging-files-log-'+time.strftime('%Y%m%d')+'.txt',
                         level=logging.INFO,
                         format='%(asctime)s - %(name)s - %(levelname)s -%(message)s',
                         datefmt='%Y%m%d %H:%M:%S'
