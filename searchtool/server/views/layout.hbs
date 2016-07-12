@@ -177,7 +177,7 @@
         </div> -->
                 {{#if accessOK}}
                     <a class="filter-group-title" href="#void" data-toggle="collapse" data-target="#2filterGroup1"><i class="icon icon-angle-right pull-right"></i> Filing date range</a>
-                {{/if}}
+                
                 <div id="2filterGroup1" class="collapse">
                   <div class="filter-group-content">
                     <div class="row">
@@ -200,7 +200,7 @@
                 </div>
 
 
-                <select name="documentcode">
+                <select name="documentcode" id="documentcodeID">
                   <option value="">Please choose a document code</option>
                   <option value="RXCTIN">INTERFERENCE COMMUNICATION: INITIAL MEMO:RXCTIN</option>
                   <option value="RDIN">RX - DECISION STAYING REEXAM IN FAVOR OF INTERFERENCE:RDIN</option>
@@ -423,6 +423,11 @@
                             {{#if term}}<span> Search Term: <span class="label label-success subtle">{{term}}</span> </span>{{/if}}
 
                             {{#if artUnit}}<span> Art Unit: <span class="label label-success subtle">{{artUnit}}</span></span>{{/if}}
+
+
+                            {{#if documentcode}}
+                            <span> Document Code: </span><span class="label label-success subtle">{{documentcode}}</span>
+                            {{/if}}
 
                             {{#if total}}<br>
                             <span class="pull-left margin-top-0">{{total}} results took {{took}} ms</span>
