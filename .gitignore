@@ -72,3 +72,4 @@ logs/*
 json_files/*
 extractedfiles/*
 PE2E-ELP/*
+/node_modules

@@ -60,7 +60,7 @@ def test_that_we_can_retrieve_list_of_files_14m(uploader):
     count = sum(1 for x in files)
     assert count == 5456
 
-def test_that_we_can_retrieve_list_of_files_13m(uploader):
+def xtest_that_we_can_retrieve_list_of_files_13m(uploader):
 
     files = uploader.get_file_list("13m/")
 
@@ -93,7 +93,7 @@ def test_we_do_refresh_when_needed(uploader):
     assert uploader.refresh_count == 2
 
 
-def test_that_we_can_get_subset_of_data(uploader):
+def xtest_that_we_can_get_subset_of_data(uploader):
     files = uploader.get_file_list("13/130000")
     files = list(files)
 
