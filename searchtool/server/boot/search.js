@@ -34,10 +34,10 @@ exports.buildSearch = function (req, res) {
     }
 
     // Ensure q var is cast to string
-
     if (req.query.q) {
         q=req.query.q.toString();
     }
+
 
     // Art Unit Filter
     if ((typeof req.query.art_unit !== 'undefined') && (req.query.art_unit.length < 7) && (req.query.art_unit.length > 0)) {
@@ -52,7 +52,6 @@ exports.buildSearch = function (req, res) {
         s = (req.query.pageno -1) *20;
         currentPage = parseInt(req.query.pageno) ;
     }
-
 
     // Build Search .. if no page number set then only show
     var SEARCH_URL = config.solrURI+'/select?q={!q.op=AND df=textdata}'+q+fq+'&wt=json&indent=true&rows=20&start='+s+'&hl=true&hl.snippets=10&hl.fl=textdata&hl.fragsize=200&hl.simple.pre=<code>&hl.simple.post=</code>&hl.usePhraseHighlighter=true&q.op=AND';
@@ -85,7 +84,8 @@ exports.buildSearch = function (req, res) {
                     accessOK: !!(! config.requireLogin || token.id),
                     todate: req.query.todate,
                     fromdate:req.query.fromdate,
-                    artUnit: req.query.art_unit
+                    artUnit: req.query.art_unit,
+                    documentcode: req.query.documentcode
                 });
             } else {
                 res.render('newview', {
