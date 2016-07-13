@@ -9,7 +9,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
   <meta name="theme-color" content="#004c97">
   <meta property="og:title" content="Customize search results">
-  <meta property="og:description" content="">  <link rel="shortcut icon" href="/bower_components/designpatterns/generated/favicon.ico">
+  <meta property="og:description" content="">
+  <link rel="shortcut icon" href="/bower_components/designpatterns/generated/favicon.ico">
   <link href="/bower_components/designpatterns/generated/styles/vendor.css" rel="stylesheet" />
   <link href="/bower_components/designpatterns/generated/styles/main.css" rel="stylesheet" />
   <link href="/bower_components/designpatterns/generated/styles/appDemo.min.css" rel="stylesheet" />
@@ -26,7 +27,7 @@
     <nav class="navbar navbar-inverse">
       <div class="container-fluid container--full">
         <div class="navbar-header">
-        <a href="/designpatterns/index.html" class="navbar-brand"><strong>USPTO</strong> <span class="light">Patent Quality Search Tool</span></a>
+          <a href="/designpatterns/index.html" class="navbar-brand"><strong>USPTO</strong> <span class="light">Patent Quality Search Tool</span></a>
         </div>
         <ul class="nav navbar-nav">
           <li>
@@ -49,7 +50,6 @@
       </div>
     </nav>
   </header>
-
   <main class="wrapper container-fluid container--full">
     <div class="row-grid">
       <div class="pane-center col">
@@ -59,12 +59,11 @@
             {{#if accessOK}}
               <form role="form" action="/newsearch" class="padding-top-2 padding-right-2 padding-bottom-2">
                 <h2 class="margin-top-0">Patent Data Search</h2>
-                <div class="form-group col-sm-5">
                 <div class="input-search input-group">
-                  <input type="text" name="q" value="{{#if term}}{{term}}{{/if}}" aria-label="Search all fields" title="Search all fields" class="form-control" placeholder="Search all fields" id="txt-find">
+                  <input type="text" name="q" value="{{term}}" aria-label="Search all fields" title="Search all fields" class="form-control" placeholder="Search all fields" id="txt-find">
                   <span class="input-group-btn">
-                    <button class="btn btn-primary"><i class="icon icon-inverse icon-search"></i></button>
-                  </span>
+                  <button class="btn btn-primary"><i class="icon icon-inverse icon-search"></i></button>
+                </span>
                 </div>
                 <label class="radio-inline">
                   <input type="radio" name="dataset" id="inlineRadio1" value="oa" {{#unless ptab}} checked {{/unless}}> Office Actions
@@ -75,98 +74,117 @@
                 <div style="margin-bottom: 0;" class="help-block">
                   <b><i>Examples: Search for law 112(f)...<code>"112\(f\)"</code> or for Art Unit... <code>"Art Unit 3669"~2</code>  </i></b>
                 </div>
+              </form>
+            {{/if}}
+            {{#unless accessOK}}
+              This Search engine is for authorized users only.
+              <hr> For access, please contact Thomas Beach
+            {{/unless}}
+          </div>
+          <div class="main-wrapper row-grid">
+            <div class="app-sidebar filters keyline-right">
+              <a tabindex="-1" id="filters"></a>
+              <div class="filter-heading">
+                <span tabindex="0" class="h4">Refine by</span> <a class="filters-clear" href="">Clear</a>
               </div>
-                <div class="form-group col-sm-1">
-                  <span class="input-icon icon icon-calendar-o"></span>
-                  <input name="fromdate" type="text" placeholder="Start" class="datepicker form-control" value="{{fromdate}}" data-inputmask="'mask': 'm/d/y', 'placeholder': 'mm/dd/yyyy'" title="Start date" aria-label="Start date">
+              <form class="filters-flat js-filterSwitch" role="form" action="/newsearch">
+                <div class="filter hide">
+                  <input type="text" name="q" value="{{term}}" aria-label="Search all fields" title="Search all fields" class="form-control hide" placeholder="Search all fields" id="txt-find">
                 </div>
-                <div class="form-group col-sm-1">
-                  <span class="input-icon icon icon-calendar-o"></span>
-                  <input name="todate" type="text" placeholder="End" class="datepicker form-control" value="{{todate}}" data-inputmask="'mask': 'm/d/y', 'placeholder': 'mm/dd/yyyy'" title="End date" aria-label="End date">
-                </div>
-                <div class="form-group col-sm-2">
-                  <input type="text" name="art_unit" aria-label="Search Art Unit Number" title="Search Art Unit Number" class="form-control" placeholder="Search Art Unit Number" value="{{#if artUnit}}{{artUnit}}{{/if}}">
-                  <div style="margin-bottom: 0;" class="help-block">
-                    <b><i>Example: Search for Art Unit number <code>3669~2</code></i></b>
+                <div class="filter">
+                  <div class="h5" tabindex="0">Document Date</div>
+                  <div class="form-group">
+                    <span class="input-icon icon icon-calendar-o"></span>
+                    <input name="fromdate" type="text" placeholder="Start" class="datepicker form-control" value="{{fromdate}}" data-inputmask="'mask': 'm/d/y', 'placeholder': 'mm/dd/yyyy'" title="Start date" aria-label="Start date">
+                  </div>
+                  <div class="form-group margin-bottom-0">
+                    <span class="input-icon icon icon-calendar-o"></span>
+                    <input name="todate" type="text" placeholder="End" class="datepicker form-control" value="{{todate}}" data-inputmask="'mask': 'm/d/y', 'placeholder': 'mm/dd/yyyy'" title="End date" aria-label="End date">
                   </div>
                 </div>
-                <select name="documentcode" id="documentcodeID">
-                  <option value="">Please choose a document code</option>
-                  <option value="RXCTIN">INTERFERENCE COMMUNICATION: INITIAL MEMO:RXCTIN</option>
-                  <option value="RDIN">RX - DECISION STAYING REEXAM IN FAVOR OF INTERFERENCE:RDIN</option>
-                  <option value="M327-D">PUB OTHER MISCELLANEOUS COMMUNICATION TO APPLICANT:M327-D</option>
-                  <option value="CTNF">NON-FINAL REJECTION:CTNF</option>
-                  <option value="CNTA">ALLOWABILITY NOTICE:CNTA</option>
-                  <option value="CTFR">FINAL REJECTION:CTFR</option>
-                  <option value="CNOA">CORRECTED NOTICE OF ALLOWABILITY:CNOA</option>
-                  <option value="N271">RESPONSE TO AMENDMENT UNDER RULE 312:N271</option>
-                  <option value="REXD">RX - EX PARTE REEXAM ORDER - DENIED:REXD</option>
-                  <option value="EX.R">REASONS FOR ALLOWANCE:EX.R</option>
-                  <option value="RTDE">RX - PETITION DECISION - DENIED:RTDE</option>
-                  <option value="INTNO">INTERFERENCE NOTIFICATION TO PATENTEE RULE 607:INTNO</option>
-                  <option value="L.SI">SUSPENSION - INTERFERENCE IN ANOTHER CASE:L.SI</option>
-                  <option value="RXBPAI">REEXAM FORWARDED TO BOARD OF PATENT APPEALS AND INTERFERENCES:RXBPAI</option>
-                  <option value="RXSRXI">DECISION STAYING REEXAM PROCEEDING IN FAVOR OF INTERFERENCE PROCEEDING:RXSRXI</option>
-                  <option value="CTMS">MISCELLANEOUS ACTION WITH SSP:CTMS</option>
-                  <option value="M327">MISCELLANEOUS COMMUNICATION TO APPLICANT - NO ACTION COUNT:M327</option>
-                  <option value="M327-E">BOA MISCELLANEOUS COMMUNICATION TO APPLICANT:M327-E</option>
-                  <option value="P132">MISCELLANEOUS COMMUNICATION:P132</option>
-                  <option value="R327">RX - MISCELLANEOUS COMMUNICATION TO APPLICANT:R327</option>
-                  <option value="RXM327">MISCELLANEOUS COMMUNICATION TO APPLICANT:RXM327</option>
-                  <option value="RXMISC">MISCELLANEOUS ACTION MAILED:RXMISC</option>
-                  <option value="RXMMIS">MISCELLANEOUS LETTER MAILED:RXMMIS</option>
-                  <option value="SEMI">SE - MISCELLANEOUS DECISION/OFFICE NOTICE IN SE:SEMI</option>
-                  <option value="RTGR">RX - PETITION DECISION - GRANTED:RTGR</option>
-                  <option value="RTDI">RX - PETITION DECISION - DISMISSED:RTDI</option>
-                </select>
-
+                <div class="filter">
+                  <label for="s2id_autogen2" class="h5 control-label">Select Document Code</label>
+                  <select class="select2 form-control" tabindex="-1" title="" name="documentcode" id="documentcodeID">
+                    <option value="">Please choose a document code</option>
+                    <option value="RXCTIN">INTERFERENCE COMMUNICATION: INITIAL MEMO:RXCTIN</option>
+                    <option value="RDIN">RX - DECISION STAYING REEXAM IN FAVOR OF INTERFERENCE:RDIN</option>
+                    <option value="M327-D">PUB OTHER MISCELLANEOUS COMMUNICATION TO APPLICANT:M327-D</option>
+                    <option value="CTNF">NON-FINAL REJECTION:CTNF</option>
+                    <option value="CNTA">ALLOWABILITY NOTICE:CNTA</option>
+                    <option value="CTFR">FINAL REJECTION:CTFR</option>
+                    <option value="CNOA">CORRECTED NOTICE OF ALLOWABILITY:CNOA</option>
+                    <option value="N271">RESPONSE TO AMENDMENT UNDER RULE 312:N271</option>
+                    <option value="REXD">RX - EX PARTE REEXAM ORDER - DENIED:REXD</option>
+                    <option value="EX.R">REASONS FOR ALLOWANCE:EX.R</option>
+                    <option value="RTDE">RX - PETITION DECISION - DENIED:RTDE</option>
+                    <option value="INTNO">INTERFERENCE NOTIFICATION TO PATENTEE RULE 607:INTNO</option>
+                    <option value="L.SI">SUSPENSION - INTERFERENCE IN ANOTHER CASE:L.SI</option>
+                    <option value="RXBPAI">REEXAM FORWARDED TO BOARD OF PATENT APPEALS AND INTERFERENCES:RXBPAI</option>
+                    <option value="RXSRXI">DECISION STAYING REEXAM PROCEEDING IN FAVOR OF INTERFERENCE PROCEEDING:RXSRXI</option>
+                    <option value="CTMS">MISCELLANEOUS ACTION WITH SSP:CTMS</option>
+                    <option value="M327">MISCELLANEOUS COMMUNICATION TO APPLICANT - NO ACTION COUNT:M327</option>
+                    <option value="M327-E">BOA MISCELLANEOUS COMMUNICATION TO APPLICANT:M327-E</option>
+                    <option value="P132">MISCELLANEOUS COMMUNICATION:P132</option>
+                    <option value="R327">RX - MISCELLANEOUS COMMUNICATION TO APPLICANT:R327</option>
+                    <option value="RXM327">MISCELLANEOUS COMMUNICATION TO APPLICANT:RXM327</option>
+                    <option value="RXMISC">MISCELLANEOUS ACTION MAILED:RXMISC</option>
+                    <option value="RXMMIS">MISCELLANEOUS LETTER MAILED:RXMMIS</option>
+                    <option value="SEMI">SE - MISCELLANEOUS DECISION/OFFICE NOTICE IN SE:SEMI</option>
+                    <option value="RTGR">RX - PETITION DECISION - GRANTED:RTGR</option>
+                    <option value="RTDI">RX - PETITION DECISION - DISMISSED:RTDI</option>
+                  </select>
+                </div>
+                <div class="filter">
+                  <div class="h5" tabindex="0">Art Unit</div>
+                  <div class="form-group">
+                    <input type="text" name="art_unit" aria-label="Search Art Unit Number" title="Search Art Unit Number" class="form-control" placeholder="Search Art Unit Number" value="{{artUnit}}">
+                    <div style="margin-bottom: 0;" class="help-block">
+                      <b><i>Example: Search for Art Unit number <code>3669~2</code></i></b>
+                    </div>
+                  </div>
+                </div>
                 <span class="input-group-btn">
                   <button class="btn btn-primary" style="z-index: 1;">Refine Search</button>
                 </span>
               </form>
-              {{/if}}
-              {{#unless accessOK}}
-              This Search engine is for authorized users only.
-              <hr> For access, please contact Thomas Beach
-              {{/unless}}
-          </div>
-          <div class="main-wrapper row-grid">
-          <div class="row-grid">
-            <div class="main-content col">
-              <div class="panel-body">
-                <div class="results-header">
-                  <a tabindex="-1" id="searchResults"></a>
-                  <a href="#void" class="link-sidebar"><i class="icon icon-columns"></i>Refine</a>
-                  <div class="pg-actions clearfix">
-                    <div class="row">
-                      {{#if term}}<span> Search Term: <span class="label label-success subtle">{{term}}</span> </span>
-                      {{/if}}
-
-                      {{#if artUnit}}<span> Art Unit: <span class="label label-success subtle">{{artUnit}}</span></span>
-                      {{/if}}
-                      {{#if documentcode}}
-                      <span> Document Code: </span><span class="label label-success subtle">{{documentcode}}</span>
-                      {{/if}}
-                      {{#if total}}
-                        <br>
-                        <span class="pull-left margin-top-0">{{total}} results took {{took}} ms</span>
-                        <span><a href="javascript:void(0);" onclick="resizeText(1)" id="plustext"> [+] Make results bigger</a> | <a href="javascript:void(0);" onclick="resizeText(-1)" id="minustext">[-] Make results smaller</a></span>
-                      {{/if}}
-
-                      <div class="btn-pgActions btn-group">
-                        {{#if term}}
-                          <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-default dropdown-toggle" id="btn-pgActions">Download <span class="caret"></span></button>
-                          <ul aria-labelledby="btn-pgActions" class="dropdown-menu">
-                            <li role="presentation"><a target="_BLANK" href="/download?q={{term}}">Download CSV</a></li>
-                          </ul>
+            </div>
+            <div class="row-grid">
+              <div class="main-content col">
+                <div class="panel-body">
+                  <div class="results-header">
+                    <a tabindex="-1" id="searchResults"></a>
+                    <a href="#void" class="link-sidebar"><i class="icon icon-columns"></i>Refine</a>
+                    <div class="pg-actions clearfix">
+                      <div class="row">
+                        {{#if term}}<span> Search Term: <span class="label label-success subtle">{{term}}</span> </span>
                         {{/if}}
+                        {{#if artUnit}}<span> Art Unit: <span class="label label-success subtle">{{artUnit}}</span></span>
+                        {{/if}}
+                        {{#if documentcode}}<span> Document Code: </span><span class="label label-success subtle">{{documentcode}}</span>
+                        {{/if}}
+                        {{#if fromdate}}<span> Date Range: </span><span class="label label-success subtle">{{fromdate}}</span>
+                        {{/if}}
+                        {{#if total}}
+                          <br>
+                          <span class="pull-left margin-top-0">{{total}} results took {{took}} ms</span>
+                          <span><a href="javascript:void(0);" onclick="resizeText(1)" id="plustext"> [+] Make results bigger</a> | <a href="javascript:void(0);" onclick="resizeText(-1)" id="minustext">[-] Make results smaller</a></span>
+                        {{/if}}
+
+                        <div class="btn-pgActions btn-group">
+                          {{#if term}}
+                            <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-default dropdown-toggle" id="btn-pgActions">Download <span class="caret"></span></button>
+                            <ul aria-labelledby="btn-pgActions" class="dropdown-menu">
+                              <li role="presentation"><a target="_BLANK" href="/download?q={{term}}">Download CSV</a></li>
+                            </ul>
+                          {{/if}}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="table--searchResults js-tableSwitch">
-                  <div class="table-responsive">
-                    {{{body}}}
+                  <div class="table--searchResults js-tableSwitch">
+                    <div class="table-responsive">
+                      {{{body}}}
+                    </div>
                   </div>
                 </div>
               </div>
