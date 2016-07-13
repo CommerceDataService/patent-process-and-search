@@ -57,9 +57,9 @@
     <div class="row-grid">
       <div class="pane-center col">
         <div class="panel--page panel panel-default">
+          {{#if accessOK}}
           <a tabindex="-1" id="search"></a>
           <div class="header keyline-bottom">
-            {{#if accessOK}}
               <form role="form" action="/newsearch" class="padding-top-2 padding-right-2 padding-bottom-2">
                 <h2 class="margin-top-0">Patent Data Search</h2>
                 <div class="input-search input-group">
@@ -75,16 +75,19 @@
                   <input type="radio" name="dataset" id="inlineRadio2" value="ptab" {{#if ptab}} checked {{/if}}> PTAB
                 </label>
                 <div style="margin-bottom: 0;" class="help-block">
-                  <b><i>Examples: Search for law 112(f)...<code>"112\(f\)"</code> or for Art Unit... <code>"Art Unit 3669"~2</code>  </i></b>
+                  <b><i>Examples: Search for law 112(f):<code>"112\(f\)"</code> or for Art Unit: <code>"Art Unit 3669"~2</code>  </i></b>
                 </div>
               </form>
-            {{/if}}
+          </div>
+          {{/if}}
+          <div class="main-wrapper row-grid">
             {{#unless accessOK}}
+            <div class="app-sidebar filters keyline-right">
               This Search engine is for authorized users only.
               <hr> For access, please contact Thomas Beach
+            </div>
             {{/unless}}
-          </div>
-          <div class="main-wrapper row-grid">
+            {{#if accessOK}}
             <div class="app-sidebar filters keyline-right">
               <a tabindex="-1" id="filters"></a>
               <div class="filter-heading">
@@ -153,6 +156,7 @@
                 </span>
               </form>
             </div>
+            {{/if}}
             <div class="row-grid">
               <div class="main-content col">
                 <div class="panel-body">

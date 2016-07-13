@@ -69,7 +69,10 @@ module.exports = function(app) {
 
 
     router.get('/help', function(req, res) {
-        res.render('help');
+        res.render('help', {
+            email: req.body.email,
+            accessOK: !!(! config.requireLogin || token.id)
+        });
     });
 
     // Main Search
