@@ -36,8 +36,7 @@ exports.buildSearch = function (req, res) {
     // Ensure q var is cast to string
     if (req.query.q) {
         q=req.query.q.toString();
-    }else{q="*:*"}
-
+    }else{q="*:*";}
 
     // Art Unit Filter
     if ((typeof req.query.art_unit !== 'undefined') && (req.query.art_unit.length < 7) && (req.query.art_unit.length > 0)) {

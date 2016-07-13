@@ -146,4 +146,4 @@ documentcodeObj.forEach(function(value,index) {
     if (URL.indexOf(value) > -1) {
         $('#documentcodeID option[value="' + value + '"]').prop('selected', true);
     }
-})
+});

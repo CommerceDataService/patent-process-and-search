@@ -88,10 +88,12 @@
             <div class="app-sidebar filters keyline-right">
               <a tabindex="-1" id="filters"></a>
               <div class="filter-heading">
-                <span tabindex="0" class="h4">Refine by</span> <a class="filters-clear" href="">Clear</a>
+                <span tabindex="0" class="h4">Refine by</span> <a class="filters-clear" href="/newsearch">Clear</a>
               </div>
               <form class="filters-flat js-filterSwitch" role="form" action="/newsearch">
                 <div class="filter hide">
+                  <input type="radio" name="dataset" id="inlineRadio1" value="oa" {{#unless ptab}} checked {{/unless}}>
+                  <input type="radio" name="dataset" id="inlineRadio2" value="ptab" {{#if ptab}} checked {{/if}}> PTAB
                   <input type="text" name="q" value="{{term}}" aria-label="Search all fields" title="Search all fields" class="form-control hide" placeholder="Search all fields" id="txt-find">
                 </div>
                 <div class="filter">
@@ -199,7 +201,7 @@
   </main>
   <script src="/bower_components/designpatterns/generated/scripts/vendor.js"></script>
   <script src="/bower_components/designpatterns/generated/scripts/plugins.js"></script>
-  <script src="https://components.uspto.gov/js/ais/2-4-pattern-library.js"></script>
+  <!-- <script src="https://components.uspto.gov/js/ais/2-4-pattern-library.js"></script> -->
   <script src="/bower_components/designpatterns/generated/scripts/appDemo.js"></script>
   <script src="/client/scripts/script.js"></script>
 </body>
