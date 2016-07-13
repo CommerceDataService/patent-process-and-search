@@ -95,22 +95,44 @@ module.exports = function(app) {
 
     // Download Query
     router.get('/download', function(req, res) {
-        //console.log(req);
-        //var q = req.body.q;
+      var q, fq;
+      fq = "&fq=type:" + req.query.dataset;
+      var dateRange='';
+      // Only doing this for readiblity. Do not accept blank or undefined dates
+      if ((typeof req.query.fromdate !== 'undefined' && req.query.todate !== 'undefined') &&  (req.query.fromdate.length > 2 && req.query.todate.length > 2)) {
+          var fromDate = +new Date(req.query.fromdate)/1000;
+          var toDate   = +new Date(req.query.todate)/1000;
+          dateRange = 'doc_date:['+ fromDate+'%20TO%20'+toDate+']';
+          fq += "&fq=" + dateRange;
+      }
 
-        var q;
-        if (req.query.q) {
-            q=req.query.q.toString();
-        }
+      // Ensure q var is cast to string
+      if (req.query.q) {
+          q=req.query.q.toString();
+      }else{q="*:*";}
 
-        var s = 0;
-        var currentPage = 1;
-        if (req.query.pageno && req.query.pageno > 0) {
-            s = (req.query.pageno -1) *20;
-            currentPage = parseInt(req.query.pageno) ;
-        }
-        var SEARCH_URL= config.solrURI+'/oafiledatanew/select?q='+q+'&wt=csv&indent=false&rows=2000&start='+s+'&q.op=AND&fl=appid,action_type,filename,minread,id,textdata';
+      // Art Unit Filter
+      if ((typeof req.query.art_unit !== 'undefined') && (req.query.art_unit.length < 7) && (req.query.art_unit.length > 0)) {
+        var artUnit = 'dn_dw_dn_gau_cd:' + req.query.art_unit;
+        fq += "&fq=" + artUnit;
+      }
 
+          // Set documentcode filter
+      if ((typeof req.query.documentcode !== 'undefined') && (req.query.documentcode.length > 0)) {
+          documentcode = 'documentcode:' + req.query.documentcode;
+          fq += "&fq=" + documentcode;
+      }
+
+      // Set Pagination to incremnt by 20 results
+      var s = 0;
+      var currentPage = 1;
+      if (req.query.pageno && req.query.pageno > 0) {
+          s = (req.query.pageno -1) *20;
+          currentPage = parseInt(req.query.pageno) ;
+      }
+
+      // Build Search .. if no page number set then only show
+      var SEARCH_URL = config.solrURI+'/select?q={!q.op=AND df=textdata}'+q+fq+'&wt=csv&indent=false&rows=2000&start='+s;
         // Create the filename for the CSV and remove any special characters
         var csvfilename = q;
         csvfilename=csvfilename.replace(/\"/g,'');
