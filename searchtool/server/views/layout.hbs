@@ -33,6 +33,9 @@
           <li>
             <a href="/help">Help</a>
           </li>
+          <li>
+            <a href="/newsearch">Search</a>
+          </li>
         </ul>
         <div class="navbar-collapse collapse" id="navbar">
           <ul class="nav navbar-nav navbar-right">
@@ -105,39 +108,39 @@
                 <div class="filter">
                   <label for="s2id_autogen2" class="h5 control-label">Select Document Code</label>
                   <select class="select2 form-control" tabindex="-1" title="" name="documentcode" id="documentcodeID">
-                    <option value="">Please choose a document code</option>
-                    <option value="RXCTIN">INTERFERENCE COMMUNICATION: INITIAL MEMO:RXCTIN</option>
-                    <option value="RDIN">RX - DECISION STAYING REEXAM IN FAVOR OF INTERFERENCE:RDIN</option>
-                    <option value="M327-D">PUB OTHER MISCELLANEOUS COMMUNICATION TO APPLICANT:M327-D</option>
-                    <option value="CTNF">NON-FINAL REJECTION:CTNF</option>
-                    <option value="CNTA">ALLOWABILITY NOTICE:CNTA</option>
-                    <option value="CTFR">FINAL REJECTION:CTFR</option>
-                    <option value="CNOA">CORRECTED NOTICE OF ALLOWABILITY:CNOA</option>
-                    <option value="N271">RESPONSE TO AMENDMENT UNDER RULE 312:N271</option>
-                    <option value="REXD">RX - EX PARTE REEXAM ORDER - DENIED:REXD</option>
-                    <option value="EX.R">REASONS FOR ALLOWANCE:EX.R</option>
-                    <option value="RTDE">RX - PETITION DECISION - DENIED:RTDE</option>
-                    <option value="INTNO">INTERFERENCE NOTIFICATION TO PATENTEE RULE 607:INTNO</option>
-                    <option value="L.SI">SUSPENSION - INTERFERENCE IN ANOTHER CASE:L.SI</option>
-                    <option value="RXBPAI">REEXAM FORWARDED TO BOARD OF PATENT APPEALS AND INTERFERENCES:RXBPAI</option>
-                    <option value="RXSRXI">DECISION STAYING REEXAM PROCEEDING IN FAVOR OF INTERFERENCE PROCEEDING:RXSRXI</option>
-                    <option value="CTMS">MISCELLANEOUS ACTION WITH SSP:CTMS</option>
-                    <option value="M327">MISCELLANEOUS COMMUNICATION TO APPLICANT - NO ACTION COUNT:M327</option>
-                    <option value="M327-E">BOA MISCELLANEOUS COMMUNICATION TO APPLICANT:M327-E</option>
-                    <option value="P132">MISCELLANEOUS COMMUNICATION:P132</option>
-                    <option value="R327">RX - MISCELLANEOUS COMMUNICATION TO APPLICANT:R327</option>
-                    <option value="RXM327">MISCELLANEOUS COMMUNICATION TO APPLICANT:RXM327</option>
-                    <option value="RXMISC">MISCELLANEOUS ACTION MAILED:RXMISC</option>
-                    <option value="RXMMIS">MISCELLANEOUS LETTER MAILED:RXMMIS</option>
-                    <option value="SEMI">SE - MISCELLANEOUS DECISION/OFFICE NOTICE IN SE:SEMI</option>
-                    <option value="RTGR">RX - PETITION DECISION - GRANTED:RTGR</option>
-                    <option value="RTDI">RX - PETITION DECISION - DISMISSED:RTDI</option>
+                    <option selected disabled>Choose here</option>
+                    <option value="RXCTIN">INTERFERENCE COMMUNICATION: INITIAL MEMO</option>
+                    <option value="RDIN">RX - DECISION STAYING REEXAM IN FAVOR OF INTERFERENCE</option>
+                    <option value="M327-D">PUB OTHER MISCELLANEOUS COMMUNICATION TO APPLICANT</option>
+                    <option value="CTNF">NON-FINAL REJECTION</option>
+                    <option value="CNTA">ALLOWABILITY NOTICE</option>
+                    <option value="CTFR">FINAL REJECTION</option>
+                    <option value="CNOA">CORRECTED NOTICE OF ALLOWABILITY</option>
+                    <option value="N271">RESPONSE TO AMENDMENT UNDER RULE 312</option>
+                    <option value="REXD">RX - EX PARTE REEXAM ORDER - DENIED</option>
+                    <option value="EX.R">REASONS FOR ALLOWANCE</option>
+                    <option value="RTDE">RX - PETITION DECISION - DENIED</option>
+                    <option value="INTNO">INTERFERENCE NOTIFICATION TO PATENTEE RULE 607</option>
+                    <option value="L.SI">SUSPENSION - INTERFERENCE IN ANOTHER CASE</option>
+                    <option value="RXBPAI">REEXAM FORWARDED TO BOARD OF PATENT APPEALS AND INTERFERENCES</option>
+                    <option value="RXSRXI">DECISION STAYING REEXAM PROCEEDING IN FAVOR OF INTERFERENCE PROCEEDING</option>
+                    <option value="CTMS">MISCELLANEOUS ACTION WITH SSP</option>
+                    <option value="M327">MISCELLANEOUS COMMUNICATION TO APPLICANT - NO ACTION COUNT</option>
+                    <option value="M327-E">BOA MISCELLANEOUS COMMUNICATION TO APPLICANT</option>
+                    <option value="P132">MISCELLANEOUS COMMUNICATION</option>
+                    <option value="R327">RX - MISCELLANEOUS COMMUNICATION TO APPLICANT</option>
+                    <option value="RXM327">MISCELLANEOUS COMMUNICATION TO APPLICANT</option>
+                    <option value="RXMISC">MISCELLANEOUS ACTION MAILED</option>
+                    <option value="RXMMIS">MISCELLANEOUS LETTER MAILED</option>
+                    <option value="SEMI">SE - MISCELLANEOUS DECISION/OFFICE NOTICE IN SE</option>
+                    <option value="RTGR">RX - PETITION DECISION - GRANTED</option>
+                    <option value="RTDI">RX - PETITION DECISION - DISMISSED</option>
                   </select>
                 </div>
                 <div class="filter">
                   <div class="h5" tabindex="0">Art Unit</div>
                   <div class="form-group">
-                    <input type="text" name="art_unit" aria-label="Search Art Unit Number" title="Search Art Unit Number" class="form-control" placeholder="Search Art Unit Number" value="{{artUnit}}">
+                    <input type="text" name="art_unit" aria-label="Search Art Unit Number" title="Search Art Unit Number" class="form-control" placeholder="Search Art Unit Number" value="{{artunit}}">
                     <div style="margin-bottom: 0;" class="help-block">
                       <b><i>Example: Search for Art Unit number <code>3669~2</code></i></b>
                     </div>
@@ -158,11 +161,11 @@
                       <div class="row">
                         {{#if term}}<span> Search Term: <span class="label label-success subtle">{{term}}</span> </span>
                         {{/if}}
-                        {{#if artUnit}}<span> Art Unit: <span class="label label-success subtle">{{artUnit}}</span></span>
+                        {{#if artunit}}<span> Art Unit: <span class="label label-success subtle">{{artunit}}</span></span>
                         {{/if}}
                         {{#if documentcode}}<span> Document Code: </span><span class="label label-success subtle">{{documentcode}}</span>
                         {{/if}}
-                        {{#if fromdate}}<span> Date Range: </span><span class="label label-success subtle">{{fromdate}}</span>
+                        {{#if fromdate}}<span> Date Range: </span><span class="label label-success subtle">{{fromdate}} - {{todate}}</span>
                         {{/if}}
                         {{#if total}}
                           <br>
