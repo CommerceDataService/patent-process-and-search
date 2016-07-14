@@ -1,6 +1,5 @@
-.help-button a {
-	margin-bottom: 15px;
-	margin-top: 15px;
+@-ms-viewport {
+	width: auto !important;
 }
 .external-link{
 	display: block;

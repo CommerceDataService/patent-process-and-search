@@ -36,8 +36,7 @@ exports.buildSearch = function (req, res) {
     // Ensure q var is cast to string
     if (req.query.q) {
         q=req.query.q.toString();
-    }
-
+    }else{q="*:*";}
 
     // Art Unit Filter
     if ((typeof req.query.art_unit !== 'undefined') && (req.query.art_unit.length < 7) && (req.query.art_unit.length > 0)) {
@@ -81,7 +80,7 @@ exports.buildSearch = function (req, res) {
                 res.render('newview', {
                     result:body.response.docs,
                     total:humanize.numberFormat(body.response.numFound,0),
-                    pagein:paginate({totalItem:body.response.numFound, itemPerPage:20, currentPage:currentPage, url:'/newsearch',params: {q: q, dataset: req.query.dataset, fromdate: req.query.fromdate, todate: req.query.todate, art_unit: req.query.art_unit, documentcode: req.query.documentcode} }),
+                    pagein:paginate({totalItem:body.response.numFound, itemPerPage:20, currentPage:currentPage, url:'/newsearch',params: {q: q, dataset: req.query.dataset, fromdate: req.query.fromdate, todate: req.query.todate, artunit: req.query.art_unit, documentcode: req.query.documentcode} }),
                     took:humanize.numberFormat(body.responseHeader.QTime,0 ),
                     highlighting:body.highlighting,
                     term:q,
@@ -90,7 +89,7 @@ exports.buildSearch = function (req, res) {
                     accessOK: !!(! config.requireLogin || token.id),
                     todate: req.query.todate,
                     fromdate:req.query.fromdate,
-                    artUnit: req.query.art_unit,
+                    artunit: req.query.art_unit,
                     documentcode: req.query.documentcode
                 });
             } else {

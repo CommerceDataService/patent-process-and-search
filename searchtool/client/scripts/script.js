@@ -106,6 +106,12 @@ $('.switch')
         $(attr).toggleClass('hide');
     });
 
+function resizeText(multiplier) {
+  if (document.getElementById('results').style.fontSize == "") {
+    document.getElementById('results').style.fontSize = "1.0em";
+  }
+  document.getElementById('results').style.fontSize = parseFloat(document.getElementById('results').style.fontSize) + (multiplier * 0.2) + "em";
+}
 var documentcodeObj = [
     'RXCTIN',
     'RDIN',
@@ -140,4 +146,4 @@ documentcodeObj.forEach(function(value,index) {
     if (URL.indexOf(value) > -1) {
         $('#documentcodeID option[value="' + value + '"]').prop('selected', true);
     }
-})
+});
