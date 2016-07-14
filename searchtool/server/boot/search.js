@@ -46,8 +46,23 @@ exports.buildSearch = function (req, res) {
 
         // Set documentcode filter
     if ((typeof req.query.documentcode !== 'undefined') && (req.query.documentcode.length > 0)) {
+        if (typeof req.query.documentcode === 'object') {
+            var reqArray = req.query.documentcode;
+            var reqArrayLen = req.query.documentcode.length;
+            var reqLoopVar = reqArrayLen - 1;
+            var reqString = '';          
+            for (var i = reqLoopVar; i >0; i--) {
+                reqString += reqArray[i] + "+OR+";
+            }
+            documentcode = 'documentcode:' +"("+ reqString + reqArray[0]+")";
+            fq += "&fq=" + documentcode;
+            // req.query.documentcode = "(" + req.query.documentcode[0] + "+OR+" + req.query.documentcode[1] + ")";            
+            // documentcode = 'documentcode:' + req.query.documentcode;
+            // fq += "&fq=" + documentcode;
+        } else {
         documentcode = 'documentcode:' + req.query.documentcode;
         fq += "&fq=" + documentcode;
+        }
     }
 
     // Set Pagination to incremnt by 20 results
