@@ -32,13 +32,15 @@
           {{else}}
             <h1> No actions found for <span class="text-success">{{term}}</span> we may still be loading some </h1>
           {{/each}}
-
-        {{else}}
-
+      {{else}}
           {{#each result}}
-            <div class="media">
-              <h4>  <a style="cursor:pointer"; onClick="javascript:document.getElementById('action_text').innerHTML =''; document.getElementById('action_text').innerHTML ='<h5>File Doc ID:{{filename}} , Action Type: {{action_type.[0]}}</h5><hr><b>Full Text</b><hr>{{breaklines textdata.[0]}}';"  data-item="{{filename}}" data-toggle="modal" data-target="#cancelModal">  Office Action ID: {{filename}}</a> | {{action_type.[0]}}</h4>
-              {{#with (lookup ../highlighting id) }}
+            <div class="media row">
+              <h4 class="col-md-8"><a style="cursor:pointer"; onClick="javascript:document.getElementById('action_text').innerHTML =''; document.getElementById('action_text').innerHTML ='<h5>File Doc ID:{{appid}} - {{ifwnumber}} , Action Type: {{{convertDocCode documentcode}}}</h5><hr><b>Full Text</b><hr>{{breaklines textdata.[0]}}';"  data-item="{{filename}}" data-toggle="modal" data-target="#cancelModal">  Office Action ID: {{appid}} - {{ifwnumber}}</a> | {{{convertDocCode documentcode}}}</h4>
+              <div class='col-md-1 col-md-offset-3'>
+                <a class='external-link' target="_blank" href='{{{hyperlinkIt "palm" appid}}}'><i class="icon icon-external-link"></i> PALM</a>
+                <a class='external-link' target="_blank" href='{{{hyperlinkIt "dav" appid}}}'><i class="icon icon-external-link"></i> DAV</a>
+              </div>
+              <div class='col-md-12'>{{#with (lookup ../highlighting id) }}
                 {{#if textdata}}
                   {{#each textdata}}
                     <li>{{{this}}}</li>
@@ -48,6 +50,7 @@
                 {{/if}}
               {{/with}}
               <hr>
+            </div>
             </div>
           {{else}}
             <h1> No actions found for <span class="text-success">{{term}}</span> we may still be loading some </h1>

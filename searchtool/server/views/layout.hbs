@@ -7,7 +7,7 @@
   <title>Office Action Search</title>
 
   <meta name="description" content="Office Action Search">
-  <meta name="keywords" contnet="office actions">
+  <meta name="keywords" content="office actions">
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
   <meta name="theme-color" content="#004c97">
@@ -25,6 +25,7 @@
   <link href="/bower_components/designpatterns/generated/styles/vendor.css" rel="stylesheet" />
   <link href="/bower_components/designpatterns/generated/styles/main.css" rel="stylesheet" />
   <link href="/bower_components/designpatterns/generated/styles/appDemo.min.css" rel="stylesheet" />
+  <link rel="stylesheet" type="text/css" href="/client/styles/layout_custom.css">
   <style>
     /* fix for IE transparent scroll bar */
 
@@ -105,6 +106,7 @@
           <div class="header keyline-bottom">
             <form role="form" action="/newsearch" class="padding-top-2 padding-right-2 padding-bottom-2">
               <h2 class="margin-top-0">Patent Data Search</h2>
+              {{#if accessOK}}
               <div class="input-search input-group">
                 <input type="text" name="q" value="{{#if term}}{{term}}{{/if}}" aria-label="Search all fields" title="Search all fields" class="form-control" placeholder="Search all fields" id="txt-find">
                 <span class="input-group-btn">
@@ -112,7 +114,7 @@
                 </span>
               </div>
               <label class="radio-inline">
-                <input type="radio" name="dataset" id="inlineRadio1" value="oafiledatanew" {{#unless ptab}}checked{{/unless}}> Office Actions
+                <input type="radio" name="dataset" id="inlineRadio1" value="oa" {{#unless ptab}}checked{{/unless}}> Office Actions
               </label>
               <label class="radio-inline">
                 <input type="radio" name="dataset" id="inlineRadio2" value="ptab" {{#if ptab}}checked{{/if}}> PTAB
@@ -121,6 +123,13 @@
                 <b><i>Examples: Search for law 112(f) ..... <code>"112\(f\)"</code>  or search for Art Unit .. <code>"Art Unit 3669"~2</code>  </i></b>
                 <!-- <a href="#void">Show advanced search</a> -->
               </div>
+
+              <div class="help-button">
+                <a href="/help" class="btn btn-primary">Help</a>
+              </div>
+
+              {{/if}}
+
 
               <div class="tabs-results tabs-responsive btn-group hide">
                 <button aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" class="btn btn-default dropdown-toggle hide" type="button">
@@ -168,26 +177,65 @@
         </div> -->
                 {{#if accessOK}}
                     <a class="filter-group-title" href="#void" data-toggle="collapse" data-target="#2filterGroup1"><i class="icon icon-angle-right pull-right"></i> Filing date range</a>
-                {{/if}}
+                
                 <div id="2filterGroup1" class="collapse">
                   <div class="filter-group-content">
                     <div class="row">
                       <div class="form-group col-sm-6">
                         <span class="input-icon icon icon-calendar-o"></span>
-                        <input name="fromdate" type="text" placeholder="Start" class="datepicker form-control" data-inputmask="'mask': 'm/d/y', 'placeholder': 'mm/dd/yyyy'" title="Start date" aria-label="Start date">
+                        <input name="fromdate" type="text" placeholder="Start" class="datepicker form-control" value="{{fromdate}}" data-inputmask="'mask': 'm/d/y', 'placeholder': 'mm/dd/yyyy'" title="Start date" aria-label="Start date">
                       </div>
                       <div class="form-group col-sm-6">
                         <span class="input-icon icon icon-calendar-o"></span>
-                        <input name="todate" type="text" placeholder="End" class="datepicker form-control" data-inputmask="'mask': 'm/d/y', 'placeholder': 'mm/dd/yyyy'" title="End date" aria-label="End date">
+                        <input name="todate" type="text" placeholder="End" class="datepicker form-control" value="{{todate}}" data-inputmask="'mask': 'm/d/y', 'placeholder': 'mm/dd/yyyy'" title="End date" aria-label="End date">
                       </div>
                     </div>
                   </div>
                 </div>
+
+
+                <div>
+                  <input type="text" name="art_unit"  aria-label="Search Art Unit Number" title="Search Art Unit Number" class="form-control" placeholder="Search Art Unit Number" value="{{#if artUnit}} {{artUnit}}{{/if}}">
+                  <span>Please use 4-6 digit number</span>
+                </div>
+
+
+                <select name="documentcode" id="documentcodeID">
+                  <option value="">Please choose a document code</option>
+                  <option value="RXCTIN">INTERFERENCE COMMUNICATION: INITIAL MEMO:RXCTIN</option>
+                  <option value="RDIN">RX - DECISION STAYING REEXAM IN FAVOR OF INTERFERENCE:RDIN</option>
+                  <option value="M327-D">PUB OTHER MISCELLANEOUS COMMUNICATION TO APPLICANT:M327-D</option>
+                  <option value="CTNF">NON-FINAL REJECTION:CTNF</option>
+                  <option value="CNTA">ALLOWABILITY NOTICE:CNTA</option>
+                  <option value="CTFR">FINAL REJECTION:CTFR</option>
+                  <option value="CNOA">CORRECTED NOTICE OF ALLOWABILITY:CNOA</option>
+                  <option value="N271">RESPONSE TO AMENDMENT UNDER RULE 312:N271</option>
+                  <option value="REXD">RX - EX PARTE REEXAM ORDER - DENIED:REXD</option>
+                  <option value="EX.R">REASONS FOR ALLOWANCE:EX.R</option>
+                  <option value="RTDE">RX - PETITION DECISION - DENIED:RTDE</option>
+                  <option value="INTNO">INTERFERENCE NOTIFICATION TO PATENTEE RULE 607:INTNO</option>
+                  <option value="L.SI">SUSPENSION - INTERFERENCE IN ANOTHER CASE:L.SI</option>
+                  <option value="RXBPAI">REEXAM FORWARDED TO BOARD OF PATENT APPEALS AND INTERFERENCES:RXBPAI</option>
+                  <option value="RXSRXI">DECISION STAYING REEXAM PROCEEDING IN FAVOR OF INTERFERENCE PROCEEDING:RXSRXI</option>
+                  <option value="CTMS">MISCELLANEOUS ACTION WITH SSP:CTMS</option>
+                  <option value="M327">MISCELLANEOUS COMMUNICATION TO APPLICANT - NO ACTION COUNT:M327</option>
+                  <option value="M327-E">BOA MISCELLANEOUS COMMUNICATION TO APPLICANT:M327-E</option>
+                  <option value="P132">MISCELLANEOUS COMMUNICATION:P132</option>
+                  <option value="R327">RX - MISCELLANEOUS COMMUNICATION TO APPLICANT:R327</option>
+                  <option value="RXM327">MISCELLANEOUS COMMUNICATION TO APPLICANT:RXM327</option>
+                  <option value="RXMISC">MISCELLANEOUS ACTION MAILED:RXMISC</option>
+                  <option value="RXMMIS">MISCELLANEOUS LETTER MAILED:RXMMIS</option>
+                  <option value="SEMI">SE - MISCELLANEOUS DECISION/OFFICE NOTICE IN SE:SEMI</option>
+                  <option value="RTGR">RX - PETITION DECISION - GRANTED:RTGR</option>
+                  <option value="RTDI">RX - PETITION DECISION - DISMISSED:RTDI</option>
+                </select>
+
                 <div class="input-search input-group" style="margin-left: 1em;">
                   <span class="input-group-btn">
                     <button class="btn btn-primary" style="z-index: 1;">Refine Search</button>
                   </span>
                 </div>
+                {{/if}}
                 </form>
                 <!--  <a class="filter-group-title" href="#void" data-toggle="collapse" data-target="#2filterGroup2"><i class="icon icon-angle-right pull-right"></i> <span class="badge pull-right">1</span> Application type</a>
         <div id="2filterGroup2" class="collapse">
@@ -373,7 +421,15 @@
                     <div class="pg-actions clearfix">
                         <div class="row">
                             {{#if term}}<span> Search Term: <span class="label label-success subtle">{{term}}</span> </span>{{/if}}
-                            {{#if total}}
+
+                            {{#if artUnit}}<span> Art Unit: <span class="label label-success subtle">{{artUnit}}</span></span>{{/if}}
+
+
+                            {{#if documentcode}}
+                            <span> Document Code: </span><span class="label label-success subtle">{{documentcode}}</span>
+                            {{/if}}
+
+                            {{#if total}}<br>
                             <span class="pull-left margin-top-0">{{total}} results took {{took}} ms</span>
                             <span><a href="javascript:void(0);" onclick="resizeText(1)" id="plustext"> [+] Make results bigger</a> | <a href="javascript:void(0);" onclick="resizeText(-1)" id="minustext">[-] Make results smaller</a></span>
                             {{/if}}
