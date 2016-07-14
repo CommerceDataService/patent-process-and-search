@@ -11,6 +11,7 @@
   <meta property="og:title" content="Customize search results">
   <meta property="og:description" content="">
   <link rel="shortcut icon" href="/bower_components/designpatterns/generated/favicon.ico">
+  <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css"> -->
   <link href="/bower_components/designpatterns/generated/styles/vendor.css" rel="stylesheet" />
   <link href="/bower_components/designpatterns/generated/styles/main.css" rel="stylesheet" />
   <link href="/bower_components/designpatterns/generated/styles/appDemo.min.css" rel="stylesheet" />
@@ -112,7 +113,7 @@
                 </div>
                 <div class="filter">
                   <label for="s2id_autogen2" class="h5 control-label">Select Action Type</label>
-                  <select class="select2 form-control" tabindex="-1" title="" name="documentcode" id="documentcodeID">
+<!--                   <select class="select2 form-control" tabindex="-1" title="" name="documentcode" id="documentcodeID" multiple="multiple">
                     <option selected disabled>Choose here</option>
                     <option value="RXCTIN">INTERFERENCE COMMUNICATION: INITIAL MEMO</option>
                     <option value="RDIN">RX - DECISION STAYING REEXAM IN FAVOR OF INTERFERENCE</option>
@@ -140,7 +141,24 @@
                     <option value="SEMI">SE - MISCELLANEOUS DECISION/OFFICE NOTICE IN SE</option>
                     <option value="RTGR">RX - PETITION DECISION - GRANTED</option>
                     <option value="RTDI">RX - PETITION DECISION - DISMISSED</option>
-                  </select>
+                  </select> -->
+                  <div class="form-control dropdown" tabindex="-1" title=""  multiple="multiple" id="documentcodeID">
+                    <div class="dropdown-toggle" data-toggle="dropdown">Choose</div>
+                    <div class="dropdown-menu" >
+                      <label>
+                        <input class="dropdown-item" type="checkbox" name="documentcode" value="RXCTIN"> INTERERENCE COMMUNICATION
+                      </label>
+                      
+                      <label>
+                        <input type="checkbox" name="documentcode" value="RDIN"> COMMUNICATION
+                      </label>
+
+                      <label>
+                        <input type="checkbox" name="documentcode" value="CNTA"> INTERFERENCE
+                      </label>
+                    </div>  
+                  </div>
+                
                 </div>
                 <div class="filter">
                   <div class="h5" tabindex="0">Art Unit</div>
@@ -203,6 +221,7 @@
       </div>
     </div>
   </main>
+<!--   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script> -->
   <script src="/bower_components/designpatterns/generated/scripts/vendor.js"></script>
   <script src="/bower_components/designpatterns/generated/scripts/plugins.js"></script>
   <!-- <script src="https://components.uspto.gov/js/ais/2-4-pattern-library.js"></script> -->
