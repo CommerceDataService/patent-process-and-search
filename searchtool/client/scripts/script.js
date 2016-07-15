@@ -105,3 +105,11 @@ $('.switch')
         $('.js-filterSwitch').addClass('hide');
         $(attr).toggleClass('hide');
     });
+
+function resizeText(multiplier) {
+  if (document.getElementById('results').style.fontSize == "") {
+    document.getElementById('results').style.fontSize = "1.0em";
+  }
+  document.getElementById('results').style.fontSize = parseFloat(document.getElementById('results').style.fontSize) + (multiplier * 0.2) + "em";
+}
+
