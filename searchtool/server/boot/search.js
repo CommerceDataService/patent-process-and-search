@@ -56,12 +56,9 @@ exports.buildSearch = function (req, res) {
             }
             documentcode = 'documentcode:' +"("+ reqString + reqArray[0]+")";
             fq += "&fq=" + documentcode;
-            // req.query.documentcode = "(" + req.query.documentcode[0] + "+OR+" + req.query.documentcode[1] + ")";            
-            // documentcode = 'documentcode:' + req.query.documentcode;
-            // fq += "&fq=" + documentcode;
         } else {
-        documentcode = 'documentcode:' + req.query.documentcode;
-        fq += "&fq=" + documentcode;
+            documentcode = 'documentcode:' + req.query.documentcode;
+            fq += "&fq=" + documentcode;
         }
     }
 
@@ -95,7 +92,7 @@ exports.buildSearch = function (req, res) {
                 res.render('newview', {
                     result:body.response.docs,
                     total:humanize.numberFormat(body.response.numFound,0),
-                    pagein:paginate({totalItem:body.response.numFound, itemPerPage:20, currentPage:currentPage, url:'/newsearch',params: {q: q, dataset: req.query.dataset, fromdate: req.query.fromdate, todate: req.query.todate, artunit: req.query.art_unit, documentcode: req.query.documentcode} }),
+                    pagein:paginate({totalItem:body.response.numFound, itemPerPage:20, currentPage:currentPage, url:'/newsearch',params: {q: q, dataset: req.query.dataset, fromdate: req.query.fromdate, todate: req.query.todate, art_unit: req.query.art_unit, documentcode: req.query.documentcode} }),
                     took:humanize.numberFormat(body.responseHeader.QTime,0 ),
                     highlighting:body.highlighting,
                     term:q,
