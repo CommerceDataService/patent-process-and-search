@@ -112,7 +112,3 @@ function resizeText(multiplier) {
   }
   document.getElementById('results').style.fontSize = parseFloat(document.getElementById('results').style.fontSize) + (multiplier * 0.2) + "em";
 }
-
-// $(document).ready( function() {
-//     $('#documentcodeID').multiselect();
-// })
