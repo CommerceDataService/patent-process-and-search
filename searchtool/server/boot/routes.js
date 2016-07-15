@@ -93,6 +93,7 @@ module.exports = function(app) {
         search.buildSearch(req, res);
     });
 
+
     // Download Query
     router.get('/download', function(req, res) {
         //console.log(req);
