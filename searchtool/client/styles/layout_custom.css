@@ -7,3 +7,11 @@
 hr{
 	margin-bottom: 5px;
 }
+
+#txt-find {
+	width: 200%
+}
+
+.search_button {
+	display: block;
+}
