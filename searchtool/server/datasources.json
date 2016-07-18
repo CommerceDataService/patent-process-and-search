@@ -4,7 +4,7 @@
     "connector": "memory"
   },
   "searchtoolapi": {
-    "host": "54.85.209.123",
+    "host": "db",
     "port": 3306,
     "database": "searchtool",
     "username": "root",
