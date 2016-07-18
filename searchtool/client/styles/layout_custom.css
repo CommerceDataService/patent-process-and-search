@@ -7,3 +7,11 @@
 hr{
 	margin-bottom: 5px;
 }
+
+.txt_input_div {
+	width: 55%;
+}
+
+.search_button {
+	display: block;
+}
