@@ -50,7 +50,7 @@ exports.buildSearch = function (req, res) {
             var reqArray = req.query.documentcode;
             var reqArrayLen = req.query.documentcode.length;
             var reqLoopVar = reqArrayLen - 1;
-            var reqString = '';          
+            var reqString = '';
             for (var i = reqLoopVar; i >0; i--) {
                 reqString += reqArray[i] + "+OR+";
             }
@@ -109,7 +109,6 @@ exports.buildSearch = function (req, res) {
                 res.render('newview', {
                     total:0,
                     pagein:'',
-                    took:body.responseHeader.QTime,
                     term:q,
                     email: req.body.email,
                     accessOK: !!(! config.requireLogin || token.id)
