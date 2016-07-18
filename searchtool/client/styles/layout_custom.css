@@ -13,3 +13,11 @@ hr{
     max-height: 200px;
     overflow-x: hidden;
 }
+
+.txt_input_div {
+	width: 55%;
+}
+
+.search_button {
+	display: block;
+}
