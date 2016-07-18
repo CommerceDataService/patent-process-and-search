@@ -102,7 +102,8 @@ exports.buildSearch = function (req, res) {
                     todate: req.query.todate,
                     fromdate:req.query.fromdate,
                     artunit: req.query.art_unit,
-                    documentcode: req.query.documentcode
+                    documentcode: req.query.documentcode,
+                    dataset: req.query.dataset
                 });
             } else {
                 res.render('newview', {
