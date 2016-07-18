@@ -95,7 +95,7 @@ module.exports = function(app) {
 
     // Download Query
     router.get('/download', function(req, res) {
-      var q, fq;
+      var q, fq, fields, rows;
       fq = "&fq=type:" + req.query.dataset;
       var dateRange='';
       // Only doing this for readiblity. Do not accept blank or undefined dates
@@ -131,8 +131,18 @@ module.exports = function(app) {
           currentPage = parseInt(req.query.pageno) ;
       }
 
+      //Set fields to return for query
+      fields = 'type,appid,ifwnumber,documentcode,documentsourceidentifier,partyidentifier,groupartunitnumber,appl_id,\         file_dt,effective_filing_dt,inv_subj_matter_ty,appl_ty,dn_examiner_no,dn_dw_gau_cd,dn_pto_art_class_no,\
+           dn_pto_art_subclass_no,confirm_no,dn_intppty_cust_no,atty_dkt_no,dn_nsrd_curr_loc_cd,dn_nsrd_curr_loc_dt,\
+           app_status_no,app_status_dt,wipo_pub_no,patent_no,patent_issue_dt,abandon_dt,disposal_type,se_in,pct_no,\
+           invn_ttl_tx,aia_in,continuity_type,frgn_priority_clm,usc_119_met,fig_qt,indp_claim_qt,efctv_claims_qt,\
+           doc_date';
+      rows = '100000';
+
       // Build Search .. if no page number set then only show
-      var SEARCH_URL = config.solrURI+'/select?q={!q.op=AND df=textdata}'+q+fq+'&wt=csv&indent=false&rows=2000&start='+s;
+      var SEARCH_URL = config.solrURI+'/select?q={!q.op=AND df=textdata}'+q+fq+
+        '&wt=csv&indent=false&rows='+rows+'&fl='+fields+'&start='+s;
+
         // Create the filename for the CSV and remove any special characters
         var csvfilename = q;
         csvfilename=csvfilename.replace(/\"/g,'');
