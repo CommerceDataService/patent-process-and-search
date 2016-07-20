@@ -9,7 +9,7 @@ module.exports = function(app) {
 
 
     router.get('/', function(req, res) {
-        res.redirect('/help');
+        res.redirect('/login');
     });
 
     // Default Login Screen
