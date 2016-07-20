@@ -3,16 +3,7 @@ import boto3, os, sys, logging, time
 
 class S3Uploader(object):
     def __init__(self, bucket):
-#        self.role = os.environ['AWS_ROLE_ARN']
         self.sts_client = boto3.client('sts')
-
-#        assumedRoleObject = self.sts_client.assume_role(
-#            RoleArn=self.role,
-#            RoleSessionName="AssumeRoleSession1"
-#        )
-
-#        self.credentials = assumedRoleObject['Credentials']
-
         self.s3 = boto3.resource('s3',
 #                                 aws_access_key_id=self.credentials['AccessKeyId'],
 #                                 aws_secret_access_key=self.credentials['SecretAccessKey'],
@@ -34,7 +25,7 @@ class S3Uploader(object):
                 logging.info("Caught connection error " + str(e) )
                 time.sleep(x)
 
-        logging.error("Exceeding maximum number of tries, givng up")
+        logging.error("Exceeding maximum number of tries, giving up")
         sys.exit(2)
 
     def get_file_list(self, prefix):
