@@ -501,7 +501,7 @@ if __name__ == '__main__':
                         filecounter += 1
                 else:
                     logging.info('Total number of files processed: '+filecounter)
-        if args.s3tosolr:
+        if not args.s3tosolr:
             logging.info("From S3 to SOLR : Series [" + series + "]")
 
             uploader = S3Uploader('uspto-bdr')

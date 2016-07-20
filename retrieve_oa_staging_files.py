@@ -1,15 +1,3 @@
-#search for conversion.ok or conversion.error.  If conversion.error, put in log
-#need to pull date from those csv files.  look in emails for link
-#don't bother copying the files in this case
-#match fields in both files (match order if possible)
-#use appidnotfound and nofilefound logs to determine which files to pull
-#DocumentIdentifier is equal to ifwnum
-#DocumentCode = documentsourceidentifier
-#OfficeActionTypeCode = DocumentCode
-#GroupArtUnitNumber
-#PartyIdentifier
-#name XML file and OACSConversion file with app ID and IFW num like other directory
-
 #!/usr/bin/env python 3.5
 
 #Author:        Sasan Bahadaran
@@ -171,11 +159,11 @@ def parseXML(fname):
 
 #convert day-month-year to UTC timestamp
 def convertToUTC(date,format):
-    if date != '' and date != None:
+    if date != '' and date != None and date != 'nan':
         dt = datetime.strptime(date, format)
         dt = time.mktime(dt.timetuple())
     else:
-        dt = ''
+        dt = 978325200.0
     return dt
 
 def loadPALMdata():
@@ -192,54 +180,58 @@ def loadDateData():
 
 #deal with na values and set type as string
 def fixNaValues(dataframe,series):
+    logging.info('-- Fixing NA values start')
     for col in series:
         dataframe[col] = dataframe[col].fillna('')
         dataframe[col] = dataframe[col].astype('str')
-
+    logging.info('-- Fixing NA values complete')
 #code for extracting PALM data from PALM series file and combine with other elements from XML file
 def getPALMData(fileappid):
     try:
         logging.info('-- Starting PALM data match process')
-        values = df[(df['APPL_ID'] == float(fileappid))]
-        series = ['FILE_DT','EFFECTIVE_FILING_DT','ABANDON_DT','DN_NSRD_CURR_LOC_DT',\
-        'APP_STATUS_DT','PATENT_ISSUE_DT','ABANDON_DT','DN_EXAMINER_NO','DN_DW_DN_GAU_CD',\
-        'DN_NSRD_CURR_LOC_CD','PATENT_NO','PCT_NO','CONTINUITY_TYPE']
-        fixNaValues(values, series)
+        values = df.loc[df['APPL_ID'] == float(fileappid)]
         if len(values.index) == 1:
-            for index, row in values.iterrows():
-                doccontent['appl_id'] = row.APPL_ID
-                doccontent['file_dt'] = convertToUTC(row.FILE_DT, '%d-%b-%y')
-                doccontent['effective_filing_dt'] = convertToUTC(row.EFFECTIVE_FILING_DT, '%d-%b-%y')
-                doccontent['inv_subj_matter_ty'] = row.INV_SUBJ_MATTER_TY
-                doccontent['appl_ty'] = row.APPL_TY
-                doccontent['dn_examiner_no'] = row.DN_EXAMINER_NO.strip()
-                doccontent['dn_dw_dn_gau_cd'] = row.DN_DW_DN_GAU_CD.strip()
-                doccontent['dn_pto_art_class_no'] = row.DN_PTO_ART_CLASS_NO
-                doccontent['dn_pto_art_subclass_no'] = row.DN_PTO_ART_SUBCLASS_NO
-                doccontent['confirm_no'] = row.CONFIRM_NO
-                doccontent['dn_intppty_cust_no'] = row.DN_INTPPTY_CUST_NO
-                doccontent['atty_dkt_no'] = row.ATTY_DKT_NO
-                doccontent['dn_nsrd_curr_loc_cd'] = row.DN_NSRD_CURR_LOC_CD.strip()
-                doccontent['dn_nsrd_curr_loc_dt'] = convertToUTC(row.DN_NSRD_CURR_LOC_DT, '%d-%b-%y')
-                doccontent['app_status_no'] = row.APP_STATUS_NO
-                doccontent['app_status_dt'] = convertToUTC(row.APP_STATUS_DT, '%d-%b-%y')
-                doccontent['wipo_pub_no'] = row.WIPO_PUB_NO
-                doccontent['patent_no'] = row.PATENT_NO
-                doccontent['patent_issue_dt'] = convertToUTC(row.PATENT_ISSUE_DT, '%d-%b-%y')
-                doccontent['abandon_dt'] = convertToUTC(row.ABANDON_DT, '%d-%b-%y')
-                doccontent['disposal_type'] = row.DISPOSAL_TYPE
-                doccontent['se_in'] = row.SE_IN
-                doccontent['pct_no'] = row.PCT_NO.strip()
-                doccontent['invn_ttl_tx'] = row.INVN_TTL_TX
-                doccontent['aia_in'] = row.AIA_IN
-                doccontent['continuity_type'] = row.CONTINUITY_TYPE.strip()
-                doccontent['frgn_priority_clm'] = row.FRGN_PRIORITY_CLM
-                doccontent['usc_119_met'] = row.USC_119_MET
-                doccontent['fig_qt'] = row.FIG_QT
-                doccontent['indp_claim_qt'] = row.INDP_CLAIM_QT
-                doccontent['efctv_claims_qt'] = row.EFCTV_CLAIMS_QT
-                logging.info('-- PALM data written to doccontent dictionary')
-                return True
+            values = values.to_dict('list')
+        # series = ['FILE_DT','EFFECTIVE_FILING_DT','ABANDON_DT','DN_NSRD_CURR_LOC_DT',\
+        # 'APP_STATUS_DT','PATENT_ISSUE_DT','ABANDON_DT']
+        # # ,'DN_EXAMINER_NO','DN_DW_DN_GAU_CD',\
+        # # 'DN_NSRD_CURR_LOC_CD','PATENT_NO','PCT_NO','CONTINUITY_TYPE']
+        # #fixNaValues(values, series)
+        # if len(values) > 0:
+            #for index, row in values.iterrows():
+            doccontent['appl_id'] = str(values['APPL_ID'][0])
+            doccontent['file_dt'] = convertToUTC(str(values['FILE_DT'][0]), '%d-%b-%y')
+            doccontent['effective_filing_dt'] = convertToUTC(str(values['EFFECTIVE_FILING_DT'][0]), '%d-%b-%y')
+            doccontent['inv_subj_matter_ty'] = str(values['INV_SUBJ_MATTER_TY'][0])
+            doccontent['appl_ty'] = str(values['APPL_TY'][0])
+            doccontent['dn_examiner_no'] = str(values['DN_EXAMINER_NO'][0]).strip()
+            doccontent['dn_dw_dn_gau_cd'] = str(values['DN_DW_DN_GAU_CD'][0])
+            doccontent['dn_pto_art_class_no'] = str(values['DN_PTO_ART_CLASS_NO'][0])
+            doccontent['dn_pto_art_subclass_no'] = str(values['DN_PTO_ART_SUBCLASS_NO'][0])
+            doccontent['confirm_no'] = str(values['CONFIRM_NO'][0])
+            doccontent['dn_intppty_cust_no'] = str(values['DN_INTPPTY_CUST_NO'][0])
+            doccontent['atty_dkt_no'] = str(values['ATTY_DKT_NO'][0])
+            doccontent['dn_nsrd_curr_loc_cd'] = str(values['DN_NSRD_CURR_LOC_CD'][0]).strip()
+            doccontent['dn_nsrd_curr_loc_dt'] = convertToUTC(str(values['DN_NSRD_CURR_LOC_DT'][0]), '%d-%b-%y')
+            doccontent['app_status_no'] = str(values['APP_STATUS_NO'][0])
+            doccontent['app_status_dt'] = convertToUTC(str(values['APP_STATUS_DT'][0]), '%d-%b-%y')
+            doccontent['wipo_pub_no'] = str(values['WIPO_PUB_NO'][0])
+            doccontent['patent_no'] = str(values['PATENT_NO'][0])
+            doccontent['patent_issue_dt'] = convertToUTC(str(values['PATENT_ISSUE_DT'][0]), '%d-%b-%y')
+            doccontent['abandon_dt'] = convertToUTC(str(values['ABANDON_DT'][0]), '%d-%b-%y')
+            doccontent['disposal_type'] = str(values['DISPOSAL_TYPE'][0])
+            doccontent['se_in'] = str(values['SE_IN'][0])
+            doccontent['pct_no'] = str(values['PCT_NO'][0]).strip()
+            doccontent['invn_ttl_tx'] = str(values['INVN_TTL_TX'][0])
+            doccontent['aia_in'] = str(values['AIA_IN'][0])
+            doccontent['continuity_type'] = str(values['CONTINUITY_TYPE'][0]).strip()
+            doccontent['frgn_priority_clm'] = str(values['FRGN_PRIORITY_CLM'][0])
+            doccontent['usc_119_met'] = str(values['USC_119_MET'][0])
+            doccontent['fig_qt'] = str(values['FIG_QT'][0])
+            doccontent['indp_claim_qt'] = str(values['INDP_CLAIM_QT'][0])
+            doccontent['efctv_claims_qt'] = str(values['EFCTV_CLAIMS_QT'][0])
+            logging.info('-- PALM data written to doccontent dictionary')
+            return True
         else:
             logging.error('-- Application ID: '+fileappid+' not found in PALM data')
             notfoundPALM.append(fileappid)
@@ -251,21 +243,27 @@ def getPALMData(fileappid):
 #get official application doc date
 def getDocDate(appid, ifwnum):
     try:
-        logging.info('-- Starting PALM data match process')
-        values = datefile[(datefile['Application_Id'] == float(fileappid)) & (datefile['Document_Id'] == ifwnum)]
-        series = ['Mailroom_Date']
-        fixNaValues(values, series)
+        logging.info('-- Starting Date match process')
+        values = datefile.loc[(datefile['Application_Id'] == float(fileappid)) & (datefile['Document_Id'] == ifwnum)]
         if len(values.index) == 1:
-            for index, row in values.iterrows():
-                doccontent['doc_date'] = convertToUTC(row.Mailroom_Date, '%Y-%m-%d %H:%M:%S')
-                logging.info('-- Date data written to doccontent dictionary')
-                return True
+            values = values.to_dict('list')
+        #values = datefile[(datefile['Application_Id'] == float(fileappid)) & (datefile['Document_Id'] == ifwnum)]
+        #series = ['Mailroom_Date']
+        #fixNaValues(values, series)
+            doccontent['doc_date'] = convertToUTC(str(values['Mailroom_Date'][0]), '%Y-%m-%d %H:%M:%S')
+            logging.info('-- Date data written to doccontent dictionary')
+            return True
+        # if len(values.index) == 1:
+        #     for index, row in values.iterrows():
+        #         doccontent['doc_date'] = convertToUTC(row.Mailroom_Date, '%Y-%m-%d %H:%M:%S')
+        #         logging.info('-- Date data written to doccontent dictionary')
+        #         return True
         else:
             logging.error('-- Application ID: '+fileappid+' not found in Date data')
             notfoundDate.append(fileappid)
             return False
     except IOError as e:
-        logging.error('PALM Extract file: '+fileappid+' I/O error({0}): {1}'.format(e.errno,e.strerror))
+        logging.error('Date Extract file: '+fileappid+' I/O error({0}): {1}'.format(e.errno,e.strerror))
         return False
 
 #write dictionary to JSON file
@@ -402,8 +400,8 @@ if __name__ == '__main__':
     logging.info("-- Skip Extraction flag set to: "+str(args.skipextraction))
     logging.info("-- Skip Parsing flag set to: "+str(args.skipparsing))
     logging.info("-- Skip Solr flag set to: "+str(args.skipsolr))
-    logging.info("-- Start  range of files to process set to: "+str(args.startappid))
-    logging.info("-- End range of files to process set to: "+str(args.endappid))
+    logging.info("-- Start range of files to extract set to: "+str(args.startappid))
+    logging.info("-- End range of files to extract set to: "+str(args.endappid))
     logging.info("-- Skip s3 to Solr flag set to: "+str(args.s3tosolr))
     logging.info("-- [JOB START]  ----------------")
 
@@ -488,6 +486,7 @@ if __name__ == '__main__':
                         doccontent['appid'] = fileappid
                         #IFW number for action
                         doccontent['ifwnumber'] = ifwnum
+                        doccontent['staging_src_path'] = filename
                         if parseXML(fname):
                             if getPALMData(fileappid):
                                 if getDocDate(fileappid, ifwnum):
@@ -523,7 +522,7 @@ if __name__ == '__main__':
                         filecounter += 1
                 else:
                     logging.info('Total number of files processed: '+filecounter)
-        if args.s3tosolr:
+        if not args.s3tosolr:
             logging.info("From S3 to SOLR : Series [" + series + "]")
 
             uploader = S3Uploader('uspto-bdr')

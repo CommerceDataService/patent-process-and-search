@@ -1,5 +1,5 @@
 import os, glob, time, botocore, boto3, logging, argparse
-from s3_uploader import S3Uploader
+from s3_uploader_new import S3Uploader
 
 def uploader():
     logging.info('-- Connecting to s3')
@@ -74,6 +74,7 @@ if __name__ == '__main__':
         logging.info('Processing seriespath: '+seriespath)
         filecounter = 0
         s3session = uploader()
+        logging.info('Collecting filenames ' + seriespath)
         for filename in glob.glob(os.path.join(seriespath,'*')):
             fpath, fname = os.path.split(filename)
             appid = fname.split('_')[0]
