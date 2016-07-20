@@ -14,7 +14,7 @@ services:
              - appserver
     appserver:
          image: node
-         command: npm start
+         command: node server/server.js
          ports:
              - 3000:3000
          volumes:
@@ -24,6 +24,7 @@ services:
              - node_modules:/node_modules
          environment:
              - NODE_PATH=/usr/lib/node_modules:/node_modules
+         restart: always
          depends_on:
              - db
     db:
