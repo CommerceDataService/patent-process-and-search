@@ -36,7 +36,7 @@ exports.buildSearch = function (req, res) {
     // Ensure q var is cast to string
     if (req.query.q) {
       q=req.query.q.toString();
-      q = q.replace('\'', '"');
+      q = q.replace('\'', '"').replace(/[\u201C\u201D]/g, '"');
       var qMarks = q.match(/"/g) || [];
       var openP = q.match(/\(/g) || [];
       var closeP = q.match(/\)/g) || [];
