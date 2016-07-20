@@ -18,7 +18,7 @@ def post(filename, fname, series):
 if __name__ == '__main__':
     #logging configuration
     logging.basicConfig(
-                        filename='uploadtos3-'+time.strftime('%Y%m%d')+'.txt',
+                        filename='logs/uploadtos3-'+time.strftime('%Y%m%d')+'.txt',
                         level=logging.INFO,
                         format='%(asctime)s - %(name)s - %(levelname)s -%(message)s',
                         datefmt='%Y%m%d %H:%M:%S'
