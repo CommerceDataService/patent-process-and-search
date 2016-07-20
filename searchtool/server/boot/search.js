@@ -22,7 +22,7 @@ exports.buildSearch = function (req, res) {
        id: 1 } }
        */
     // Get From Date
-    var q, fq, validateMessage;
+    var q, fq, validateMessage = {};
     fq = "&fq=type:" + req.query.dataset;
     var dateRange='';
     // Only doing this for readiblity. Do not accept blank or undefined dates
@@ -35,16 +35,27 @@ exports.buildSearch = function (req, res) {
 
     // Ensure q var is cast to string
     if (req.query.q) {
-        q=req.query.q.toString();
+      q=req.query.q.toString();
+      q = q.replace('\'', '"');
+      var qMarks = q.match(/"/g) || [];
+      var openP = q.match(/\(/g) || [];
+      var closeP = q.match(/\)/g) || [];
+      if(qMarks && qMarks%2 !== 0){
+          validateMessage.quotation = 'Check your query for missing quotation marks.';
+        }
+      if( openP.length !== closeP.length ){
+          validateMessage.parenthesis = 'Check your query for missing parenthesis.';
+      }
+
     }else{q="*:*";}
 
     // Art Unit Filter
     if (typeof req.query.art_unit !== 'undefined'){
+      var artUnit = 'dn_dw_dn_gau_cd:' + req.query.art_unit;
       if(req.query.art_unit.length == 4) {
-        var artUnit = 'dn_dw_dn_gau_cd:' + req.query.art_unit;
         fq += "&fq=" + artUnit;
       }else{
-        validateMessage = 'Please enter a valid 4-digit Art Unit number.'
+        validateMessage.artunit = 'Enter a valid 4-digit Art Unit number.'
       }
     }
         // Set documentcode filter
@@ -113,8 +124,15 @@ exports.buildSearch = function (req, res) {
                     total:0,
                     pagein:'',
                     term:q,
+                    ptab: ptab,
                     email: req.body.email,
                     accessOK: !!(! config.requireLogin || token.id),
+                    message: validateMessage,
+                    todate: req.query.todate,
+                    fromdate:req.query.fromdate,
+                    artunit: req.query.art_unit,
+                    documentcode: req.query.documentcode,
+                    dataset: req.query.dataset
                 });
             }
         });
