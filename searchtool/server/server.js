@@ -36,12 +36,14 @@ try {
 
 // -- Add your pre-processing middleware here --
 
-
+// Setup the view engine
 var path = require('path');
 var helmet = require('helmet');
 var hbs = require('hbs');
 var helpers = require('./helpers.js');
 
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'hbs');
 
 app.middleware('initial', bodyParser.urlencoded({ extended: true }));
 
@@ -49,11 +51,7 @@ app.middleware('initial', bodyParser.urlencoded({ extended: true }));
 // Sub-apps like REST API are mounted via boot scripts.
 boot(app, __dirname);
 
-app.set('view engine', 'hbs'); // LoopBack comes with EJS out-of-box
-// must be set to serve views properly when starting the app via `slc run` from
-// the project rootapp.set('views', path.join(__dirname, 'views'));
 
-app.set('views', path.join(__dirname, 'views'));
 app.use('/client', loopback.static(path.join(__dirname, '../client')));
 app.use('/bower_components', loopback.static(path.join(__dirname, '../bower_components')));
 
@@ -67,7 +65,7 @@ app.use(helmet.hidePoweredBy());
 
 app.middleware('session:before', loopback.cookieParser(app.get('cookieSecret')));
 app.middleware('session', loopback.session({
-  secret: 'kitty',
+  secret: 'secret-kitty',
   saveUninitialized: true,
   resave: true,
 }));
@@ -86,7 +84,6 @@ for (var s in config) {
   c.session = c.session !== false;
   passportConfigurator.configureProvider(s, c);
 }
-var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
 
 app.start = function() {
   // start the web server

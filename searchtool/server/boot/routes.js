@@ -12,8 +12,11 @@ module.exports = function(app) {
     var search   = require('./search');
     var User     = app.models.user;
 
+    var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
 
-    router.get('/', function(req, res) {
+
+
+  router.get('/', function(req, res) {
         res.redirect('/newsearch');
     });
 
@@ -70,7 +73,7 @@ module.exports = function(app) {
 
 
 
-    router.get('/help', function(req, res) {
+    router.get('/help', ensureLoggedIn('/login'), function(req, res) {
         res.render('help', {
             email: req.body.email,
         });
