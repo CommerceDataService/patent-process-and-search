@@ -22,7 +22,7 @@ exports.buildSearch = function (req, res) {
        id: 1 } }
        */
     // Get From Date
-    var q, fq;
+    var q, fq, validateMessage = {};
     fq = "&fq=type:" + req.query.dataset;
     var dateRange='';
     // Only doing this for readiblity. Do not accept blank or undefined dates
@@ -35,15 +35,29 @@ exports.buildSearch = function (req, res) {
 
     // Ensure q var is cast to string
     if (req.query.q) {
-        q=req.query.q.toString();
+      q=req.query.q.toString();
+      q = q.replace('\'', '"').replace(/[\u201C\u201D]/g, '"');
+      var qMarks = q.match(/"/g) || [];
+      var openP = q.match(/\(/g) || [];
+      var closeP = q.match(/\)/g) || [];
+      if(qMarks && qMarks%2 !== 0){
+          validateMessage.quotation = 'Check your query for missing quotation marks.';
+        }
+      if( openP.length !== closeP.length ){
+          validateMessage.parenthesis = 'Check your query for missing parenthesis.';
+      }
+
     }else{q="*:*";}
 
     // Art Unit Filter
-    if ((typeof req.query.art_unit !== 'undefined') && (req.query.art_unit.length < 7) && (req.query.art_unit.length > 0)) {
+    if (typeof req.query.art_unit !== 'undefined'){
       var artUnit = 'dn_dw_dn_gau_cd:' + req.query.art_unit;
-      fq += "&fq=" + artUnit;
+      if(req.query.art_unit.length == 4) {
+        fq += "&fq=" + artUnit;
+      }else{
+        validateMessage.artunit = 'Enter a valid 4-digit Art Unit number.'
+      }
     }
-
         // Set documentcode filter
     if ((typeof req.query.documentcode !== 'undefined') && (req.query.documentcode.length > 0)) {
         if (typeof req.query.documentcode === 'object') {
@@ -88,7 +102,7 @@ exports.buildSearch = function (req, res) {
             if (typeof response.body !== 'undefined') {
                 body = JSON.parse(response.body);
             }
-            if (body && typeof body.response.docs !== 'undefined') {
+            if (body && typeof body.response !== 'undefined' && typeof body.response.docs !== 'undefined') {
                 res.render('newview', {
                     result:body.response.docs,
                     total:humanize.numberFormat(body.response.numFound,0),
@@ -110,8 +124,15 @@ exports.buildSearch = function (req, res) {
                     total:0,
                     pagein:'',
                     term:q,
+                    ptab: ptab,
                     email: req.body.email,
-                    accessOK: !!(! config.requireLogin || token.id)
+                    accessOK: !!(! config.requireLogin || token.id),
+                    message: validateMessage,
+                    todate: req.query.todate,
+                    fromdate:req.query.fromdate,
+                    artunit: req.query.art_unit,
+                    documentcode: req.query.documentcode,
+                    dataset: req.query.dataset
                 });
             }
         });

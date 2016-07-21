@@ -54,6 +54,11 @@
             </div>
           {{else}}
             <h1>Data based on this criteria is not available in the Big Data Office Action Data set.</h1>
+            {{#if message}}{{#each message}}
+            <div class="alert alert-danger">
+              <i class="alert-icon-danger alert-icon"></i> {{this}}
+            </div>
+            {{/each}}{{/if}}
           {{/each}}
 
         {{/if}}
