@@ -37,7 +37,6 @@ module.exports = function(app) {
                     redirectTo: '/login',
                     redirectToLinkText: 'Try again'
                 });
-                return;
             } else {
                 token = token.toJSON();
                 var maxAgeSet=10000000;  // Darren : 166 Mins .. I know long.
@@ -48,8 +47,6 @@ module.exports = function(app) {
 
                 res.render('newview', {
                     email: req.body.email,
-                    accessToken: token.id,
-                    accessOK: !!(token.id || ! config.requireLogin)
                 });
             }
         });
@@ -76,25 +73,11 @@ module.exports = function(app) {
     router.get('/help', function(req, res) {
         res.render('help', {
             email: req.body.email,
-            accessOK: !!(! config.requireLogin || token.id)
         });
     });
 
     // Main Search
     router.get('/newsearch', function(req, res, next) {
-        var sessionCookie;
-        if (config.requireLogin) {
-            if (typeof req.cookies.USPTOSession === 'undefined') {
-                res.redirect('/login');
-            } else {
-                sessionCookie = JSON.parse(req.cookies.USPTOSession);
-                if (typeof sessionCookie.id === 'undefined') {
-                    res.redirect('/login');
-                }
-            }
-        }
-        next();
-    }, function(req, res) {
         search.buildSearch(req, res);
     });
 
@@ -190,9 +173,7 @@ module.exports = function(app) {
         } else {
             res.render('newview', {
                 email: req.body.email,
-                accessOK: !!(! config.requireLogin || token.id)
-            }
-            );
+            });
         }
     });
 
