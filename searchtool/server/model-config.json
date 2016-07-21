@@ -4,7 +4,8 @@
       "loopback/common/models",
       "loopback/server/models",
       "../common/models",
-      "./models"
+      "./models",
+      "./node_modules/loopback-component-passport/lib/models"
     ],
     "mixins": [
       "loopback/common/mixins",
@@ -13,20 +14,27 @@
       "./mixins"
     ]
   },
-  "User": {
+  "user": {
     "dataSource": "searchtoolapi",
-    "public": false
+    "public": false,
+    "options": {
+      "emailVerificationRequired": false
+    }
   },
   "accessToken": {
     "dataSource": "searchtoolapi",
     "public": false
   },
-  "AccessToken": {
-    "dataSource": "db",
+  "userCredential": {
+    "dataSource": "searchtoolapi",
+    "public": false
+  },
+  "userIdentity": {
+    "dataSource": "searchtoolapi",
     "public": false
   },
   "ACL": {
-    "dataSource": "db",
+    "dataSource": "searchtoolapi",
     "public": false
   },
   "RoleMapping": {
@@ -37,11 +45,5 @@
     "dataSource": "searchtoolapi",
     "public": false
   },
-  "user": {
-    "dataSource": "searchtoolapi",
-    "public": true,
-    "options": {
-      "emailVerificationRequired": false
-    }
-  }
+
 }
