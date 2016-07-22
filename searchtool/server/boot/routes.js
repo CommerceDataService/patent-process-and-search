@@ -1,3 +1,8 @@
+// Copyright IBM Corp. 2015,2016. All Rights Reserved.
+// Node module: loopback-example-access-control
+// This file is licensed under the Artistic License 2.0.
+// License text available at https://opensource.org/licenses/Artistic-2.0
+
 module.exports = function(app) {
     var router   = app.loopback.Router();
     var unirest  = require('unirest');
@@ -6,90 +11,56 @@ module.exports = function(app) {
     var path     = require('path');
     var search   = require('./search');
     var User     = app.models.user;
+    var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
 
+    function protectedAccess() {
+      if (config.requireLogin) {
+        return ensureLoggedIn('/login');
+      } else {
+        return function(req, res, next) {
+          req.user = {name: "Anonymous", id:0, email: 'anon@anonymous.org'};
+          next();
+        }
+      }
+    }
 
     router.get('/', function(req, res) {
-        res.redirect('/help');
+      res.redirect('/help');
     });
 
     // Default Login Screen
-    router.get('/login', function(req, res){
-        res.render('login');
+    router.get('/login', function (req, res, next) {
+
+      var errors;
+
+      if (typeof(req.session.flash) !== 'undefined') {
+          errors = req.session.flash['error'];
+          console.log(errors);
+      }
+
+      res.render('login', {
+        user: req.user,
+        url: req.url,
+        error: errors,
+      });
     });
 
+    router.get('/auth/logout', function(req, res, next) {
+      req.logout();
+      res.redirect('/');
 
-    // Login Post and set session cookie
-    router.post('/login', function(req, res) {
-        User.login({
-            email: req.body.email,
-            password: req.body.password
-        }, 'user', function(err, token) {
-            if (err) {
-                console.log(err);
-                res.render('login-response', { //render view named 'login-response.ejs'
-                    title: 'Login failed',
-                    content: 'Please Contact Thomas Beach for access if you do not have a login',
-                    redirectTo: '/login',
-                    redirectToLinkText: 'Try again'
-                });
-                return;
-            } else {
-                token = token.toJSON();
-                var maxAgeSet=10000000;  // Darren : 166 Mins .. I know long.
-                res.cookie('USPTOSession', JSON.stringify(token), {
-                    maxAge: maxAgeSet,
-                    httpOnly: true
-                });
-
-                res.render('newview', {
-                    email: req.body.email,
-                    accessToken: token.id,
-                    accessOK: !!(token.id || ! config.requireLogin)
-                });
-            }
-        });
-    });
-
-    // Destroy session on logout
-    router.get('/logout', function(req, res, next) {
-        if (!req.cookies.USPTOSession) return res.sendStatus(401);
-        var sessionCookie = JSON.parse(req.cookies.USPTOSession);
-        console.log(sessionCookie.id);
-        var AccessToken = app.models.AccessToken;
-        var token = new AccessToken({
-            id: sessionCookie.id
-        });
-        token.destroy();
-        req.session.destroy();
-        res.clearCookie('USPTOSession');
-
-        res.redirect('/login');
     });
 
 
 
-    router.get('/help', function(req, res) {
+    router.get('/help', protectedAccess(), function(req, res) {
         res.render('help', {
-            email: req.body.email,
-            accessOK: !!(! config.requireLogin || token.id)
+            user: req.user,
         });
     });
 
     // Main Search
-    router.get('/newsearch', function(req, res, next) {
-        var sessionCookie;
-        if (config.requireLogin) {
-            if (typeof req.cookies.USPTOSession === 'undefined') {
-                res.redirect('/login');
-            } else {
-                sessionCookie = JSON.parse(req.cookies.USPTOSession);
-                if (typeof sessionCookie.id === 'undefined') {
-                    res.redirect('/login');
-                }
-            }
-        }
-        next();
-    }, function(req, res) {
+    router.get('/newsearch', protectedAccess(), function(req, res, next) {
         search.buildSearch(req, res);
     });
 
@@ -184,10 +155,8 @@ module.exports = function(app) {
                 });
         } else {
             res.render('newview', {
-                email: req.body.email,
-                accessOK: !!(! config.requireLogin || token.id)
-            }
-            );
+                email: req.user,
+            });
         }
     });
 

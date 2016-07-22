@@ -4,23 +4,8 @@ exports.buildSearch = function (req, res) {
     var unirest  = require('unirest');
     var humanize = require('humanize');
     var paginate = require('nodejs-yapaginate/lib/main.js');
-    /*
-       example Payload of sessionCookie
-       { ttl: '1209600',
-       id: '2opQLpAHH0ofjkM9TXjnsolxs5LLES00xHbn9sqKU5DSKgpGkBrMor5th7tYf8ep',
-       userId: 1,
-       user:
-       { realm: null,
-       username: null,
-       credentials: null,
-       challenges: null,
-       email: 'darren.culbreath@uspto.gov',
-       emailVerified: null,
-       status: null,
-       created: null,
-       lastUpdated: null,
-       id: 1 } }
-       */
+
+
     // Get From Date
     var q, fq, validateMessage = {};
     fq = "&fq=type:" + req.query.dataset;
@@ -112,12 +97,12 @@ exports.buildSearch = function (req, res) {
                     term:q,
                     ptab: ptab,
                     email: req.body.email,
-                    accessOK: !!(! config.requireLogin || token.id),
                     todate: req.query.todate,
                     fromdate:req.query.fromdate,
                     artunit: req.query.art_unit,
                     documentcode: req.query.documentcode,
-                    dataset: req.query.dataset
+                    dataset: req.query.dataset,
+                    user: req.user,
                 });
             } else {
                 res.render('newview', {
@@ -126,20 +111,20 @@ exports.buildSearch = function (req, res) {
                     term:q,
                     ptab: ptab,
                     email: req.body.email,
-                    accessOK: !!(! config.requireLogin || token.id),
                     message: validateMessage,
                     todate: req.query.todate,
                     fromdate:req.query.fromdate,
                     artunit: req.query.art_unit,
                     documentcode: req.query.documentcode,
-                    dataset: req.query.dataset
+                    dataset: req.query.dataset,
+                    user: req.user,
                 });
             }
         });
     } else {
         res.render('newview', {
             email: req.body.email,
-            accessOK: !!(! config.requireLogin || token.id)
+            user: req.user,
         });
     }
 };

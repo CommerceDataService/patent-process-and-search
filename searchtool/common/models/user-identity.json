@@ -1,7 +1,7 @@
 {
-  "name": "accessToken",
-  "plural": "accessTokens",
-  "base": "AccessToken",
+  "name": "userIdentity",
+  "plural": "userIdentities",
+  "base": "UserIdentity",
   "properties": {},
   "validations": [],
   "relations": {

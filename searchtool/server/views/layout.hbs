@@ -38,17 +38,22 @@
           </li>
         </ul>
         <div class="navbar-collapse collapse" id="navbar">
+          {{#if user}}
           <ul class="nav navbar-nav navbar-right">
             <li class="dropdown">
-              <a aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" class="dropdown-toggle" href="#"><i class="icon icon-user margin-right-1 icon-inverse"></i>{{#if email}} {{email}} {{/if}}<span class="caret"></span></a>
+              <a aria-expanded="false" aria-haspopup="true" role="button"
+                 data-toggle="dropdown" class="dropdown-toggle" href="#">
+                  <i class="icon icon-user margin-right-1 icon-inverse"></i>
+                  {{user.email}}
+                  <span class="caret"></span>
+              </a>
               <ul class="dropdown-menu">
-                <!-- <li><a href="user-profile.html">User Profile</a></li>
-                           <li><a href="#modal-appSettings" data-toggle="modal">Settings</a></li> -->
                 <li class="divider" role="separator"></li>
-                <li><a href="/logout">Sign out</a></li>
+                <li><a href="/auth/logout">Sign out</a></li>
               </ul>
             </li>
           </ul>
+          {{/if}}
         </div>
       </div>
     </nav>
@@ -57,7 +62,8 @@
     <div class="row-grid">
       <div class="pane-center col">
         <div class="panel--page panel panel-default">
-          {{#if accessOK}}
+
+          {{#if user}}
           <a tabindex="-1" id="search"></a>
           <div class="header keyline-bottom">
               <form role="form" action="/newsearch" class="padding-top-2 padding-right-2 padding-bottom-2">
@@ -79,16 +85,12 @@
                 </label>
               </form>
           </div>
+
           {{/if}}
           <div class="main-wrapper row-grid">
-            {{#unless accessOK}}
             <div class="app-sidebar filters keyline-right">
-              This Search engine is for authorized users only.
-              <hr> For access, please contact Thomas Beach
-            </div>
-            {{/unless}}
-            {{#if accessOK}}
-            <div class="app-sidebar filters keyline-right">
+              {{#if user}}
+
               <a tabindex="-1" id="filters"></a>
               <div class="filter-heading">
                 <span tabindex="0" class="h4">Refine by</span> <a class="filters-clear" href="/newsearch?dataset={{dataset}}&amp;q={{term}}">Clear</a>
@@ -217,8 +219,8 @@
                   <button class="btn btn-primary">Refine Search</button>
                 </span>
               </form>
+              {{/if}}
             </div>
-            {{/if}}
             <div class="row-grid">
               <div class="main-content col">
                 <div class="panel-body">
