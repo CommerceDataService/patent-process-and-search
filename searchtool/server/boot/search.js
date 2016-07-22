@@ -102,7 +102,7 @@ exports.buildSearch = function (req, res) {
                     artunit: req.query.art_unit,
                     documentcode: req.query.documentcode,
                     dataset: req.query.dataset,
-                    user: "Vlad",
+                    user: req.user,
                 });
             } else {
                 res.render('newview', {
@@ -117,14 +117,14 @@ exports.buildSearch = function (req, res) {
                     artunit: req.query.art_unit,
                     documentcode: req.query.documentcode,
                     dataset: req.query.dataset,
-                    user: "Vlad",
+                    user: req.user,
                 });
             }
         });
     } else {
         res.render('newview', {
             email: req.body.email,
-            user: "Vlad",
+            user: req.user,
         });
     }
 };
