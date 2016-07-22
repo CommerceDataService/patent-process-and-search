@@ -14,7 +14,14 @@ module.exports = function(app) {
     var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
 
     function protectedAccess() {
-      return ensureLoggedIn('/login');
+      if (config.requireLogin) {
+        return ensureLoggedIn('/login');
+      } else {
+        return function(req, res, next) {
+          req.user = {name: "Anonymous", id:0, email: 'anon@anonymous.org'};
+          next();
+        }
+      }
     }
 
     router.get('/', function(req, res) {
