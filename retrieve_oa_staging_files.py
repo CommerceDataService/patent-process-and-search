@@ -5,15 +5,18 @@
 #Organization:  Commerce Data Service
 #Description:   This script crawls specific directory structures of Office Action
 #files, renames them with app ID and IFW number, parses the XML, combines the XML
-#with PALM data from flat files, and gets the post date from a CMS RESTFUL service.
+#with PALM data from flat files, and gets the post date from a Date file.
 #It then transforms the resulting dictionary to JSON and sends it to Solr for indexing.
 
 import sys, os, glob, shutil, logging, time, argparse, glob, json, requests,\
-csv, collections, math, itertools
+collections, itertools
 
 from datetime import datetime
 from lxml import etree
 import pandas as pd
+
+from s3_upload.s3_uploader_new import S3Uploader
+from s3_upload.util import Util
 
 #get public app IDs from app ID file
 def getAppIDs(fname, start, end):
@@ -35,7 +38,6 @@ def makeDirectory(directory):
     if not os.path.isdir(directory):
         os.makedirs(directory)
         logging.info('-- Directory: '+directory+' created')
-        print('directory created!!!!!')
 
 #split path to get app ID
 def splitAll(path):
@@ -178,13 +180,6 @@ def loadDateData():
     logging.info('-- Date data loaded into dataframe')
     return dataframe
 
-#deal with na values and set type as string
-def fixNaValues(dataframe,series):
-    logging.info('-- Fixing NA values start')
-    for col in series:
-        dataframe[col] = dataframe[col].fillna('')
-        dataframe[col] = dataframe[col].astype('str')
-    logging.info('-- Fixing NA values complete')
 #code for extracting PALM data from PALM series file and combine with other elements from XML file
 def getPALMData(fileappid):
     try:
@@ -192,13 +187,6 @@ def getPALMData(fileappid):
         values = df.loc[df['APPL_ID'] == float(fileappid)]
         if len(values.index) == 1:
             values = values.to_dict('list')
-        # series = ['FILE_DT','EFFECTIVE_FILING_DT','ABANDON_DT','DN_NSRD_CURR_LOC_DT',\
-        # 'APP_STATUS_DT','PATENT_ISSUE_DT','ABANDON_DT']
-        # # ,'DN_EXAMINER_NO','DN_DW_DN_GAU_CD',\
-        # # 'DN_NSRD_CURR_LOC_CD','PATENT_NO','PCT_NO','CONTINUITY_TYPE']
-        # #fixNaValues(values, series)
-        # if len(values) > 0:
-            #for index, row in values.iterrows():
             doccontent['appl_id'] = str(values['APPL_ID'][0])
             doccontent['file_dt'] = convertToUTC(str(values['FILE_DT'][0]), '%d-%b-%y')
             doccontent['effective_filing_dt'] = convertToUTC(str(values['EFFECTIVE_FILING_DT'][0]), '%d-%b-%y')
@@ -247,17 +235,9 @@ def getDocDate(appid, ifwnum):
         values = datefile.loc[(datefile['Application_Id'] == float(fileappid)) & (datefile['Document_Id'] == ifwnum)]
         if len(values.index) == 1:
             values = values.to_dict('list')
-        #values = datefile[(datefile['Application_Id'] == float(fileappid)) & (datefile['Document_Id'] == ifwnum)]
-        #series = ['Mailroom_Date']
-        #fixNaValues(values, series)
             doccontent['doc_date'] = convertToUTC(str(values['Mailroom_Date'][0]), '%Y-%m-%d %H:%M:%S')
             logging.info('-- Date data written to doccontent dictionary')
             return True
-        # if len(values.index) == 1:
-        #     for index, row in values.iterrows():
-        #         doccontent['doc_date'] = convertToUTC(row.Mailroom_Date, '%Y-%m-%d %H:%M:%S')
-        #         logging.info('-- Date data written to doccontent dictionary')
-        #         return True
         else:
             logging.error('-- Application ID: '+fileappid+' not found in Date data')
             notfoundDate.append(fileappid)
@@ -299,6 +279,43 @@ def readJSON(fname):
                         logging.info("-- Solr error for doc: "+docid+" error: "+', '.join("{!s}={!r}".format(k,v) for (k,v) in rdict.items()))
     except IOError as e:
         logging.error('Read JSON file: '+fname+' I/O error({0}): {1}'.format(e.errno,e.strerror))
+    except:
+        logging.error('Unexpected error:', sys.exc_info()[0])
+        raise
+
+#read JSON file and set up for sending to Solr
+def postFromS3ToSOLR(obj):
+    try:
+        log_dir_path = os.path.join("logs", "solr_upload", Util.log_directory(obj.key))
+        logging.info("Log dir for file " + log_dir_path )
+        os.makedirs(log_dir_path, exist_ok=True)
+
+        docid = Util.doc_id(obj.key)
+        objdata = obj.get()
+        jsontext = objdata['Body'].read()
+
+        jsontext = Util.reprocess_document(jsontext, obj.key)
+
+        with open(os.path.join(log_dir_path  , 'solrComplete.log'), 'a+') as logfile:
+                logfile.seek(0)
+                if docid+'\n' in logfile:
+                    logging.info('-- File: '+docid+' already processed by Solr')
+                else:
+                    logging.info('-- Sending file: '+obj.key+' to Solr')
+                    response = sendToSolr('oadata_3_shard1_replica3', jsontext)
+                    r = response.json()
+                    status = r['responseHeader']['status']
+                    if status == 0:
+                        logfile.write(docid+"\n")
+                        logging.info('-- Solr update for file: '+docid+' complete')
+                        return True
+                    else:
+                        logging.info('-- Solr error for doc: '+docid+' error: '+ \
+                        ', '.join("{!s}={!r}".format(k,v) for (k,v) in r.items()))
+                        return False
+    except IOError as e:
+        logging.error('Read JSON file: '+ obj.key +' I/O error({0}): {1}'.format(e.errno,e.strerror))
+        return False
     except:
         logging.error('Unexpected error:', sys.exc_info()[0])
         raise
@@ -375,6 +392,7 @@ if __name__ == '__main__':
                         '-f',
                         '--startappid',
                         required=False,
+                        default=0,
                         help='Pass this flag to specify the line number of the app ID file to start processing from for extraction - format #',
                         type=int
                        )
@@ -383,6 +401,7 @@ if __name__ == '__main__':
                         '--endappid',
                         required=False,
                         help='Pass this flag to specify the line number of the app ID file to end processing from for extraction - format #',
+                        default=None,
                         type=int
                        )
     parser.add_argument(
@@ -407,7 +426,6 @@ if __name__ == '__main__':
 
     for series in args.series:
         seriespath = os.path.join(scriptpath,'extractedfiles', series, 'staging')
-        print("seriespath: "+seriespath)
         if not args.skipextraction:
             logging.info("-- Processing series: "+series)
             getAppIDs(os.path.join(scriptpath, 'extractedfiles', series, 'OA2XML_notfound_sorted.log'), args.startappid, args.endappid)
@@ -417,16 +435,12 @@ if __name__ == '__main__':
                     currentapp = x
                     logging.info('-- Searching for app ID: '+currentapp)
                     seriesdirpath = constructPath(x)
-                    print("seriesdirpath: "+seriesdirpath)
                     if os.path.isdir(seriesdirpath):
                         donotprocess = False
                         dirfiles = {}
                         for dirname in glob.glob(os.path.join(seriesdirpath, '*')):
-                            print("dirname: "+dirname)
                             if os.path.isfile(os.path.join(dirname,'conversion.ok')):
-                                print("conversion.ok file found")
                                 for name in glob.glob(os.path.join(dirname, '*.DOCM')):
-                                    print("DOCM: "+name)
                                     fn = changeExt(name, 'xml')
                                     if os.path.isfile(fn):
                                         convfn = os.path.join(dirname, 'OACSConversion.xml')
@@ -439,11 +453,9 @@ if __name__ == '__main__':
                                             logging.info('-- New Conversion file name: '+newconvfn)
                                             dirfiles[convfn] = newconvfn
                                     else:
-                                        print("XML file not found")
                                         logging.info("-- XML file not found for: "+name)
                                         donotprocess = True
                             else:
-                                print("conversion.ok file not found!")
                                 donotprocess = True
                         if donotprocess == False:
                             #for each file, run copy
@@ -529,5 +541,7 @@ if __name__ == '__main__':
             files = uploader.get_file_list(series + "/" + "130000")
             for x in files:
                 logging.info( "Uploading " + x.key )
-                postFromS3ToJSon(x)
+                postFromS3ToSOLR(x)
+
+
     logging.info("-- [JOB END] -------------------")

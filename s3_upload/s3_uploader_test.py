@@ -3,7 +3,7 @@ import pytest
 
 @pytest.fixture
 def uploader():
-    from s3_uploader import S3Uploader
+    from s3_uploader_new import S3Uploader
     return S3Uploader('uspto-bdr')
 
 

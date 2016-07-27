@@ -27,6 +27,7 @@ class S3Uploader(object):
 
         logging.error("Exceeding maximum number of tries, giving up")
         sys.exit(2)
+        return False
 
     def get_file_list(self, prefix):
         return self.bucket.objects.filter(Prefix=prefix)

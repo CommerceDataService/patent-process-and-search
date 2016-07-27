@@ -15,7 +15,19 @@ def post(filename, fname, series):
         raise
         return False
 
+#write list of app ID's to specified log file
+def writeLogs(logfname,idlist):
+    try:
+        with open(logfname,'a+') as logfile:
+            for appid in idlist:
+                logfile.write(appid+"\n")
+        logging.info('-- Log entries for: '+logfname+' written to file')
+    except IOError as e:
+        logging.error('-- Write Log: '+logfname+' I/O error({0}): {1}'.format(e.errno,e.strerror))
+
 if __name__ == '__main__':
+    filesaddedtos3 = []
+
     #logging configuration
     logging.basicConfig(
                         filename='logs/uploadtos3-'+time.strftime('%Y%m%d')+'.txt',
@@ -35,16 +47,18 @@ if __name__ == '__main__':
     parser.add_argument(
                         '-a',
                         '--startappid',
-                        required=True,
+                        required=False,
                         help='Specify an app ID to start with when uploading the files',
-                        type=str
+                        type=int,
+                        default=0
                        )
     parser.add_argument(
                         '-n',
                         '--numoffiles',
-                        required=True,
+                        required=False,
                         help='Specify number of files to process',
-                        type=int
+                        type=int,
+                        default=100000000
                        )
     parser.add_argument(
                         '-w',
@@ -77,10 +91,13 @@ if __name__ == '__main__':
         logging.info('Collecting filenames ' + seriespath)
         for filename in glob.glob(os.path.join(seriespath,'*')):
             fpath, fname = os.path.split(filename)
-            appid = fname.split('_')[0]
+            appid = int(fname.split('_')[0])
+            ifwnumber = int(fname.split('_')[1])
             if fname.endswith('.json') and appid >= startappid and filecounter <= args.numoffiles:
                 if post(filename, fname, seriesfolder):
                     filecounter += 1
                     logging.info('-- {} - posted file: {}'.format(filecounter,fname))
+                    filesaddedtos3.append(appid+','+ifwnumber)
                 else:
                     logging.error('-- File upload failed for: {}'.format(fname))
+        writeLogs(os.path.join(seriespath,'filesaddedtos3.log'),filesaddedtos3)
