@@ -63,6 +63,12 @@ target/
 
 .htpasswd
 
-files/*
+files/GRANTS/*
+files/OFFICEACTIONS/*
+files/PTAB/*
+files/PUBS/*
+files/PAIR/pair_app_ids.txt
 logs/*
 json_files/*
+extractedfiles/*
+PE2E-ELP/*
