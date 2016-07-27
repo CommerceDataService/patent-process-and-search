@@ -8,12 +8,14 @@
 #with PALM data from flat files, and gets the post date from a CMS RESTFUL service.
 #It then transforms the resulting dictionary to JSON and sends it to Solr for indexing.
 
-import sys, os, glob, shutil, logging, time, argparse, glob, json, requests,\
-csv, collections, math
+import sys, os,  shutil, logging, time, argparse, glob, json, requests, collections
 
 from datetime import datetime
 from lxml import etree
 import pandas as pd
+
+from s3_upload.s3_uploader_new import S3Uploader
+from s3_upload.util import Util
 
 #get public app IDs from app ID file
 def getAppIDs(fname,series):
@@ -154,56 +156,46 @@ def loadPALMdata():
     logging.info('-- PALM data loaded into dataframe')
     return dataframe
 
-#deal with na values and set type as string
-def fixNaValues(dataframe,series):
-    for col in series:
-        dataframe[col] = dataframe[col].fillna('')
-        dataframe[col] = dataframe[col].astype('str')
-
 #code for extracting PALM data from PALM series file and combine with other elements from XML file
 def getPALMData(fileappid):
     try:
         logging.info('-- Starting PALM data match process')
-        values = df[(df['APPL_ID'] == float(fileappid))]
-        series = ['FILE_DT','EFFECTIVE_FILING_DT','ABANDON_DT','DN_NSRD_CURR_LOC_DT',\
-        'APP_STATUS_DT','PATENT_ISSUE_DT','ABANDON_DT']
-        fixNaValues(values, series)
-
+        values = df.loc[df['APPL_ID'] == float(fileappid)]
         if len(values.index) == 1:
-            for index, row in values.iterrows():
-                doccontent['appl_id'] = row.APPL_ID
-                doccontent['file_dt'] = convertToUTC(row.FILE_DT, '%d-%b-%y')
-                doccontent['effective_filing_dt'] = convertToUTC(row.EFFECTIVE_FILING_DT, '%d-%b-%y')
-                doccontent['inv_subj_matter_ty'] = row.INV_SUBJ_MATTER_TY
-                doccontent['appl_ty'] = row.APPL_TY
-                doccontent['dn_examiner_no'] = row.DN_EXAMINER_NO
-                doccontent['dn_dw_dn_gau_cd'] = row.DN_DW_DN_GAU_CD
-                doccontent['dn_pto_art_class_no'] = row.DN_PTO_ART_CLASS_NO
-                doccontent['dn_pto_art_subclass_no'] = row.DN_PTO_ART_SUBCLASS_NO
-                doccontent['confirm_no'] = row.CONFIRM_NO
-                doccontent['dn_intppty_cust_no'] = row.DN_INTPPTY_CUST_NO
-                doccontent['atty_dkt_no'] = row.ATTY_DKT_NO
-                doccontent['dn_nsrd_curr_loc_cd'] = row.DN_NSRD_CURR_LOC_CD
-                doccontent['dn_nsrd_curr_loc_dt'] = convertToUTC(row.DN_NSRD_CURR_LOC_DT, '%d-%b-%y')
-                doccontent['app_status_no'] = row.APP_STATUS_NO
-                doccontent['app_status_dt'] = convertToUTC(row.APP_STATUS_DT, '%d-%b-%y')
-                doccontent['wipo_pub_no'] = row.WIPO_PUB_NO
-                doccontent['patent_no'] = row.PATENT_NO
-                doccontent['patent_issue_dt'] = convertToUTC(row.PATENT_ISSUE_DT, '%d-%b-%y')
-                doccontent['abandon_dt'] = convertToUTC(row.ABANDON_DT, '%d-%b-%y')
-                doccontent['disposal_type'] = row.DISPOSAL_TYPE
-                doccontent['se_in'] = row.SE_IN
-                doccontent['pct_no'] = row.PCT_NO
-                doccontent['invn_ttl_tx'] = row.INVN_TTL_TX
-                doccontent['aia_in'] = row.AIA_IN
-                doccontent['continuity_type'] = row.CONTINUITY_TYPE
-                doccontent['frgn_priority_clm'] = row.FRGN_PRIORITY_CLM
-                doccontent['usc_119_met'] = row.USC_119_MET
-                doccontent['fig_qt'] = row.FIG_QT
-                doccontent['indp_claim_qt'] = row.INDP_CLAIM_QT
-                doccontent['efctv_claims_qt'] = row.EFCTV_CLAIMS_QT
-                logging.info('-- PALM data written to doccontent dictionary')
-                return True
+            values = values.to_dict('list')
+            doccontent['appl_id'] = str(values['APPL_ID'][0])
+            doccontent['file_dt'] = convertToUTC(str(values['FILE_DT'][0]), '%d-%b-%y')
+            doccontent['effective_filing_dt'] = convertToUTC(str(values['EFFECTIVE_FILING_DT'][0]), '%d-%b-%y')
+            doccontent['inv_subj_matter_ty'] = str(values['INV_SUBJ_MATTER_TY'][0])
+            doccontent['appl_ty'] = str(values['APPL_TY'][0])
+            doccontent['dn_examiner_no'] = str(values['DN_EXAMINER_NO'][0]).strip()
+            doccontent['dn_dw_dn_gau_cd'] = str(values['DN_DW_DN_GAU_CD'][0])
+            doccontent['dn_pto_art_class_no'] = str(values['DN_PTO_ART_CLASS_NO'][0])
+            doccontent['dn_pto_art_subclass_no'] = str(values['DN_PTO_ART_SUBCLASS_NO'][0])
+            doccontent['confirm_no'] = str(values['CONFIRM_NO'][0])
+            doccontent['dn_intppty_cust_no'] = str(values['DN_INTPPTY_CUST_NO'][0])
+            doccontent['atty_dkt_no'] = str(values['ATTY_DKT_NO'][0])
+            doccontent['dn_nsrd_curr_loc_cd'] = str(values['DN_NSRD_CURR_LOC_CD'][0]).strip()
+            doccontent['dn_nsrd_curr_loc_dt'] = convertToUTC(str(values['DN_NSRD_CURR_LOC_DT'][0]), '%d-%b-%y')
+            doccontent['app_status_no'] = str(values['APP_STATUS_NO'][0])
+            doccontent['app_status_dt'] = convertToUTC(str(values['APP_STATUS_DT'][0]), '%d-%b-%y')
+            doccontent['wipo_pub_no'] = str(values['WIPO_PUB_NO'][0])
+            doccontent['patent_no'] = str(values['PATENT_NO'][0])
+            doccontent['patent_issue_dt'] = convertToUTC(str(values['PATENT_ISSUE_DT'][0]), '%d-%b-%y')
+            doccontent['abandon_dt'] = convertToUTC(str(values['ABANDON_DT'][0]), '%d-%b-%y')
+            doccontent['disposal_type'] = str(values['DISPOSAL_TYPE'][0])
+            doccontent['se_in'] = str(values['SE_IN'][0])
+            doccontent['pct_no'] = str(values['PCT_NO'][0]).strip()
+            doccontent['invn_ttl_tx'] = str(values['INVN_TTL_TX'][0])
+            doccontent['aia_in'] = str(values['AIA_IN'][0])
+            doccontent['continuity_type'] = str(values['CONTINUITY_TYPE'][0]).strip()
+            doccontent['frgn_priority_clm'] = str(values['FRGN_PRIORITY_CLM'][0])
+            doccontent['usc_119_met'] = str(values['USC_119_MET'][0])
+            doccontent['fig_qt'] = str(values['FIG_QT'][0])
+            doccontent['indp_claim_qt'] = str(values['INDP_CLAIM_QT'][0])
+            doccontent['efctv_claims_qt'] = str(values['EFCTV_CLAIMS_QT'][0])
+            logging.info('-- PALM data written to doccontent dictionary')
+            return True
         else:
             logging.error('-- Application ID: '+fileappid+' not found in PALM data')
             notfoundPALM.append(fileappid)
@@ -269,7 +261,7 @@ def readJSON(fname):
                         return True
                     else:
                         logging.info('-- Solr error for doc: '+docid+' error: '+\
-                        ', '.join("{!s}={!r}".format(k,v) for (k,v) in rdict.items()))
+                        ', '.join("{!s}={!r}".format(k,v) for (k,v) in r.items()))
                         return False
     except IOError as e:
         logging.error('Read JSON file: '+fname+' I/O error({0}): {1}'.format(e.errno,e.strerror))
@@ -279,10 +271,48 @@ def readJSON(fname):
         raise
         return False
 
+#read JSON file and set up for sending to Solr
+def postFromS3ToSOLR(obj):
+    try:
+        log_dir_path = os.path.join("logs", "solr_upload", Util.log_directory(obj.key))
+        logging.info("Log dir for file " + log_dir_path )
+        os.makedirs(log_dir_path, exist_ok=True)
+
+        docid = Util.doc_id(obj.key)
+        objdata = obj.get()
+        jsontext = objdata['Body'].read()
+
+        jsontext = Util.reprocess_document(jsontext, obj.key)
+
+
+        with open(os.path.join(log_dir_path  , 'solrComplete.log'), 'a+') as logfile:
+                logfile.seek(0)
+                if docid+'\n' in logfile:
+                    logging.info('-- File: '+docid+' already processed by Solr')
+                else:
+                    logging.info('-- Sending file: '+obj.key+' to Solr')
+                    response = sendToSolr('oadata_3_shard1_replica3', jsontext)
+                    r = response.json()
+                    status = r['responseHeader']['status']
+                    if status == 0:
+                        logfile.write(docid+"\n")
+                        logging.info('-- Solr update for file: '+docid+' complete')
+                        return True
+                    else:
+                        logging.info('-- Solr error for doc: '+docid+' error: '+ \
+                        ', '.join("{!s}={!r}".format(k,v) for (k,v) in r.items()))
+                        return False
+    except IOError as e:
+        logging.error('Read JSON file: '+ obj.key +' I/O error({0}): {1}'.format(e.errno,e.strerror))
+        return False
+    except:
+        logging.error('Unexpected error:', sys.exc_info()[0])
+        raise
+
 #send document to Solr for indexin
 def sendToSolr(core, json):
     try:
-        jsontext = '{"add":{ "doc":'+json+',"boost":1.0,"overwrite":true, "commitWithin": 1000}}'
+        jsontext = b'{"add":{ "doc":'+json+b',"boost":1.0,"overwrite":true, "commitWithin": 1000}}'
         url = os.path.join(solrURL,"solr",core,"update")
         headers = {"Content-type" : "application/json"}
         return requests.post(url, data=jsontext, headers=headers)
@@ -348,6 +378,14 @@ if __name__ == '__main__':
                         action="store_true",
                         default=False
                        )
+    parser.add_argument(
+                        '-3',
+                        '--s3tosolr',
+                        required=False,
+                        help='Pass this flag to send from S3 to SOLR',
+                        action="store_true",
+                        default=False
+                       )
     args = parser.parse_args()
     logging.info("-- SCRIPT ARGUMENTS ------------")
     if args.series:
@@ -405,7 +443,7 @@ if __name__ == '__main__':
             del nofileappids[:]
         if not args.skipparsing:
             df = loadPALMdata()
-            for filename in glob.glob(os.path.join(seriespath,'*.xml')):
+            for filename in glob.glob(os.path.join(seriespath, '*.xml')):
                 logging.info('-- Start Processing file: '+filename)
                 fname = os.path.join(seriespath, filename)
                 fn = changeExt(fname, 'json')
@@ -452,4 +490,14 @@ if __name__ == '__main__':
                         filecounter += 1
                 else:
                     logging.info('Total number of files processed: '+filecounter)
+        if not args.s3tosolr:
+            logging.info("From S3 to SOLR : Series [" + series + "]")
+
+            uploader = S3Uploader('uspto-bdr')
+            files = uploader.get_file_list(series + "/" + "130000")
+            for x in files:
+                logging.info( "Uploading " + x.key )
+                postFromS3ToSOLR(x)
+
+
     logging.info("-- [JOB END] -------------------")
