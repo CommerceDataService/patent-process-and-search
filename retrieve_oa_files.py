@@ -8,7 +8,7 @@
 #with PALM data from flat files, and gets the post date from a CMS RESTFUL service.
 #It then transforms the resulting dictionary to JSON and sends it to Solr for indexing.
 
-import sys, os,  shutil, logging, time, argparse, glob, json, requests, collections
+import sys, os, shutil, logging, time, argparse, glob, json, requests, collections
 
 from datetime import datetime
 from lxml import etree
