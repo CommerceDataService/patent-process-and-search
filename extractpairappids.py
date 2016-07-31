@@ -66,12 +66,12 @@ if __name__ == '__main__':
     if os.path.isdir(os.path.join(scriptpath, filesdir)):
         for filename in glob.glob(os.path.join(scriptpath, filesdir,'*.json')):
             extractIDs(filename)
-
+            logging.info('-- Total number of app IDs extracted: '+str(len(publicappids)))
+            logging.info('-- Writing all extracted public app IDs to file')
+            writeAppIDs(publicappids)
+            del publicappids[:]
         #sort app id's in order
         publicappids.sort()
-        logging.info('-- Total number of app IDs extracted: '+str(len(publicappids)))
-        logging.info('-- Writing all extracted public app IDs to file')
-        writeAppIDs(publicappids)
     else:
         logging.error('-- PAIR App ID file path does not exist')
 
