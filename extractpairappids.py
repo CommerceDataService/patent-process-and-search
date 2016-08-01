@@ -15,7 +15,7 @@ def extractIDs(fname):
         ignoreappids = 0
         fpath,filename = os.path.split(fname)
         logging.info('-- Processing file: '+filename)
-        with open(fname, 'r') as fd:
+        with open(fname, 'r', encoding='utf-8') as fd:
             data = json.load(fd)
             apps = data['PatentBulkData']
             for app in apps:
