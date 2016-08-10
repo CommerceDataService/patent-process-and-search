@@ -10,7 +10,6 @@
 
 import sys, os,  shutil, logging, time, argparse, glob, json, requests, collections
 
-from datetime import datetime
 from lxml import etree
 import pandas as pd
 
@@ -141,20 +140,18 @@ def parseXML(fname):
         badfiles.append(fname)
         return False
 
-#convert day-month-year to UTC timestamp
-def convertToUTC(date,format):
-    if date != '' and date != None:
-        dt = datetime.strptime(date, format)
-        dt = time.mktime(dt.timetuple())
-    else:
-        dt = ''
-    return dt
 
 def loadPALMdata():
     logging.info('-- Loading PALM data')
     dataframe =  pd.read_csv(os.path.join(palmfilespath, 'app'+series+'.csv'), encoding = 'latin-1')
     logging.info('-- PALM data loaded into dataframe')
     return dataframe
+
+#deal with na values and set type as string
+def fixNaValues(dataframe,series):
+    for col in series:
+        dataframe[col] = dataframe[col].fillna('')
+        dataframe[col] = dataframe[col].astype('str')
 
 #code for extracting PALM data from PALM series file and combine with other elements from XML file
 def getPALMData(fileappid):
@@ -217,7 +214,7 @@ def getDocDate(appid, ifwnum):
             logging.info('-- App ID: '+appid+', IFW#: '+ifwnum+' not found from CMS service')
             notfoundCMS.append(appid+', '+ifwnum)
         elif 'officialDocumentDate' in r[0]:
-            doc_date = convertToUTC(r[0]['officialDocumentDate'], '%Y-%m-%d')
+            doc_date = Util.convertToUTC(r[0]['officialDocumentDate'], '%Y-%m-%d')
         else:
             logging.info('-- CMS RESTFUL call neither contained an error or the doc date')
             doc_date = ''
@@ -252,7 +249,7 @@ def readJSON(fname):
                     logging.info('-- File: '+docid+' already processed by Solr')
                 else:
                     logging.info('-- Sending file: '+fname+' to Solr')
-                    response = sendToSolr('oadata_2_shard1_replica1', jsontext)
+                    response = sendToSolr('oadata_3_shard1_replica1', jsontext)
                     r = response.json()
                     status = r['responseHeader']['status']
                     if status == 0:
@@ -273,29 +270,43 @@ def readJSON(fname):
 
 #read JSON file and set up for sending to Solr
 def postFromS3ToSOLR(obj):
+
+    if not Util.allowed_key(obj.key):
+        return
+
     try:
+
         log_dir_path = os.path.join("logs", "solr_upload", Util.log_directory(obj.key))
         logging.info("Log dir for file " + log_dir_path )
         os.makedirs(log_dir_path, exist_ok=True)
 
+        second_log_dir_path = os.path.join("logs", "solr_upload", Util.secondary_log_directory(obj.key))
+        logging.info("Secondary Log dir for file " + second_log_dir_path )
+        os.makedirs(second_log_dir_path, exist_ok=True)
+
         docid = Util.doc_id(obj.key)
-        objdata = obj.get()
-        jsontext = objdata['Body'].read()
 
-        jsontext = Util.reprocess_document(jsontext, obj.key)
+        with open(os.path.join(log_dir_path, 'solrComplete.log'), 'a+') as logfile:
 
+            with open(os.path.join(second_log_dir_path, 'solrComplete.log'), 'a+') as sec_logfile:
 
-        with open(os.path.join(log_dir_path  , 'solrComplete.log'), 'a+') as logfile:
                 logfile.seek(0)
-                if docid+'\n' in logfile:
+                doc_log_entry = docid + '\n'
+                if doc_log_entry in logfile or doc_log_entry in sec_logfile:
                     logging.info('-- File: '+docid+' already processed by Solr')
                 else:
+
+                    objdata = obj.get()
+                    jsontext = objdata['Body'].read()
+                    jsontext = Util.reprocess_document(jsontext, obj.key)
+
                     logging.info('-- Sending file: '+obj.key+' to Solr')
-                    response = sendToSolr('oadata_3_shard1_replica3', jsontext)
+                    response = sendToSolr('oadata_3_shard1_replica1', jsontext)
                     r = response.json()
                     status = r['responseHeader']['status']
                     if status == 0:
-                        logfile.write(docid+"\n")
+                        logfile.write(doc_log_entry)
+                        sec_logfile.write(doc_log_entry)
                         logging.info('-- Solr update for file: '+docid+' complete')
                         return True
                     else:
@@ -309,10 +320,11 @@ def postFromS3ToSOLR(obj):
         logging.error('Unexpected error:', sys.exc_info()[0])
         raise
 
+
 #send document to Solr for indexin
 def sendToSolr(core, json):
     try:
-        jsontext = b'{"add":{ "doc":'+json+b',"boost":1.0,"overwrite":true, "commitWithin": 1000}}'
+        jsontext = '{"add":{ "doc":'+json+',"boost":1.0,"overwrite":true, "commitWithin": 1000}}'
         url = os.path.join(solrURL,"solr",core,"update")
         headers = {"Content-type" : "application/json"}
         return requests.post(url, data=jsontext, headers=headers)
@@ -490,7 +502,7 @@ if __name__ == '__main__':
                         filecounter += 1
                 else:
                     logging.info('Total number of files processed: '+filecounter)
-        if not args.s3tosolr:
+        if args.s3tosolr:
             logging.info("From S3 to SOLR : Series [" + series + "]")
 
             uploader = S3Uploader('uspto-bdr')

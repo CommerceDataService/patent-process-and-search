@@ -1,5 +1,18 @@
 #!/usr/bin/env python 3.5
 
+#search for conversion.ok or conversion.error.  If conversion.error, put in log
+#need to pull date from those csv files.  look in emails for link
+#don't bother copying the files in this case
+#match fields in both files (match order if possible)
+#use appidnotfound and nofilefound logs to determine which files to pull
+#DocumentIdentifier is equal to ifwnum
+#DocumentCode = documentsourceidentifier
+#OfficeActionTypeCode = DocumentCode
+#GroupArtUnitNumber
+#PartyIdentifier
+#name XML file and OACSConversion file with app ID and IFW num like other directory
+
+
 #Author:        Sasan Bahadaran
 #Date:          6/27/16
 #Organization:  Commerce Data Service
@@ -38,6 +51,7 @@ def makeDirectory(directory):
     if not os.path.isdir(directory):
         os.makedirs(directory)
         logging.info('-- Directory: '+directory+' created')
+        print('directory created!!!!!')
 
 #split path to get app ID
 def splitAll(path):

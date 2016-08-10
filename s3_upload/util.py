@@ -1,9 +1,15 @@
 import json
+import math
+from datetime import datetime
+import time
+
 
 class Util(object):
     @classmethod
     def log_directory(cls, objkey):
-        parts = (objkey[0:2], objkey[3:7], objkey[7:10], objkey[10])
+        (series, appid ) = objkey.split('/')
+
+        parts = (series, appid[0:4], appid[4:7], appid[7])
 
         return '/'.join(parts)
 
@@ -23,11 +29,48 @@ class Util(object):
 
         obj['s3_url'] = src_url
 
-        if obj['dn_intppty_cust_no'] == 'NaN':
-            del obj['dn_intppty_cust_no']
+        objkeys = list(obj.keys())
+        for k in objkeys:
+            # Remove all float fields with value of NaN
+            if k == 'textdata':
+                continue
+            elif k == 'file_dt':
+                if type(obj[k]) != float and '-' in obj[k]:
+                    obj[k] = '{:.0f}'.format(Util.convertToUTC(obj[k], '%d-%b-%y'))
+                else:
+                    obj[k] = '{:.0f}'.format(obj[k])
+            elif k == 'dn_dw_gau_cd':
+                obj['dn_dw_dn_gau_cd'] = obj[k]
+                del obj[k]
+            elif type(obj[k]) == float:
+                if math.isnan(obj[k]):
+                    del obj[k]
+                else:
+                    obj[k] = '{:.0f}'.format(obj[k])
+            elif type(obj[k]) == str:
+                trimmed = obj[k].strip()
+                if len(trimmed) == 0 or trimmed == 'nan':
+                    del obj[k]
+                else:
+                    obj[k] = trimmed
 
-#TODO: SOLR should handle '\n' properly if they are not removed.
-#        obj['textdata'] = obj['textdata'].replace('\n', ' \n ')
 
+        return json.dumps(obj)
+
+    @classmethod
+    def allowed_key(cls, key):
+
+        if key[0:3] == '13/':
+            if key[5] in ('2', '3', '6', '7'):
+                return True
+
+        return False
+
+    @classmethod
+    def secondary_log_directory(cls, key):
+
+        log_dir = Util.log_directory(key)
+
+        return log_dir.replace("13/", "13s/")
 
         return json.dumps(obj)
