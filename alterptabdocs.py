@@ -38,19 +38,19 @@ def alterJSON(fname):
             for x in records:
                 last_modified_ts = x['LAST_MODIFIED_TS']
                 x['LAST_MODIFIED_TS'] = convertToUTC(x, 'LAST_MODIFIED_TS')
-                x['LAST_MODIFIED_TS_frmt'] = convertToReadableDate(last_modified_ts)
-                x['PATENT_ISSUE_DT_frmt'] = convertToReadableDate(x['PATENT_ISSUE_DT'])
+                x['derived_LAST_MODIFIED_TS'] = convertToReadableDate(last_modified_ts)
+                x['derived_PATENT_ISSUE_DT'] = convertToReadableDate(x['PATENT_ISSUE_DT'])
                 x['PATENT_ISSUE_DT'] = convertToUTC(x, 'PATENT_ISSUE_DT')
-                x['DECISION_MAILED_DT_frmt'] = convertToReadableDate(x['DECISION_MAILED_DT'])
+                x['derived_DECISION_MAILED_DT'] = convertToReadableDate(x['DECISION_MAILED_DT'])
                 x['DECISION_MAILED_DT'] = convertToUTC(x, 'DECISION_MAILED_DT')
-                x['PRE_GRANT_PUBLICATION_DT_frmt'] = convertToReadableDate(x['PRE_GRANT_PUBLICATION_DT'])
+                x['derived_PRE_GRANT_PUBLICATION_DT'] = convertToReadableDate(x['PRE_GRANT_PUBLICATION_DT'])
                 x['PRE_GRANT_PUBLICATION_DT'] = convertToUTC(x, 'PRE_GRANT_PUBLICATION_DT')
-                x['APPLICANT_PUB_AUTHORIZATION_DT_frmt'] = convertToReadableDate(x['APPLICANT_PUB_AUTHORIZATION_DT'])
+                x['derived_APPLICANT_PUB_AUTHORIZATION_DT'] = convertToReadableDate(x['APPLICANT_PUB_AUTHORIZATION_DT'])
                 x['APPLICANT_PUB_AUTHORIZATION_DT'] = convertToUTC(x, 'APPLICANT_PUB_AUTHORIZATION_DT')
-                x['doc_date_frmt'] = convertToReadableDate(x['doc_date'])
+                x['derived_doc_date'] = convertToReadableDate(x['doc_date'])
                 x['doc_date'] = convertToUTC(x, 'doc_date')
                 x['type'] = 'ptab'
-                x['textdata_frmt'] = x['textdata'][:32000]
+                x['derived_textdata'] = x['textdata'][:32000]
 
             #transform output to json and save to file with same name
             with open(fname,'w') as outfile:
