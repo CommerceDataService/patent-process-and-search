@@ -51,7 +51,6 @@ def makeDirectory(directory):
     if not os.path.isdir(directory):
         os.makedirs(directory)
         logging.info('-- Directory: '+directory+' created')
-        print('directory created!!!!!')
 
 #split path to get app ID
 def splitAll(path):
