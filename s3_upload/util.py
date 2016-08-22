@@ -74,3 +74,13 @@ class Util(object):
         return log_dir.replace("13/", "13s/")
 
         return json.dumps(obj)
+
+    @classmethod
+    # convert day-month-year to UTC timestamp
+    def convertToUTC(cls, date, format='%d-%b-%y'):
+        if date != '' and date != None:
+            dt = datetime.strptime(date, format)
+            dt = time.mktime(dt.timetuple())
+        else:
+            dt = ''
+        return dt
