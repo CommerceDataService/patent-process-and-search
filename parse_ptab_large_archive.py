@@ -45,7 +45,6 @@ def readJSON(fname):
                 docid = x.get('DOCUMENT_IMAGE_ID',x.get('DOCUMENT_NM'))
                 jsontext = json.dumps(x)
                 #need to change this line
-                print(os.path.join(os.path.dirname(fname)))
                 with open(os.path.join(os.path.dirname(fname),'solrcomplete.txt'),'a+') as logfile:
                     logfile.seek(0)
                     if docid+"\n" in logfile:
@@ -97,7 +96,6 @@ def processXML(fname):
                                 text = dr.read()
                                 x['textdata'] = text
                         else:
-                            print("TXT file does not exist!!: " + docid)
                             logging.info("TXT file: "+docid+".txt  does not exist. JSON file creation skipped.")
                             return
 
@@ -166,7 +164,7 @@ if __name__ == '__main__':
     logging.info("--SCRIPT ARGUMENTS--------------")
     if args.dates:
         logging.info("Date arguments passed for processing: "+", ".join(args.dates))
-    logging.info("Solr Processing set to: "+str(args.skipsolr))
+    logging.info("Skip Solr Processing set to: "+str(args.skipsolr))
     logging.info("-- [JOB START]  ----------------")
 
     if args.dates:
