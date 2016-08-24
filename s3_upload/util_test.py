@@ -108,7 +108,7 @@ def test_reprocess_preserves_good_wipo_pub_no (util, json_doc_3):
 
     jsontext = util.reprocess_document(json_doc_3, '13/0000_XXX')
 
-    assert '"wipo_pub_no": "122334",' in jsontext
+    assert '"wipo_pub_no": "122334"' in jsontext
 
 
 
