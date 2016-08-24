@@ -4,6 +4,9 @@ set -e -v
 
 echo "Testing S3 with STS key"
 
+export TZ='US/Eastern'
+
+
 if [ ! -x /usr/bin/virtualenv ]; then
     echo "Virtual ENV not found... installing"
     pip3.4 install virtualenv
