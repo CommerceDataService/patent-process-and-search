@@ -2,4 +2,7 @@ xmltodict==0.10.1
 requests==2.9.1
 python-dateutil==2.5.2
 boto3
+lxml
+pandas
+pytest
 botocore
