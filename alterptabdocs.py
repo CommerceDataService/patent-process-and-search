@@ -53,6 +53,7 @@ def alterJSON(fname):
                 x['derived_textdata'] = x['textdata'][:32000]
 
             #transform output to json and save to file with same name
+            fname = os.splitext(fname)[0]+'_altered'+os.splitext(fname)[1]
             with open(fname,'w') as outfile:
                 json.dump(doc,outfile)
                 print("--Alteration of file complete")
@@ -65,5 +66,5 @@ def alterJSON(fname):
 if __name__ == '__main__':
     scriptpath = os.path.dirname(os.path.abspath(__file__))
 
-    for filename in glob.iglob(os.path.join(scriptpath,'files/PTAB','PTAB*/*.json')):
+    for filename in glob.iglob(os.path.join(scriptpath,'files/PTAB','jsonfiles/*.json')):
         alterJSON(filename)
