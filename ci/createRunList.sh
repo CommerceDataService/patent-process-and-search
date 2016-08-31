@@ -2,29 +2,11 @@
 
 set -e
 
-export TZ='US/Eastern'
+SCRIPT=$(python -c "import os; print(os.path.realpath('$0'))")
+SCRIPT_DIR=$(dirname "$SCRIPT")
+PROJECT_ROOT=$(dirname "$SCRIPT_DIR/..")
 
-echo "Testing S3 with STS key"
-
-if [ ! -x /usr/bin/virtualenv ]; then
-    echo "Virtual ENV not found... installing"
-    pip3.4 install virtualenv
-fi
-
-if [ ! -x env ]; then
-  virtualenv -p python3.4 env
-fi
-
-if [[ $GO_JOB_NAME == *"AWS"* ]]
-then
-  echo "Remove AWS ARN and Friends";
-  unset AWS_ROLE_ARN
-  unset AWS_ACCESS_KEY_ID
-  unset AWS_SECRET_ACCESS_KEY
-fi
-
-
-. env/bin/activate
+source "${SCRIPT_DIR}/_common.sh"
 
 pip install -r requirements.txt
 
@@ -32,11 +14,5 @@ py.test .
 
 rm -f run-list.txt
 
-
 python reprocess_create_run_list.py
-
-find . | grep -v ./env/ | grep -v ./.git/
-
-
-
 
