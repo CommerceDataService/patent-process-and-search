@@ -3,9 +3,11 @@
 <schema name="example-data-driven-schema" version="1.6">
 
   <field name="id" type="string" indexed="true" stored="true" required="true" multiValued="false" />
+  <field name="uniq_id" type="string" indexed="true" stored="true" required="true" multiValued="false" />
+  <field name="type" type="string" indexed="true" stored="true" required="true" multiValued="false" />
   <field name="_version_" type="long" indexed="true" stored="true"/>
 
-  <uniqueKey>id</uniqueKey>
+  <uniqueKey>uniq_id</uniqueKey>
 
   <fieldType name="string" class="solr.StrField" sortMissingLast="true" />
   <fieldType name="long" class="solr.TrieLongField" precisionStep="0" positionIncrementGap="0"/>
