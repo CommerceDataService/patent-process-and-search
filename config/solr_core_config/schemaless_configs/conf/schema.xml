@@ -2,7 +2,7 @@
 <!-- Solr managed schema - automatically generated - DO NOT EDIT -->
 <schema name="example-data-driven-schema" version="1.6">
 
-  <field name="id" type="string" indexed="true" stored="true" required="true" multiValued="false" />
+  <field name="id" type="string" indexed="true" stored="true" required="false" multiValued="false" />
   <field name="uniq_id" type="string" indexed="true" stored="true" required="true" multiValued="false" />
   <field name="type" type="string" indexed="true" stored="true" required="true" multiValued="false" />
   <field name="_version_" type="long" indexed="true" stored="true"/>
