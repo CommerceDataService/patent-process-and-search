@@ -31,6 +31,13 @@ class S3Uploader(object):
         self.credentials = None
         self.s3 = None
 
+        self.test_pfx = ''
+
+        if 'GO_PIPELINE_NAME' in os.environ:
+            if 'Test-' in os.environ['GO_PIPELINE_NAME']:
+                self.test_pfx = "test/"
+
+
     def refresh_s3(self):
 
         if self.credentials is None:
@@ -79,3 +86,11 @@ class S3Uploader(object):
     @ensure_fresh_credentials
     def get_file_list(self, prefix):
         return self.bucket.objects.filter(Prefix=prefix)
+
+    @ensure_fresh_credentials
+    def get_obj(self, key):
+        return self.bucket.Object(key)
+
+    def post_document(self, text, url):
+
+        self.bucket.put_object(Key=self.test_pfx + url, Body=text)

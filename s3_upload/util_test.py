@@ -1,3 +1,5 @@
+import os
+
 import pytest
 
 
@@ -27,6 +29,19 @@ def json_doc_4():
 @pytest.fixture
 def json_doc_5_wes():
     return load_file("test_fixtures/test14w_33_1.json")
+
+@pytest.fixture
+def json_doc_6_froms3():
+    return load_file("test_fixtures/test13s3_06.json")
+
+@pytest.fixture
+def json_doc_7_s3_no_abdt():
+    return load_file("test_fixtures/test13s3_038.json")
+
+
+@pytest.fixture
+def json_doc_8_s3_no_docdt():
+    return load_file("test_fixtures/test14s3_001_bad_docdt.json")
 
 
 def load_file(name):
@@ -65,6 +80,12 @@ def test_we_get_correct_secondary_log_dir(util):
     assert sec_dir == '13s/1312/347/8'
 
 
+def test_we_can_convert_date_to_text(util):
+
+    rv = util.convertUTCtoText("1471553120")
+    assert rv == "08/18/2016"
+
+
 
 def test_can_parse_json_file(util, json_doc):
 
@@ -86,6 +107,61 @@ def test_can_reprocess_document(util, json_doc):
     assert 's3_url' in jsontext
     assert '"s3_url": "13/0000_XXX' in jsontext
 
+def test_we_can_retrieve_metadata_from_reprocessed_doc(util, json_doc):
+
+    meta = {}
+
+    util.reprocess_document(json_doc, '13/0000_XXX', meta)
+
+    assert type(meta) == dict
+    assert meta['appid'] == '13000099'
+    assert meta['ifwnumber'] == 'I0XTDP9BPXXIFW4'
+    assert meta['type'] == 'OA'
+    assert meta['documentcode'] == 'CTFR'
+    assert meta['series'] == '13'
+    assert meta['format'] == 'json'
+
+
+def test_we_can_get_store_url_from_metadata(util, json_doc):
+
+    meta = {}
+    util.reprocess_document(json_doc, '13/0000_XXX', meta)
+
+    url = util.get_store_url(meta)
+
+    assert url == 'OA/13/13000099_I0XTDP9BPXXIFW4_CTFR.json'
+
+
+
+def test_that_we_reprocess_s3_file(util, json_doc_6_froms3):
+
+    os.environ["PIPELINE_URL"] = 'http://scheduler.bdr.uspto.gov/go/tab/build/detail/Test/12/CMS_Pull/1/ComputeDelta'
+
+    fd = open("before.doc.json", "wb")
+    fd.write(json_doc_6_froms3)
+
+    jsontext = util.reprocess_document(json_doc_6_froms3, '13/0000_XXX')
+
+    fd = open("reprocessed_doc.json", "wb")
+    fd.write(jsontext.encode("utf-8"))
+
+
+    assert type(jsontext) == str
+    assert 'doc_date' not in jsontext
+    assert 'textdata' not in jsontext
+    assert 'textdata_short' not in jsontext
+    assert '"s3_url": "13/0000_XXX' in jsontext
+    assert '"body_tx": "' in jsontext
+    assert "patent_issue_dt_tx" in jsontext
+    assert "patent_issue_dt_tx" in jsontext
+    assert "patent_issue_dt_txt" not in jsontext
+    assert '"patent_issue_dt_tx": "04/07/2015"' in jsontext
+    assert '"doc_dt": "1387256400"' in jsontext
+    assert '"doc_dt_tx": "12/17/2013"' in jsontext
+    assert '"uniq_id": "13000006-HP5IYPUSPXXIFW4"' in jsontext
+    assert '"body_short_tx": "DETAILED ACTION' in jsontext
+    assert '"prov": "wasDerivedFrom(13/0000_XXX,.,' \
+           'http://scheduler.bdr.uspto.gov/go/tab/build/detail/Test/12/CMS_Pull/1/ComputeDelta)"' in jsontext
 
 def test_reprocess_removes_NaN_from_dn_intppty_cust_no(util, json_doc_2):
 
@@ -122,7 +198,7 @@ def test_reprocess_keeps_all_core_fields(util, json_doc):
 
     jsontext = util.reprocess_document(json_doc, '13/0000_XXX')
 
-    for fld in ('"appid":', '"ifwnumber":', '"textdata":', '"doc_date":', '"type":', '"documentcode":'):
+    for fld in ('"appid":', '"ifwnumber":', '"body_tx":', '"doc_dt":', '"type":', '"documentcode":'):
         assert fld in jsontext
 
 
@@ -130,7 +206,7 @@ def test_reprocess_keeps_all_core_fields_wes(util, json_doc_5_wes):
 
     jsontext = util.reprocess_document(json_doc_5_wes, '13/0000_XXX')
 
-    for fld in ('"appid":', '"ifwnumber":', '"textdata":', '"doc_date":',
+    for fld in ('"appid":', '"ifwnumber":', '"body_tx":', '"doc_dt":',
                 '"type":', '"documentcode":', '"staging_src_path"'):
         assert fld in jsontext
 
@@ -139,6 +215,21 @@ def test_reprocess_removes_misspelled_fields_wes(util, json_doc_5_wes):
 
     jsontext = util.reprocess_document(json_doc_5_wes, '13/0000_XXX')
     assert 'dn_dw_gau_cd' not in jsontext
+
+
+def test_reprocess_we_handle_empty_abandon_dt(util, json_doc_7_s3_no_abdt):
+
+    jsontext = util.reprocess_document(json_doc_7_s3_no_abdt, '13/0000_XXX')
+    assert 'abandon_dt' not in jsontext
+
+def test_reprocess_we_handle_empty_doc_dt(util, json_doc_8_s3_no_docdt):
+
+    jsontext = util.reprocess_document(json_doc_8_s3_no_docdt, '13/0000_XXX')
+    assert 'doc_date' not in jsontext
+    assert 'doc_dt' not in jsontext
+    assert 'doc_dt_tx' not in jsontext
+
+
 
 
 def test_reprocess_file_dt_is_processed_correctly(util, json_doc_3):
