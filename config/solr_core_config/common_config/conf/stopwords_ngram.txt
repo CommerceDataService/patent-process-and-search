@@ -1,0 +1,329 @@
+#
+# Stopword for Shingles
+# min word length of 3, before being stemmed, and a max shingle size of 4.
+#
+accompani draw
+accompani figur depict
+accompani figur show
+accompani figur show support
+all such
+along line
+anoth aspect
+apart from
+appar from
+apparatu can
+apparatu refer
+applic appli
+applic cite
+applic entitl
+applic ser
+art prior
+assembl includ
+assembl mai
+awai from
+background art
+becom appar
+becom more
+been describ
+been shown
+been us
+better understood
+between an
+between two
+can achiev
+can act
+can caus
+can chang
+can have
+can help
+can improv
+can includ
+can lead
+can make
+can occur
+can onli
+can oper
+can reduc
+can vari
+claim disclosur
+claim subject matter
+complet disclosur
+comprehens disclosur
+concern previous
+corpor nonpat
+corpor nonpat document
+corpor nonpat document fundament
+cross refer
+cross section
+cross section view
+current disclosur
+depart from
+depend upon
+deriv from
+describ below
+design for
+detail below
+detail descript
+devic accord
+devic can
+devic us
+disclosur can
+disclosur concern
+disclosur detail
+disclosur disclos
+disclosur fig
+disclosur illustr
+disclosur need
+disclosur patentfigurea
+disclosur patentfigureb
+disclosur patentfigurec
+disclosur patentfigured
+disclosur patentfiguree
+disclosur patentfiguref
+disclosur patentfigureg
+disclosur present
+disclosur prior
+disclosur refer
+disclosur relat
+disclosur unless
+discuss previous
+dispos between
+distal end
+document disclos
+document japanes
+document japanes laidopen
+document japanes unexamin
+document korean laidopen
+draw fig
+dure oper
+end portion
+entir content
+entir disclosur
+entireti disclos
+even though
+fig ar
+fig depict
+fig fig
+fig for
+fig illustr
+fig mai
+fig show
+figur depict
+figur depict perspect
+figur depict perspect view
+figur depict simplifi view
+figur refer
+figur repres
+figur schemat show
+figur show
+figur show cross
+figur show cross section
+figur show detail
+figur show graph
+figur show multipl
+figur show schemat
+figur show side
+figur show side view
+figur show support
+figur show support member
+figur show view
+figurea depict
+figurea show
+figureb depict
+figureb show
+figurec depict
+figurec show
+figuree depict
+figuree show
+figuref depict
+figuref show
+figureg depict
+figureg show
+first end
+follow descript
+follow detail
+follow detail descript
+forgo disclosur
+from about
+from each
+from fig
+front view
+gap between
+have from
+higher than
+includ for
+includ two
+incorpor into
+intellectu properti
+intellectu properti offic
+intellectu properti offic kipo
+into contact
+introduc into
+invent disclosur
+japan intellectu
+japan intellectu properti
+japan intellectu properti offic
+japanes laid open
+japanes laidopen
+japanes publish
+japanes unexamin
+japanes util
+japanes util model
+japanes util model registr
+korean intellectu
+korean intellectu properti
+korean intellectu properti offic
+korean laidopen
+larg nonpat literatur
+last mention
+least some
+left side
+like part
+like refer
+literatur disclos
+literatur japanes
+literatur japanes laidopen
+literatur japanes publish
+literatur japanes publish examin
+literatur japanes unexamin
+literatur japanes util
+literatur japanes util model
+literatur korean
+literatur ptl
+literatur refer
+literatur refer cite
+literatur see
+ltd tokyo japan
+mai caus
+mai compris
+mai have
+mai includ
+mai not
+mai occur
+mai pass through
+mai prefer
+mai provid
+mai repres
+mai vari
+manner previous
+mention applic
+mention disadvantag
+mention previous
+mention prior patent
+mention problem
+more particularli
+more prefer
+more prefer from
+more specif
+more than
+necessari for
+need exist
+need onli
+non limit exampl
+nonpat document
+nonpat literatur
+nonpat literatur mention
+nonpat refer
+not have
+not illustr
+not includ
+not intend
+not necessari
+not necessarili
+not onli
+not requir
+not shown
+note previous
+number mention
+onli need
+opposit direct
+opposit end
+opposit side
+over time
+part can
+part mention
+patent disclos
+patentfigurea depict
+patentfigurea show
+patentfigureb depict
+patentfigureb show
+patentfigurec depict
+patentfigurec show
+patentfigured depict
+patentfigured show
+patentfiguree depict
+patentfiguree show
+patentfiguref depict
+patentfiguref show
+patentfigureg depict
+patentfigureg show
+perspect view
+perspect view show
+plan view
+portion japanes
+portion previous mention
+portion previous mention can
+possibl for
+prefer from
+present applic
+present disclosur
+previou mention
+previous cite
+previous discuss
+previous illustr
+previous mention
+previous mention can
+previous note
+prior art
+prior disclosur
+problem mention
+provision applic
+ptl japanes laidopen
+public disclos
+purpos mention
+recent year nonpat
+recent year nonpat literatur
+refer disclos
+refer now
+refer numer
+referenc disclosur
+report see nonpat
+report see nonpat document
+same manner
+same refer
+same time
+schemat view
+second end
+section area
+see fig
+see japanes laidopen
+see nonpat
+see nonpat document
+see nonpat literatur
+see ptl japanes laidopen
+select from
+set forth
+sipo state intellectu
+sipo state intellectu properti
+some case
+specif mention
+state intellectu
+state intellectu properti
+state intellectu properti offic
+substanti parallel
+taken along
+technic field
+time for
+tokyo japan
+top view
+trade name
+two or more
+us nonpat
+us nonpat literatur
+us nonpat literatur mention
+user need
+view from
+view illustr
+view show
+pat no
+government regul
