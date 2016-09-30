@@ -1,0 +1,127 @@
+Airliner,Commercial airliner,Commercial jet,Commercial flight,Passenger airplane,Passenger aircraft,Air liner
+Computer software,Application software,computer software application,Computer application,Software application,computer program,App code,desktop software
+Automatic transmission,Fully-automatic transmission,Fully automatic transmission,Auto tran,Automatic gearbox
+Automotive,Automotive sector,Car sector,Automotive industry,Automobile manufacturer,Car maker,Automobile maker,Car Automobile,Passenger vehicle,Automoble,Automobil,Motor Car,car,automaker,Automobile production,Auto manufacturer,Car company,Car factory,Automotive factory,Automobile manufacture,Automobile manufacturing
+Aviation,Air Transport,Air Transport Industry,Aerial transportation,Personal Aviation,Personal aircraft,General aviation aircraft,general aviation,modern aviation
+Digital Audio,digital music,digital sound,digital audio file,Digital Audio Technology
+Electronic file,Digital file,computer file
+ISP,ISP service,internet service provider,Internet provider,Internet Communications Service Provider,Broadband service provider,Broadband Internet Provider,Broadband provider,Internet Access Provider
+LAN,local area network,local-area network
+LCD,liquid crystal display,Liquid-crystal display,lcd display,lcd screen,LCD panel,lcd pixel,LCD monitor,lcd display device
+LED display,LED flat panel display,Light-emitting diode display,Light emitting diode display,LED Panel,LED video display,LED screen,LED monitor
+LED light bulb,LED lightbulb,LED lamp,LED bulb,Light emitting diode bulb,Light emitting diode lamp,Light emitting diode light bulb,Light-emitting diode bulb,Light-emitting diode lamp
+LED,Light emitting diode,Light-emitting diode,LED diode
+MAC Address,Ethernet Hardware Address,Media Access Control address
+Manual transmission,Manual gearbox,Standard transmission,Stick shift,Shift stick
+Movie,movie film,motion picture,major motion picture,theatrical film
+Nightstand,Night Stand,bedside table,bed table
+Table lamp,Study lamp,Desk lamp
+Voice over IP,Voice over Internet protocol,IP telephony,Internet telephony,internet telephone,broadband telephony,Broadband telephone,broadband phone service,voip communication,Voice over internet protocol,IP voice,Internet phone service,Internet telephone service,Internet-based telephony,IP telephony signaling protocol,VoIP carrier,Voice Over IP industry,VOIP Call,Internet Protocol telephone,Voiceover IP
+WIFI,wi-fi network,wifi area connection,wifi connection,wifi network connection,wifi network,wifi transmitter receiver,wifi receiver transmitter,wifi connection,wifi transmitter,wifi receiver,wifi operable connection,wireless wifi connection,wifi standard
+WLAN,wireless local area network,wireless lan
+WWAN,wireless wide area network,wireless wan,wide-area wireless network
+White board,Dry-erase board,Dry erase board,Markerboard,Whiteboard
+air circulation chamber,air circulation device,air circulation system
+air circulation,air circulate,air circulating
+air compression,pressurize air,compresss air,air compressor
+air conditioning,air conditioner,air conditioning system,air-condition system,air conditioning apparatus,air conditioning equipment
+air filtration,air purification,air purifier,air cleaner,air filtration system,air purification unit,air purification system
+air flow pathway,air flow passageway
+air handler,air handling system
+air leak,air leakage
+air movement,air flow,air speed,air flow velocity
+air permeable,air permeability
+air pollution,air pollutant
+air pressure,ambient air pressure,Atmospheric pressure,Standard atmospheric pressure,Barometric pressure,Atmospheric air pressure
+air tank,air reservoir
+air ventilation,air vent
+airplane,aeroplane,aircraft structure,fixed-wing aircraft
+bluetooth,bluetooth wireless,bluetooth wireless connection,bluetooth transmitter receiver,Bluetooth radio wave,bluetooth wireless,bluetooth transmitter,bluetooth receiver,bluetooth connection,Bluetooth 4.0 wireless connection,bluetooth communication,bluetooth signal,bluetooth transmission,bluetooth pairing,wireless bluetooth connection,bluetooth standard,bluetooth transceiv,bluetooth standard
+cd-rom,cd-rom disk
+cellular text message,cell phone text message,sms text message
+cleaning tool,cleanup tool
+computer monitor,computer display,computer screen,desktop computer display
+computer peripheral,associate computer equipment
+computer program code,program source code,program source-code,computer source code,computer source-code,programming code,computer code,software code,computer program instruction,computer implemented process,computer instruct,computer instruction,computer usable program code,module computer code,software implementation
+computer storage medium,computer readable medium,computer-readable medium,computer readable storage medium
+computer,computer system,digital computer,computing device,electronic computer,general purpose computer,general-purpose computer,personal computer,personal computer pc
+cpu,computer processor,central computer processor,Central processing unit,
+ethernet,ethernet standard,ethernet network,hardwir network,Higher Speed Ethernet,
+facial recognition,face recognition,facial geometry,face recognizer
+speech recognition,voice recognition
+floating touch,hovering touch,interaction floating touch,free floating touch
+floor lamp,torch lamp
+foldable table,collapsible table,card table
+hand operable,hand held,hand portable,hand operat
+human anatomy,human body
+man-portable,human portable,man portable
+computer programming language,programming language,computer language,computer oriented language
+landline phone,landline telephone,fixed-line telephone,wireline phone,wireline telephone
+mobile phone,cell phone,cellular phone,mobile telephone,cellular telephone,portable mobile telephone,own private cell phone,private cell phone,small cellular telephone,mobile phone device,mobile phone handset,commercial mobile phone,portable phone device
+mobile telephone network,cellular phone network,cell phone network,mobile phone network,mobile telephone service provider network,cellular telephone system,Cellular communication system,Cellular communication carrier,mobile phone carrier,mobile telephone carrier
+mobile telephone service,cellular service provider,mobile telephone service provider,mobile telephone service provider network,mobile telephone provider
+network computer,remote computer
+office chair,desk chair
+portable audio device,portable audio,portable music player,portable audio player
+portable computer display,portable computer screen
+portable computer,mobile computer,laptop computer,notebook computer,netbook computer,computer portable computer
+portable gaming device,handheld portable gaming device,portable gaming system,portable game player
+reliable computer system,stable computer system
+smart phone,smart mobile telephone,iphone smart phone,android smart phone,apple smart phone,nexus smart phone
+street light,street lamp
+sunroof,moonroof,sun roof,moon roof
+telecommunication equipment,telecom equipment,communication equipment
+telecommunications network,computer network,data network
+touch device,touch-sensitive user interface,touch-sensitive device,touch sensor,touch signal probe,touch input
+touch free display,touch free interactive display,non touch panel
+touch free,touch free design,touch free input,touch free input device,touch-less,touch-les sensor,touch-less sensor,touch less sensor
+touch screen,touch-screen,touch panel,touch-screen panel,touch screen display,touch-screen display,touch display,touch screen area,touch-screen area,touch interactive display,multi touch display,multi-touch display,multi touch screen,multi-touch screen,touch screen button,touch screen button,two touch screen area
+videogame,video game,computer game
+video game console,videogame console,game console,video game system,gaming system,Console video game,gaming console,video-game console,console video game system,home video game console,video game platform
+videoconference,video conference,videoteleconference
+pressure release valve,pressure relief valve
+few defect,few imperfection
+electric motor,electrical motor
+electronic display,screen display,display technology
+voltage spike,current spike
+battery backup,uninterruptible power supply,uninterruptible power source
+lithium ion battery,Li ion battery
+nickel cadmium battery,NiCd battery,NiCad battery
+CFL,compact fluorescent lamps
+voltage,volt,electric potential difference,electric pressure,electric tension
+electric potential,electric field potential,electrostatic potential
+electroconductivity,electrical conductivity,electrical resistivity,electrical conductance,electrical resistance,electrical volume resistivity,specific conductance
+Waterproof,water proof
+RCA connection,RCA connector,RCA cable,RCA plug,rca jack
+HDMI,High Definition Multimedia Interface
+HDTV,High Definition TV,High Definition Television,HD TV,High definition digital TV
+glovebox,glove box
+restroom,rest room,rublic toilet,toilet room,public washroom,bathroom
+gesture recognition,hand tracking and recognition,hand movement recognition,Gesture recognizer,video gesture control
+brain injury,neurotrauma,brain damage,intracranial injury
+physiotherapy,physical therapy,physical rehabilitation,rehabilitation medicine,physical medicine and rehabilitation,physiotherapist,physical therapist,physiatrist
+logopaedic,logo paedic,logo pedic,speech therapy,Speech Language Pathology,Speech language pathologist,speech and language therapist,speech therapist,Speech pathologist,Speech and Language Therapy,Language Therapy,speech and language disorder
+brainwave,brain wave
+compact structure,compact form,compact design,compact shape,little compact,compact carry,compact carry size,compact fashion,compact size,compact sizing,compact device,compact apparatus
+lightweight compact,light compact,lightweight compact size
+portable cd,portable compact disk
+compact disk,cd rom disk,cdrom disk
+fiber optic communication,fiber optic cable,optical fiber cable,fiber optic coupler
+electrical cable,power cable,electric power cable
+coaxial cable,coax cable
+triaxial cable,triax cable
+Twinaxial cable,twinax cable,twin axial cable
+solar power,photovoltaic power,solar photovoltaic power,solar electric power
+Solaode,solar cell,photovoltaic cell,Photoelectric cell,Crystalline PV cell
+solar panel,solar Photovoltaic panel,Sun energy power panel,Solar photovoltaic module,photovoltaic module
+solar power system,photovoltaic system,solar PV power system
+Solar thermal power,solar thermal electricity,Solar thermal electric power,Solar thermic power
+Wind electric power,wind turbine,wind powered generator,propeller wind generator
+Hybrid vehicle,Hybrid Automobile,Hybrid car,Petrol electric hybrid vehicle,hybrid electric vehicle
+semiconductor,semi conductor,semi conduct
+Geothermal Power,steam power plant,geothermal power plant,geothermal electric,geothermal electric power
+wellbore,wellbore completion
+well logging,borehole logging,wireline logging,wireline cable,wireline tool
+borehole,borehole drilling
+household appliance,home appliance,domestic appliance
+beer brewing,beer making,beer brewing system,beer making system
