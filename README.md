@@ -13,7 +13,7 @@ java -jar tika-server-1.7.jar --port 9998
 In order to download zip files from the USPTO bulk data site (https://bulkdata.uspto.gov/data2/patent/trial/appeal/board/)
 run the retrieval script:
 ```
-./retrieve_files.sh
+./retrieve_ptab_files.sh
 ```
 
 This script will download the zip files into the /files directory, unzip them, and send each pdf file to the Tika server to parse.
