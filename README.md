@@ -28,6 +28,7 @@ python parse_xml.py
 ```
 
 ###Loading data into Solr
+The `parse_xml.py` script referred to above will also load the resulting JSON files into Solr (unless skipping Solr processing is specified).
 
 ##Office Actions
 
