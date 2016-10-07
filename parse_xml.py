@@ -80,7 +80,8 @@ def processXML(fname):
                 txtfn = os.path.join(os.path.dirname(fn),'PDF_image',docid+'.txt')
                 if os.path.isfile(txtfn):
                     x['LAST_MODIFIED_TS'] = formatDate(x, 'LAST_MODIFIED_TS')
-                    x['PATENT_ISSUE_DT'] = formatDate(x, 'PATENT_ISSUE_DT')
+                    if 'PATENT_ISSUE_DT' in x:
+                        x['PATENT_ISSUE_DT'] = formatDate(x, 'PATENT_ISSUE_DT')
                     x['DECISION_MAILED_DT'] = formatDate(x, 'DECISION_MAILED_DT')
                     x['PRE_GRANT_PUBLICATION_DT'] = formatDate(x, 'PRE_GRANT_PUBLICATION_DT')
                     x['APPLICANT_PUB_AUTHORIZATION_DT'] = formatDate(x, 'APPLICANT_PUB_AUTHORIZATION_DT')
@@ -119,13 +120,19 @@ def processFile(filename):
         if (args.skipsolr):
             logging.info("-- XML file: "+filename+" already processed.  Skipping Solr process.")
         else:
-            logging.info("-- XML file: "+filename+" already processed.  Sending to Solr for indexing.")
+            logging.info("-- XML file: "+filename+" already processed.  Starting processing of JSON file.")
             readJSON(fn)
     else:
         logging.info("-- Starting processing of XML file: "+filename)
         processXML(filename)
-        logging.info("-- Starting processing of JSON file: "+fn)
-        readJSON(fn)
+        if (args.skipsolr):
+            logging.info("-- Skipping Solr process.")
+        else:
+            if (args.skipsolr):
+                logging.info("Skipping Solr process.")
+            else:
+                logging.info("-- Starting processing of JSON file: "+fn)
+                readJSON(fn)
 
 if __name__ == '__main__':
     scriptpath = os.path.dirname(os.path.abspath(__file__))
@@ -153,7 +160,7 @@ if __name__ == '__main__':
                         "--skipsolr",
                         required=False,
                         help="Pass this flag to skip Solr processing",
-                        action='store_true'
+                        action="store_true"
                        )
 
     args = parser.parse_args()
