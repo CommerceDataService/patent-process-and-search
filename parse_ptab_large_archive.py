@@ -33,7 +33,7 @@ def sendToSolr(core, json):
      jsontext = '{"add":{ "doc":'+json+',"boost":1.0,"overwrite":true, "commitWithin": 1000}}'
      url = os.path.join(solrURL,"solr",core,"update")
      headers = {"Content-type" : "application/json"}
-     
+
      return requests.post(url, data=jsontext, headers=headers)
 
 def readJSON(fname):
@@ -45,7 +45,6 @@ def readJSON(fname):
                 docid = x.get('DOCUMENT_IMAGE_ID',x.get('DOCUMENT_NM'))
                 jsontext = json.dumps(x)
                 #need to change this line
-                print(os.path.join(os.path.dirname(fname)))
                 with open(os.path.join(os.path.dirname(fname),'solrcomplete.txt'),'a+') as logfile:
                     logfile.seek(0)
                     if docid+"\n" in logfile:
@@ -77,28 +76,33 @@ def processXML(fname):
             records = doc['main']['DATA_RECORD']
             for x in records:
                 docid = x.get('DOCUMENT_IMAGE_ID',x.get('DOCUMENT_NM'))
-                txtfn = os.path.join(os.path.dirname(fn),'PDF_image',docid+'.txt')
-                if os.path.isfile(txtfn):
-                    x['LAST_MODIFIED_TS'] = formatDate(x, 'LAST_MODIFIED_TS')
-                    if 'PATENT_ISSUE_DT' in x:
-                        x['PATENT_ISSUE_DT'] = formatDate(x, 'PATENT_ISSUE_DT')
-                    x['DECISION_MAILED_DT'] = formatDate(x, 'DECISION_MAILED_DT')
-                    x['PRE_GRANT_PUBLICATION_DT'] = formatDate(x, 'PRE_GRANT_PUBLICATION_DT')
-                    x['APPLICANT_PUB_AUTHORIZATION_DT'] = formatDate(x, 'APPLICANT_PUB_AUTHORIZATION_DT')
-                    x['appid'] = x.pop('BD_PATENT_APPLICATION_NO')
-                    x['doc_date'] = x.pop('DOCUMENT_CREATE_DT')
-                    with open(txtfn) as dr:
-                        text = dr.read()
-                        x['textdata'] = text
-                else:
-                    logging.info("TXT file: "+docid+".txt  does not exist. JSON file creation skipped.")
-                    return 
+                txtfn = docid+'.txt'
+                x['textdata'] = ''
+                x['LAST_MODIFIED_TS'] = formatDate(x, 'LAST_MODIFIED_TS')
+                x['PATENT_ISSUE_DT'] = formatDate(x, 'PATENT_ISSUE_DT')
+                x['DECISION_MAILED_DT'] = formatDate(x, 'DECISION_MAILED_DT')
+                x['PRE_GRANT_PUBLICATION_DT'] = formatDate(x, 'PRE_GRANT_PUBLICATION_DT')
+                x['APPLICANT_PUB_AUTHORIZATION_DT'] = formatDate(x, 'APPLICANT_PUB_AUTHORIZATION_DT')
+                x['doc_date'] = formatDate(x, 'DOCUMENT_CREATE_DT')
+                x['appid'] = x.pop('BD_PATENT_APPLICATION_NO')
+                logging.info('Looking for: '+txtfn)
+                for filename in glob.iglob(os.path.join(scriptpath,'files', 'PTAB', 'PTAB*', '*', '*', '*.txt')):
+                    fpath,fname = os.path.split(filename)
+                    if fname == txtfn:
+                        logging.info("filename match: "+filename)
+                        if os.path.isfile(filename):
+                            logging.info("found file!!!!!")
+                            with open(filename) as dr:
+                                text = dr.read()
+                                x['textdata'] = text
+                        else:
+                            logging.info("TXT file: "+docid+".txt  does not exist. JSON file creation skipped.")
+                            return
 
             #transform output to json and save to file with same name
             with open(fn,'w') as outfile:
                 json.dump(doc,outfile)
                 logging.info("-- Processing of XML file complete")
-                #process new JSON file
     except IOError as e:
         logging.error("I/O error({0}): {1}".format(e.errno,e.strerror))
     except:
@@ -117,22 +121,15 @@ def validDate(s):
 def processFile(filename):
     fn = changeExt(filename,'json')
     if os.path.isfile(os.path.abspath(fn)):
-        if (args.skipsolr):
-            logging.info("-- XML file: "+filename+" already processed.  Skipping Solr process.")
-        else:
-            logging.info("-- XML file: "+filename+" already processed.  Starting processing of JSON file.")
-            readJSON(fn)
+        logging.info("-- file: "+fn+" already exists.")
     else:
         logging.info("-- Starting processing of XML file: "+filename)
         processXML(filename)
-        if (args.skipsolr):
-            logging.info("-- Skipping Solr process.")
+        if not args.skipsolr:
+            logging.info("-- Starting processing of JSON file: "+fn)
+            readJSON(fn)
         else:
-            if (args.skipsolr):
-                logging.info("Skipping Solr process.")
-            else:
-                logging.info("-- Starting processing of JSON file: "+fn)
-                readJSON(fn)
+            logging.info("-- Skipping Solr process")
 
 if __name__ == '__main__':
     scriptpath = os.path.dirname(os.path.abspath(__file__))
@@ -160,14 +157,14 @@ if __name__ == '__main__':
                         "--skipsolr",
                         required=False,
                         help="Pass this flag to skip Solr processing",
-                        action="store_true"
+                        action='store_true'
                        )
 
     args = parser.parse_args()
     logging.info("--SCRIPT ARGUMENTS--------------")
     if args.dates:
         logging.info("Date arguments passed for processing: "+", ".join(args.dates))
-    logging.info("Solr Processing set to: "+str(args.skipsolr))
+    logging.info("Skip Solr Processing set to: "+str(args.skipsolr))
     logging.info("-- [JOB START]  ----------------")
 
     if args.dates:
