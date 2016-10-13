@@ -31,4 +31,9 @@ python parse_xml.py
 The `parse_xml.py` script referred to above will also load the resulting JSON files into Solr (unless skipping Solr processing is specified).
 
 ##Office Actions
+The `retrieve_oa_files.py` and `retrieve_oa_staging_files.py` files contain processes to copy, parse, combine Office Action files with PAIR data, and store the resulting JSON files in AWS S3.  These scripts are specific to two directories of Office Action files that was used for processing.
 
+##PAIR Bulk Data
+The `extractpairappids.py` file is a process that uses the PAIR bulk download files from:
+https://pairbulkdata.uspto.gov
+This process goes through each file in the set and copies the application ID's to one file.  These application ID's are for public patent applications only.
