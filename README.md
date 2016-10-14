@@ -1,5 +1,5 @@
 # patent-process-and-search
-This is a set of scripts to download Patent data, munge, and load into a Solr instance.
+This repository contains a set of scripts to download Patent data, munge, and load into a Solr instance.  It also contains a website that is used to search processed patent documents that are loaded into a Solr instance (refer to searchtool directory for more information).
 
 ##Processing PTAB (Patent Trial and Appeal Board Files)
 
