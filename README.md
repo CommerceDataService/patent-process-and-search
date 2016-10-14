@@ -1,4 +1,4 @@
-# uspto_ptab
+# patent-process-and-search
 This is a set of scripts to download Patent data, munge, and load into a Solr instance.
 
 ##Processing PTAB (Patent Trial and Appeal Board Files)
